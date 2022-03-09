@@ -1,3 +1,19 @@
 <resources>
-    <string name="app_name">Cams</string>
+    <string name="app_name">Камеры</string>
+    <string name="main_title">Камеры</string>
+    <string name="add">Добавить</string>
+    <string name="cam_add">Добавить камеру</string>
+    <string name="cam_name">Название</string>
+    <string name="cam_name_hint">Новая камера</string>
+    <string name="cam_url">Адрес</string>
+    <string name="cam_url_hint">rtsp://ip:port</string>
+    <string name="cam_tcp_udp">TCP/UDP</string>
+    <string name="cam_delete">Удалить камеру?</string>
+    <string name="save">Сохранить</string>
+    <string name="delete">Удалить</string>
+    <string name="cancel">Отмена</string>
+    <string name="settings">Настройки</string>
+    <string name="back">Назад</string>
+    <string name="err_invalid">Неверное значение</string>
+    <string name="err_cam_exists">Такая камера уже существует</string>
 </resources>
