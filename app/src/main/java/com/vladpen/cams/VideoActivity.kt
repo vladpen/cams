@@ -1,20 +1,19 @@
 package com.vladpen.cams
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
-import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener
 import androidx.appcompat.app.AppCompatActivity
 import com.vladpen.StreamData
+import com.vladpen.VideoGestureDetector
 import com.vladpen.cams.databinding.ActivityVideoBinding
 import org.videolan.libvlc.LibVLC
 import org.videolan.libvlc.Media
 import org.videolan.libvlc.MediaPlayer
 import org.videolan.libvlc.util.VLCVideoLayout
 import java.io.IOException
-import kotlin.math.max
-import kotlin.math.min
 
 class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     private val binding by lazy { ActivityVideoBinding.inflate(layoutInflater) }
@@ -22,8 +21,8 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     private lateinit var libVlc: LibVLC
     private lateinit var mediaPlayer: MediaPlayer
     private lateinit var videoLayout: VLCVideoLayout
-    private lateinit var scaleGestureDetector: ScaleGestureDetector
-    private var scaleFactor = 1.0f
+
+    private lateinit var gestureDetector: VideoGestureDetector
 
     private var position: Int = -1
 
@@ -73,7 +72,8 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         } catch (e: IOException) {
             e.printStackTrace()
         }
-        scaleGestureDetector = ScaleGestureDetector(this, ScaleListener())
+
+        gestureDetector = VideoGestureDetector(this, videoLayout)
     }
 
     override fun onStop() {
@@ -94,19 +94,11 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         }
     }
 
-    override fun onTouchEvent(ev: MotionEvent): Boolean {
-        // Let the ScaleGestureDetector inspect all events.
-        scaleGestureDetector.onTouchEvent(ev)
-        return true
-    }
+    override fun onTouchEvent(event: MotionEvent) =
+        gestureDetector.onTouchEvent(event) || super.onTouchEvent(event)
 
-    inner class ScaleListener : SimpleOnScaleGestureListener() {
-        override fun onScale(scaleGestureDetector: ScaleGestureDetector): Boolean {
-            scaleFactor *= scaleGestureDetector.scaleFactor
-            scaleFactor = max(1f, min(scaleFactor, 10.0f))
-            videoLayout.scaleX = scaleFactor
-            videoLayout.scaleY = scaleFactor
-            return true
-        }
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        gestureDetector.reset()
     }
 }
