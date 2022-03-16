@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import com.vladpen.StreamData
+import com.vladpen.StreamDataModel
 import com.vladpen.VideoGestureDetector
 import com.vladpen.cams.databinding.ActivityVideoBinding
 import org.videolan.libvlc.LibVLC
@@ -21,6 +22,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     private lateinit var libVlc: LibVLC
     private lateinit var mediaPlayer: MediaPlayer
     private lateinit var videoLayout: VLCVideoLayout
+    private lateinit var stream: StreamDataModel
 
     private lateinit var gestureDetector: VideoGestureDetector
 
@@ -35,11 +37,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     private fun initActivity() {
         position = intent.getIntExtra("position", -1)
 
-        val stream = StreamData.getByPosition(position)
-        if (stream == null) {
-            position = -1
-            return
-        }
+        stream = StreamData.getByPosition(position) ?: return
 
         binding.toolbar.tvToolbarLabel.text = stream.name
         binding.toolbar.btnBack.setOnClickListener {
@@ -57,8 +55,13 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         mediaPlayer = MediaPlayer(libVlc)
         mediaPlayer.setEventListener(this)
 
-        mediaPlayer.attachViews(videoLayout, null, false, false)
+        gestureDetector = VideoGestureDetector(this, videoLayout)
+    }
 
+    override fun onStart() {
+        super.onStart()
+
+        mediaPlayer.attachViews(videoLayout, null, false, false)
         try {
             val uri = Uri.parse(stream.url)
             Media(libVlc, uri).apply {
@@ -72,8 +75,6 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         } catch (e: IOException) {
             e.printStackTrace()
         }
-
-        gestureDetector = VideoGestureDetector(this, videoLayout)
     }
 
     override fun onStop() {
