@@ -1,0 +1,8 @@
+Simple Android mobile app for playing RTSP streams from IP cameras
+
+Features:
+
+* Ability to switch TCP/UDP protocol. This option is important while viewing cameras over the Internet, where UDP may not be supported or may not work well.
+* Image zoom.
+* Maximum connection speed.
+* Extreme ease of navigation and control.
