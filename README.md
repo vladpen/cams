@@ -1,6 +1,6 @@
 ## Cams
 
-[![Cams](https://raw.githubusercontent.com/vladpen/cams/screenshots/img/cover.png)]
+![Cams](https://raw.githubusercontent.com/vladpen/cams/screenshots/img/cover.png)
 
 Простое мобильное приложение под Android для воспроизведения RTSP потоков с IP камер.
 
@@ -11,6 +11,7 @@
 - Двадцатикратное увеличение изображения.
 - Максимальная скорость подключения.
 - Предельная простота навигации и управления.
+
 
 ![Screenshots](https://raw.githubusercontent.com/vladpen/cams/screenshots/img/screens.png)
 
