@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Cameras</string>
+    <string name="app_name">Cams</string>
     <string name="main_title">Cameras</string>
     <string name="add">Add</string>
     <string name="cam_add">Add camera</string>
