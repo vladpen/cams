@@ -12,7 +12,6 @@
 - Максимальная скорость подключения.
 - Предельная простота навигации и управления.
 
-
 ![Screenshots](https://raw.githubusercontent.com/vladpen/cams/screenshots/img/screens.png)
 
 Подробное обсуждение: [habr.com/ru/post/654915](https://habr.com/ru/post/654915/)
