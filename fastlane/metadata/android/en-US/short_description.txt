@@ -1,1 +1,1 @@
-Simple Android mobile app for playing RTSP streams from IP cameras
+Simple RTSP viewer for IP cameras
