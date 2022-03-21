@@ -55,6 +55,8 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         mediaPlayer = MediaPlayer(libVlc)
         mediaPlayer.setEventListener(this)
 
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
         gestureDetector = VideoGestureDetector(this, videoLayout)
     }
 
