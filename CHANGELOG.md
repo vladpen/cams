@@ -1,3 +1,7 @@
+## 1.0.3 - 2022-03-24
+
+Fastlane directory structure for F-Droid
+
 ## 1.0.2 - 2022-03-21
 
 Minor tweaks and improvements
