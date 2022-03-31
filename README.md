@@ -16,4 +16,8 @@
 
 Подробное обсуждение: [habr.com/ru/post/654915](https://habr.com/ru/post/654915/)
 
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="80">](https://f-droid.org/packages/com.vladpen.cams/)
+
 *Copyright (c) 2022 vladpen under MIT license. Use it with absolutely no warranty.*
