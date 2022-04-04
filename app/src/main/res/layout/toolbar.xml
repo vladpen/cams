@@ -2,7 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/overlay_background">
@@ -39,6 +38,8 @@
         android:padding="10dp"
         android:layout_marginEnd="6dp"
         android:textColor="@color/hint"
+        android:textStyle="bold"
+        android:textSize="18sp"
         android:clickable="true"
         android:focusable="true"
         android:background="?attr/selectableItemBackground"

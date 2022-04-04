@@ -26,6 +26,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <include android:id="@+id/toolbar" layout="@layout/toolbar"/>
+    <include android:id="@+id/videoBar" layout="@layout/video_bar" />
+
+    <include android:id="@+id/toolbar" layout="@layout/toolbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

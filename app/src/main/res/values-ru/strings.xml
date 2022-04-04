@@ -3,10 +3,12 @@
     <string name="main_title">Камеры</string>
     <string name="add">Добавить</string>
     <string name="cam_add">Добавить камеру</string>
-    <string name="cam_name">Название</string>
+    <string name="cam_name">Название *</string>
     <string name="cam_name_hint">Новая камера</string>
-    <string name="cam_url">Адрес</string>
-    <string name="cam_url_hint">rtsp://ip:port</string>
+    <string name="cam_url">Адрес *</string>
+    <string name="cam_url_hint">rtsp://логин:пароль@ip:порт/путь</string>
+    <string name="sftp_url">Адрес SFTP</string>
+    <string name="sftp_url_hint">sftp://логин:пароль@ip/папка</string>
     <string name="cam_tcp_udp">TCP/UDP</string>
     <string name="cam_delete">Удалить камеру?</string>
     <string name="save">Сохранить</string>
@@ -16,4 +18,14 @@
     <string name="back">Назад</string>
     <string name="err_invalid">Неверное значение</string>
     <string name="err_cam_exists">Такая камера уже существует</string>
+    <string name="files">Файлы</string>
+    <string name="live">Эфир</string>
+    <string name="MB">МБ</string>
+    <string name="speed_normal">1x</string>
+    <string name="speed_fast">4x</string>
+    <string name="file_prev">Предыдущий файл</string>
+    <string name="file_next">Следующий файл</string>
+    <string name="seek_back">Перемотка назад</string>
+    <string name="seek_fwd">Перемотка вперед</string>
+    <string name="play_pause">Пуск/пауза</string>
 </resources>

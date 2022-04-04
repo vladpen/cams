@@ -11,4 +11,6 @@
     <color name="buttonBackground">#0055CC</color>
     <color name="hint">#AAAAAA</color>
     <color name="error">#FF4400</color>
+    <color name="live_link">#FF8844</color>
+    <color name="files_link">#88FFAA</color>
 </resources>

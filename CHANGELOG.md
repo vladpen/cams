@@ -1,3 +1,7 @@
+## 1.1.0 - 2022-04-04
+
+SFTP browser
+
 ## 1.0.3 - 2022-03-24
 
 Fastlane directory structure for F-Droid

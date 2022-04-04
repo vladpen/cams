@@ -59,16 +59,15 @@ class VideoGestureDetector(context: Context, private val view: View) {
     }
 
     private fun move(distanceX: Float, distanceY: Float) {
-        if (abs(view.x - distanceX) < visibleSize.availableX) {
+        if (abs(view.x - distanceX) < visibleSize.availableX)
             view.x -= distanceX
-        } else {
+        else
             view.x = visibleSize.availableX * sign(view.x)
-        }
-        if (abs(view.y - distanceY) < visibleSize.availableY) {
+
+        if (abs(view.y - distanceY) < visibleSize.availableY)
             view.y -= distanceY
-        } else {
+        else
             view.y = visibleSize.availableY * sign(view.y)
-        }
     }
 
     private inner class VideoScaleDetectorListener :
@@ -79,9 +78,9 @@ class VideoGestureDetector(context: Context, private val view: View) {
             view.scaleX = scaleFactor
             view.scaleY = scaleFactor
 
-            if (scaleFactor == maxScaleFactor && detector.scaleFactor > 1) {
+            if (scaleFactor == maxScaleFactor && detector.scaleFactor > 1)
                 return true
-            }
+
             visibleSize.set()
             val distanceX = view.x * (1 - detector.scaleFactor)
             val distanceY = view.y * (1 - detector.scaleFactor)

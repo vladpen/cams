@@ -3,10 +3,15 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable/ic_baseline_arrow_back_24.xml" value="0.187" />
         <entry key="app/src/main/res/layout/activity_edit.xml" value="0.1796875" />
+        <entry key="app/src/main/res/layout/activity_files.xml" value="0.15443840579710144" />
         <entry key="app/src/main/res/layout/activity_video.xml" value="0.1717325227963526" />
+        <entry key="app/src/main/res/layout/file_item.xml" value="0.15443840579710144" />
         <entry key="app/src/main/res/layout/loading.xml" value="0.3432971014492754" />
         <entry key="app/src/main/res/layout/toolbar.xml" value="0.3432971014492754" />
+        <entry key="app/src/main/res/layout/video_bar.xml" value="0.1796875" />
+        <entry key="app/src/main/res/layout/videobar.xml" value="0.1431159420289855" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.2975" />
       </map>
     </option>

@@ -12,7 +12,7 @@ import com.vladpen.cams.databinding.ActivityEditBinding
 class EditActivity : AppCompatActivity() {
     private val binding by lazy { ActivityEditBinding.inflate(layoutInflater) }
     private val streams by lazy { StreamData.getStreams(this) }
-    private var position: Int = -1
+    private var streamId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,17 +21,18 @@ class EditActivity : AppCompatActivity() {
     }
 
     private fun initActivity() {
-        position = intent.getIntExtra("position", -1)
+        streamId = intent.getIntExtra("streamId", -1)
 
-        val stream = StreamData.getByPosition(position)
+        val stream = StreamData.getById(streamId)
         if (stream == null) {
-            position = -1
+            streamId = -1
             binding.toolbar.tvToolbarLabel.text = getString(R.string.cam_add)
         } else {
             binding.toolbar.tvToolbarLabel.text = stream.name
 
             binding.etEditName.setText(stream.name)
             binding.etEditUrl.setText(stream.url)
+            binding.etEditSftpUrl.setText(stream.sftp)
             binding.scEditTcp.isChecked = !stream.tcp
 
             binding.tvDeleteLink.visibility = View.VISIBLE
@@ -48,13 +49,16 @@ class EditActivity : AppCompatActivity() {
     }
 
     private fun save() {
-        if (!validate()) {
+        if (!validate())
             return
-        }
-        StreamData.save(this, position, StreamDataModel(
+
+        val sftpUrl = binding.etEditSftpUrl.text.toString().trim()
+
+        StreamData.save(this, streamId, StreamDataModel(
             binding.etEditName.text.toString().trim(),
             binding.etEditUrl.text.toString().trim(),
-            !binding.scEditTcp.isChecked
+            !binding.scEditTcp.isChecked,
+            if (sftpUrl != "") sftpUrl else null
         ))
         back()
     }
@@ -73,9 +77,9 @@ class EditActivity : AppCompatActivity() {
             ok = false
         }
         for (i in streams.indices) {
-            if (i == position) {
+            if (i == streamId)
                 break
-            }
+
             if (streams[i].name == name) {
                 binding.etEditName.error = getString(R.string.err_cam_exists)
                 ok = false
@@ -92,7 +96,7 @@ class EditActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setMessage(R.string.cam_delete)
             .setPositiveButton(R.string.delete) { _, _ ->
-                StreamData.delete(this, position)
+                StreamData.delete(this, streamId)
                 back()
             }
             .setNegativeButton(R.string.cancel) { dialog, _ ->

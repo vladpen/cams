@@ -3,10 +3,12 @@
     <string name="main_title">Cameras</string>
     <string name="add">Add</string>
     <string name="cam_add">Add camera</string>
-    <string name="cam_name">Name</string>
+    <string name="cam_name">Name *</string>
     <string name="cam_name_hint">New camera</string>
-    <string name="cam_url">Address</string>
-    <string name="cam_url_hint">rtsp://ip:port</string>
+    <string name="cam_url">Address *</string>
+    <string name="cam_url_hint">rtsp://user:password@ip:port/path</string>
+    <string name="sftp_url">SFTP address</string>
+    <string name="sftp_url_hint">sftp://user:password@ip/folder</string>
     <string name="cam_tcp_udp">TCP/UDP</string>
     <string name="cam_delete">Delete camera?</string>
     <string name="save">Save</string>
@@ -16,4 +18,14 @@
     <string name="back">Back</string>
     <string name="err_invalid">Invalid value</string>
     <string name="err_cam_exists">Camera already exists</string>
+    <string name="files">Files</string>
+    <string name="live">Live</string>
+    <string name="MB">MB</string>
+    <string name="speed_normal">1x</string>
+    <string name="speed_fast">4x</string>
+    <string name="file_prev">Previous file</string>
+    <string name="file_next">Next file</string>
+    <string name="seek_back">Seek back</string>
+    <string name="seek_fwd">Seek forward</string>
+    <string name="play_pause">Play/Pause</string>
 </resources>

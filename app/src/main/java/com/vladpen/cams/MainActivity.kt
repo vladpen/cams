@@ -34,7 +34,6 @@ class MainActivity: AppCompatActivity() {
 
     private fun editScreen() {
         val editIntent = Intent(this, EditActivity::class.java)
-        editIntent.putExtra("id", -1)
         startActivity(editIntent)
     }
 }

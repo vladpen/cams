@@ -6,33 +6,31 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
 
-data class StreamDataModel(val name: String, val url: String, val tcp: Boolean)
+data class StreamDataModel(val name: String, val url: String, val tcp: Boolean, var sftp: String?)
 
 object StreamData {
     private const val fileName = "streams.json"
     private var streams = mutableListOf<StreamDataModel>()
 
-    fun save(context: Context, position: Int, stream: StreamDataModel) {
-        if (position < 0) {
+    fun save(context: Context, streamId: Int, stream: StreamDataModel) {
+        if (streamId < 0)
             streams.add(stream)
-        } else {
-            streams[position] = stream
-        }
+        else
+            streams[streamId] = stream
+
         streams.sortBy { it.name }
         write(context)
     }
 
-    fun delete(context: Context, position: Int) {
-        if (position < 0) {
+    fun delete(context: Context, streamId: Int) {
+        if (streamId < 0)
             return
-        }
-        streams.removeAt(position)
+        streams.removeAt(streamId)
         write(context)
     }
 
     private fun write(context: Context) {
         val json = Gson().toJson(streams)
-
         context.openFileOutput(fileName, Context.MODE_PRIVATE).use {
             it.write(json.toByteArray())
         }
@@ -56,17 +54,15 @@ object StreamData {
         return streams
     }
 
-    fun getByPosition(position: Int): StreamDataModel? {
-        if (position < 0 || position >= streams.count()) {
+    fun getById(streamId: Int): StreamDataModel? {
+        if (streamId < 0 || streamId >= streams.count())
             return null
-        }
-        return streams[position]
+        return streams[streamId]
     }
 
     private fun initStreams(json: String) {
-        if (json == "") {
+        if (json == "")
             return
-        }
         val listType = object : TypeToken<List<StreamDataModel>>() { }.type
         streams = Gson().fromJson<List<StreamDataModel>>(json, listType).toMutableList()
     }
