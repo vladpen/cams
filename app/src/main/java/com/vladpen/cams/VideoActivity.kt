@@ -150,9 +150,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
                 if (remotePath == "")
                     addOption(":network-caching=150")
                 else {
-                    addOption(":file-caching=600")
-                    addOption(":live-caching=600")
-                    addOption(":disc-caching=600")
+                    addOption(":avcodec-skip-frame=-1")
                 }
                 mediaPlayer.media = this
             }.release()

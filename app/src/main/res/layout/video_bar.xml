@@ -54,17 +54,15 @@
                 <TextView
                     android:id="@+id/tvSpeed"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="42dp"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
-                    android:paddingTop="8dp"
-                    android:textSize="19sp"
+                    android:textSize="20sp"
                     android:text="@string/speed_normal"
                     android:textColor="@color/white"
-                    android:textStyle="bold"
                     android:clickable="true"
                     android:focusable="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:gravity="center_vertical"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/btnPlay" />
 

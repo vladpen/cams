@@ -108,14 +108,14 @@ class FileData(private val context: Context, private val sftpUrl: String?) {
         var size: Long = 0
         var i = 0
         try {
-            while(size == 0L && i++ < 1000) { // wait for downloading will start
+            while(size == 0L && i++ < 1000) { // wait until downloading will start
                 sleep(10)
                 size = tmpFile.length()
             }
         } catch (e: IOException) {
             e.printStackTrace()
         }
-        sleep(50)
+        sleep(100)
     }
 
     fun getNext(remotePath: String, fwd: Boolean = true): String {
