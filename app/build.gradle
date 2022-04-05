@@ -54,7 +54,6 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'org.videolan.android:libvlc-all:3.4.9'
     implementation 'com.jcraft:jsch:0.1.55'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

@@ -29,7 +29,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
 
     private var streamId: Int = -1 // -1 means "no stream"
     private var remotePath: String = "" // relative SFTP path
-    private val seekStep: Long = 30000 // milliseconds
+    private val seekStep: Long = 10000 // milliseconds
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,10 +118,6 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
             // we can't use the "position" here (file size changes during playback)
             mediaPlayer.time -= seekStep
         }
-        binding.videoBar.btnSeekFwd.setOnClickListener {
-            dropRate() // prevent lost keyframe
-            mediaPlayer.time += seekStep // or may use the "position += 0.1f"
-        }
         binding.videoBar.btnNextFile.setOnClickListener {
             next()
         }
@@ -201,9 +197,10 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     override fun onEvent(ev: MediaPlayer.Event) {
         if (ev.type == MediaPlayer.Event.Buffering && ev.buffering == 100f) {
             binding.pbLoading.visibility = View.GONE
-        // } else if (ev.type == MediaPlayer.Event.EndReached && remotePath != "") {
-            // Event.EndReached may raises before the file loading will ends, don't call next() here
-            // next()
+        } else if (ev.type == MediaPlayer.Event.EndReached && remotePath != "") {
+            // Event.EndReached may raises before the file loading will ends,
+            // so don't seek forward
+            next()
         }
     }
 
