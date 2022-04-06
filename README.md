@@ -16,13 +16,13 @@
 
 <img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/main.png"
 alt="Main screen"
-width="200">  &nbsp;
+width="200">&nbsp;
 <img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/edit.png"
 alt="Edit screen"
-width="200">  &nbsp;
+width="200">&nbsp;
 <img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/files.png"
 alt="Files screen"
-width="200">  &nbsp;
+width="200">&nbsp;
 <img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/video.png"
 alt="Video screen"
 width="200">
