@@ -149,9 +149,8 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
                 setHWDecoderEnabled(false, false)
                 if (remotePath == "")
                     addOption(":network-caching=150")
-                else {
+                else
                     addOption(":avcodec-skip-frame=-1")
-                }
                 mediaPlayer.media = this
             }.release()
 
