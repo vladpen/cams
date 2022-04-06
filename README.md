@@ -14,7 +14,18 @@
 - Максимальная скорость подключения.
 - Предельная простота навигации и управления.
 
-![Screenshots](https://raw.githubusercontent.com/vladpen/cams/screenshots/img/screens.png)
+<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/main.png"
+alt="Main screen"
+width="200">  &nbsp;
+<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/edit.png"
+alt="Edit screen"
+width="200">  &nbsp;
+<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/files.png"
+alt="Files screen"
+width="200">  &nbsp;
+<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/video.png"
+alt="Video screen"
+width="200">
 
 Приложение написано специально для работы с сервером [python-rtsp-server](https://github.com/vladpen/python-rtsp-server),
 но прекрасно работает автономно благодаря возможности подключения к любым RTSP потокам и видеорегистраторам, поддерживающим SFTP.
