@@ -26,7 +26,6 @@ class MainActivity: AppCompatActivity() {
         binding.toolbar.btnBack.visibility = View.GONE
         binding.toolbar.tvToolbarLabel.text = getString(R.string.app_name)
         binding.toolbar.tvToolbarLink.text = getString(R.string.add)
-        binding.toolbar.tvToolbarLink.visibility = View.VISIBLE
         binding.toolbar.tvToolbarLink.setOnClickListener {
             editScreen()
         }

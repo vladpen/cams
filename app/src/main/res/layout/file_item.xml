@@ -16,23 +16,22 @@
 
     <TextView
         android:id="@+id/tvFileName"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text=""
         android:textSize="20sp"
         android:paddingStart="30dp"
         android:paddingEnd="30dp"
         android:textColor="@color/text"
         android:background="?attr/selectableItemBackground"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/ivLabel"
+        app:layout_constraintEnd_toStartOf="@+id/tvFileSize"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvFileSize"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=""
         android:textColor="@color/hint"
         android:background="?attr/selectableItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"

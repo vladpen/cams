@@ -21,7 +21,7 @@
 
     <TextView
         android:id="@+id/tvToolbarLabel"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:textColor="@android:color/white"
@@ -29,6 +29,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btnBack"
+        app:layout_constraintEnd_toStartOf="@+id/tvToolbarLink"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -43,7 +44,6 @@
         android:clickable="true"
         android:focusable="true"
         android:background="?attr/selectableItemBackground"
-        android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

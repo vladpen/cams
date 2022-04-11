@@ -97,7 +97,6 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
                 startActivity(videoIntent)
             }
         }
-        binding.toolbar.tvToolbarLink.visibility = View.VISIBLE
     }
 
     private fun initVideoBar() {
@@ -147,10 +146,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
 
             media.apply {
                 setHWDecoderEnabled(false, false)
-                if (remotePath == "")
-                    addOption(":network-caching=150")
-                else
-                    addOption(":avcodec-skip-frame=-1")
+                addOption(":network-caching=300")
                 mediaPlayer.media = this
             }.release()
 

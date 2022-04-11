@@ -43,7 +43,6 @@ class FilesActivity: AppCompatActivity() {
         }
         binding.toolbar.tvToolbarLabel.text = stream.name
         binding.toolbar.tvToolbarLink.text = getString(R.string.live)
-        binding.toolbar.tvToolbarLink.visibility = View.VISIBLE
         binding.toolbar.tvToolbarLink.setOnClickListener {
             videoScreen()
         }
