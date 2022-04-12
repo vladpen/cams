@@ -3,16 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/overlay_background"
-    android:visibility="gone"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
+            android:id="@+id/llVideoCtrl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintHorizontal_bias="0.49"
+            android:background="@color/overlay_background"
+            android:visibility="gone"
+            app:layout_constraintHorizontal_bias="0.492"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -83,12 +84,11 @@
             android:id="@+id/btnMute"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/transparent_background"
-            android:contentDescription="@string/seek_fwd"
+            android:background="@color/overlay_background"
+            android:contentDescription="@string/mute"
             android:foreground="?android:attr/selectableItemBackground"
             android:padding="10dp"
-            android:src="@drawable/ic_baseline_keyboard_arrow_right_24"
-            android:visibility="gone"
+            android:src="@drawable/ic_baseline_volume_up_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

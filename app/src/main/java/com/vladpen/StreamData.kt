@@ -4,13 +4,13 @@ import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import java.io.File
 
 data class StreamDataModel(val name: String, val url: String, val tcp: Boolean, var sftp: String?)
 
 object StreamData {
     private const val fileName = "streams.json"
     private var streams = mutableListOf<StreamDataModel>()
+    private const val muteFileName = "mute.bin"
 
     fun save(context: Context, streamId: Int, stream: StreamDataModel) {
         if (streamId < 0)
@@ -39,13 +39,11 @@ object StreamData {
     fun getStreams(context: Context): MutableList<StreamDataModel> {
         if (streams.size == 0) {
             try {
-                val filesDir = context.filesDir
-
-                if (File(filesDir, fileName).exists()) {
-                    val json: String = File(filesDir, fileName).readText()
+                context.openFileInput(fileName).use { stream ->
+                    val json = stream.bufferedReader().use {
+                        it.readText()
+                    }
                     initStreams(json)
-                } else {
-                    Log.i("DATA", "Data file $fileName does not exist")
                 }
             } catch (e: Exception) {
                 Log.e("Data", e.localizedMessage ?: "Can't read data file $fileName")
@@ -58,6 +56,27 @@ object StreamData {
         if (streamId < 0 || streamId >= streams.count())
             return null
         return streams[streamId]
+    }
+
+    fun setMute(context: Context, mute: Int) {
+        try {
+            context.openFileOutput(muteFileName, Context.MODE_PRIVATE).use {
+                it.write(mute)
+            }
+        } catch (e: Exception) {
+            Log.e("Data", e.localizedMessage ?: "Can't write the file $muteFileName")
+        }
+    }
+
+    fun getMute(context: Context): Int {
+        try {
+            context.openFileInput(muteFileName).use {
+                return it.read()
+            }
+        } catch (e: Exception) {
+            Log.e("Data", e.localizedMessage ?: "Can't read the file $muteFileName")
+        }
+        return 0
     }
 
     private fun initStreams(json: String) {

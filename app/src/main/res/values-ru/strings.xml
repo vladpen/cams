@@ -28,4 +28,5 @@
     <string name="seek_back">Перемотка назад</string>
     <string name="seek_fwd">Перемотка вперед</string>
     <string name="play_pause">Пуск/пауза</string>
+    <string name="mute">Тишина</string>
 </resources>

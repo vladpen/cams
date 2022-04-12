@@ -1,3 +1,8 @@
+## 1.1.1 - 2022-04-12
+
+- The mute button
+- Tweaks and improvements
+
 ## 1.1.0 - 2022-04-04
 
 SFTP browser

@@ -56,6 +56,8 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         if (remotePath != "")
             initVideoBar()
 
+        initMute()
+
         gestureDetector = VideoGestureDetector(this, videoLayout)
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -128,12 +130,31 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
                 dropRate()
             }
         }
-        binding.videoBar.root.visibility = View.VISIBLE
+        binding.videoBar.llVideoCtrl.visibility = View.VISIBLE
     }
 
     private fun dropRate() {
         mediaPlayer.rate = 1f
         binding.videoBar.tvSpeed.setText(R.string.speed_normal)
+    }
+
+    private fun initMute() {
+        binding.videoBar.btnMute.setOnClickListener {
+            var mute = StreamData.getMute(this)
+            mute = if (mute == 0) 1 else 0
+            setMute(mute)
+            StreamData.setMute(this, mute)
+        }
+    }
+
+    private fun setMute(mute: Int) {
+        if (mute == 1) {
+            mediaPlayer.volume = 0
+            binding.videoBar.btnMute.setImageResource(R.drawable.ic_baseline_volume_off_24)
+        } else {
+            mediaPlayer.volume = 100
+            binding.videoBar.btnMute.setImageResource(R.drawable.ic_baseline_volume_up_24)
+        }
     }
 
     private fun play() {
@@ -152,6 +173,8 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
 
             mediaPlayer.play()
 
+            setMute(StreamData.getMute(this))
+
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -162,7 +185,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         if (remotePath != "") {
             binding.videoBar.btnPlay.setBackgroundResource(R.drawable.ic_baseline_pause_24)
             play()
-        } else {
+        } else { // The most recent file was played, let's show live video
             finish()
             intent.putExtra("streamId", streamId).putExtra("remotePath", "")
             startActivity(intent)
@@ -190,9 +213,11 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     override fun onEvent(ev: MediaPlayer.Event) {
         if (ev.type == MediaPlayer.Event.Buffering && ev.buffering == 100f) {
             binding.pbLoading.visibility = View.GONE
+            if (mediaPlayer.audioTracksCount < 1)
+                binding.videoBar.btnMute.visibility = View.GONE
+            else
+                binding.videoBar.btnMute.visibility = View.VISIBLE
         } else if (ev.type == MediaPlayer.Event.EndReached && remotePath != "") {
-            // Event.EndReached may raises before the file loading will ends,
-            // so don't seek forward
             next()
         }
     }
