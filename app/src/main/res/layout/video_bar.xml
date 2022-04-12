@@ -89,6 +89,7 @@
             android:foreground="?android:attr/selectableItemBackground"
             android:padding="10dp"
             android:src="@drawable/ic_baseline_volume_up_24"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

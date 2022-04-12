@@ -213,9 +213,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     override fun onEvent(ev: MediaPlayer.Event) {
         if (ev.type == MediaPlayer.Event.Buffering && ev.buffering == 100f) {
             binding.pbLoading.visibility = View.GONE
-            if (mediaPlayer.audioTracksCount < 1)
-                binding.videoBar.btnMute.visibility = View.GONE
-            else
+            if (mediaPlayer.audioTracksCount > 0)
                 binding.videoBar.btnMute.visibility = View.VISIBLE
         } else if (ev.type == MediaPlayer.Event.EndReached && remotePath != "") {
             next()
