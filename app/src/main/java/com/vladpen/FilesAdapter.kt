@@ -37,9 +37,6 @@ class FilesAdapter(
         fun bind(row: FileDataModel) {
             with(binding) {
                 tvFileName.text = row.name
-                tvFileName.setOnClickListener {
-                    navigate(context, row)
-                }
                 if (!row.isDir) {
                     var s = DecimalFormat("#.00")
                         .format(row.size.toDouble() / 1000000)
@@ -49,6 +46,9 @@ class FilesAdapter(
                     ivLabel.setBackgroundResource(R.drawable.ic_outline_videocam_24)
                 } else {
                     ivLabel.setBackgroundResource(R.drawable.ic_outline_folder_24)
+                }
+                clFileRow.setOnClickListener {
+                    navigate(context, row)
                 }
             }
         }
