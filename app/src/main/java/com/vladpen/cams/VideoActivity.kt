@@ -6,10 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
-import com.vladpen.FileData
-import com.vladpen.StreamData
-import com.vladpen.StreamDataModel
-import com.vladpen.VideoGestureDetector
+import com.vladpen.*
 import com.vladpen.cams.databinding.ActivityVideoBinding
 import org.videolan.libvlc.LibVLC
 import org.videolan.libvlc.Media
@@ -55,7 +52,6 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         initToolbar()
         if (remotePath != "")
             initVideoBar()
-
         initMute()
 
         gestureDetector = VideoGestureDetector(this, videoLayout)
@@ -110,6 +106,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
                 mediaPlayer.play()
                 it.setBackgroundResource(R.drawable.ic_baseline_pause_24)
             }
+            initBars()
         }
         binding.videoBar.btnPrevFile.setOnClickListener {
             next(false)
@@ -118,6 +115,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
             dropRate() // prevent lost keyframe
             // we can't use the "position" here (file size changes during playback)
             mediaPlayer.time -= seekStep
+            initBars()
         }
         binding.videoBar.btnNextFile.setOnClickListener {
             next()
@@ -129,6 +127,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
             } else {
                 dropRate()
             }
+            initBars()
         }
         binding.videoBar.llVideoCtrl.visibility = View.VISIBLE
     }
@@ -144,6 +143,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
             mute = if (mute == 0) 1 else 0
             setMute(mute)
             StreamData.setMute(this, mute)
+            initBars()
         }
     }
 
@@ -192,6 +192,20 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         }
     }
 
+    private fun initBars(isLandscape: Boolean? = null) {
+        val landscape = isLandscape ?: (binding.root.width > binding.root.height)
+
+        Effects.cancel()
+        binding.toolbar.root.visibility = View.VISIBLE
+        binding.videoBar.root.visibility = View.VISIBLE
+        if (landscape) {
+            Effects.delayedFadeOut(
+                this,
+                arrayOf(binding.toolbar.root, binding.videoBar.root)
+            )
+        }
+    }
+
     override fun onStart() {
         super.onStart()
         mediaPlayer.attachViews(videoLayout, null, false, false)
@@ -215,16 +229,22 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
             binding.pbLoading.visibility = View.GONE
             if (mediaPlayer.audioTracksCount > 0)
                 binding.videoBar.btnMute.visibility = View.VISIBLE
+            initBars()
         } else if (ev.type == MediaPlayer.Event.EndReached && remotePath != "") {
             next()
         }
     }
 
-    override fun onTouchEvent(event: MotionEvent) =
-        gestureDetector.onTouchEvent(event) || super.onTouchEvent(event)
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (event.action == MotionEvent.ACTION_DOWN) {
+            initBars()
+        }
+        return gestureDetector.onTouchEvent(event) || super.onTouchEvent(event)
+    }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         gestureDetector.reset()
+        initBars(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
     }
 }
