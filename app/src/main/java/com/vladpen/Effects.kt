@@ -3,9 +3,12 @@ package com.vladpen
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.util.TypedValue
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.TextView
+import androidx.core.content.ContextCompat.getColor
 
 object Effects {
     private var animation: Animation? = null
@@ -44,5 +47,14 @@ object Effects {
             animation?.setAnimationListener(null)
             animation = null
         }
+    }
+
+    fun setTextViewClickable(context: Context, view: TextView, color: Int) {
+        view.setTextColor(getColor(context, color))
+        val outValue = TypedValue()
+        context.theme
+            .resolveAttribute(android.R.attr.selectableItemBackground, outValue, true)
+        view.setBackgroundResource(outValue.resourceId)
+
     }
 }

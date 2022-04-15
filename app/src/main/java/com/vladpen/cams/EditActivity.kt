@@ -3,6 +3,7 @@ package com.vladpen.cams
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.vladpen.StreamData
@@ -44,6 +45,13 @@ class EditActivity : AppCompatActivity() {
             save()
         }
         binding.toolbar.btnBack.setOnClickListener {
+            back()
+        }
+        this.onBackPressedDispatcher.addCallback(callback)
+    }
+
+    private val callback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
             back()
         }
     }

@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.vladpen.*
 import com.vladpen.cams.databinding.ActivityVideoBinding
@@ -57,21 +58,45 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         gestureDetector = VideoGestureDetector(this, videoLayout)
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        this.onBackPressedDispatcher.addCallback(callback)
+    }
+
+    private val callback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            back()
+        }
+    }
+
+    private fun back() {
+        if (remotePath == "") {
+            val mainIntent = Intent(this, MainActivity::class.java)
+            startActivity(mainIntent)
+        } else {
+            val filesIntent = Intent(this, FilesActivity::class.java)
+                .putExtra("streamId", streamId)
+                .putExtra("remotePath", FileData.getParentPath(remotePath))
+            startActivity(filesIntent)
+        }
+    }
+
+    private fun filesHome() {
+        val filesIntent = Intent(this, FilesActivity::class.java)
+            .putExtra("streamId", streamId)
+        startActivity(filesIntent)
     }
 
     private fun initToolbar() {
-        binding.toolbar.tvToolbarLabel.text = stream.name
-
-        binding.toolbar.btnBack.setOnClickListener {
-            if (remotePath == "") {
-                val mainIntent = Intent(this, MainActivity::class.java)
-                startActivity(mainIntent)
-            } else {
-                val filesIntent = Intent(this, FilesActivity::class.java)
-                    .putExtra("streamId", streamId)
-                    .putExtra("remotePath", FileData.getParentPath(remotePath))
-                startActivity(filesIntent)
+        val label = binding.toolbar.tvToolbarLabel
+        label.text = stream.name
+        if (remotePath != "") {
+            Effects.setTextViewClickable(this, label, R.color.files_link)
+            label.setOnClickListener {
+                filesHome()
             }
+        }
+        binding.toolbar.btnBack.setOnClickListener {
+            back()
         }
 
         if (stream.sftp == null)
@@ -86,9 +111,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         }
         binding.toolbar.tvToolbarLink.setOnClickListener {
             if (remotePath == "") {
-                val filesIntent = Intent(this, FilesActivity::class.java)
-                    .putExtra("streamId", streamId)
-                startActivity(filesIntent)
+                filesHome()
             } else {
                 val videoIntent = Intent(this, VideoActivity::class.java)
                     .putExtra("streamId", streamId)
@@ -236,9 +259,8 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (event.action == MotionEvent.ACTION_DOWN) {
+        if (event.action == MotionEvent.ACTION_UP)
             initBars()
-        }
         return gestureDetector.onTouchEvent(event) || super.onTouchEvent(event)
     }
 

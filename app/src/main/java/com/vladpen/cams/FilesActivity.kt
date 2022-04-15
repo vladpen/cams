@@ -2,7 +2,7 @@ package com.vladpen.cams
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vladpen.*
@@ -13,6 +13,7 @@ class FilesActivity: AppCompatActivity() {
     private lateinit var remotePath: String
     private var streamId: Int = -1
     private lateinit var stream: StreamDataModel
+    private var sftpData: SftpDataModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,24 +25,26 @@ class FilesActivity: AppCompatActivity() {
         streamId = intent.getIntExtra("streamId", -1)
         stream = StreamData.getById(streamId) ?: return
 
-        val sftpData = FileData.parseSftpUrl(stream.sftp)
+        sftpData = FileData.parseSftpUrl(stream.sftp)
         if (sftpData == null) {
             videoScreen()
             return
         }
-        remotePath = intent.getStringExtra("remotePath") ?: sftpData.path
+        remotePath = intent.getStringExtra("remotePath") ?: sftpData!!.path
 
         binding.toolbar.btnBack.setOnClickListener {
-            if (remotePath == sftpData.path) {
-                videoScreen()
-            } else {
-                val filesIntent = Intent(this, FilesActivity::class.java)
-                    .putExtra("streamId", streamId)
-                    .putExtra("remotePath", FileData.getParentPath(remotePath))
-                startActivity(filesIntent)
-           }
+            back()
         }
-        binding.toolbar.tvToolbarLabel.text = stream.name
+        this.onBackPressedDispatcher.addCallback(callback)
+
+        val label = binding.toolbar.tvToolbarLabel
+        label.text = stream.name
+        if (remotePath != sftpData!!.path) {
+            Effects.setTextViewClickable(this, label, R.color.files_link)
+            label.setOnClickListener {
+                filesHome()
+            }
+        }
         binding.toolbar.tvToolbarLink.text = getString(R.string.live)
         binding.toolbar.tvToolbarLink.setOnClickListener {
             videoScreen()
@@ -52,6 +55,29 @@ class FilesActivity: AppCompatActivity() {
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = FilesAdapter(files, remotePath, streamId, stream.sftp)
+    }
+
+    private val callback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            back()
+        }
+    }
+
+    private fun back() {
+        if (sftpData == null || remotePath == sftpData?.path) {
+            videoScreen()
+        } else {
+            val filesIntent = Intent(this, FilesActivity::class.java)
+                .putExtra("streamId", streamId)
+                .putExtra("remotePath", FileData.getParentPath(remotePath))
+            startActivity(filesIntent)
+        }
+    }
+
+    private fun filesHome() {
+        val filesIntent = Intent(this, FilesActivity::class.java)
+            .putExtra("streamId", streamId)
+        startActivity(filesIntent)
     }
 
     private fun videoScreen() {

@@ -3,6 +3,7 @@ package com.vladpen.cams
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vladpen.StreamData
@@ -29,10 +30,17 @@ class MainActivity: AppCompatActivity() {
         binding.toolbar.tvToolbarLink.setOnClickListener {
             editScreen()
         }
+        this.onBackPressedDispatcher.addCallback(callback)
     }
 
     private fun editScreen() {
         val editIntent = Intent(this, EditActivity::class.java)
         startActivity(editIntent)
+    }
+
+    private val callback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            finishAffinity()
+        }
     }
 }
