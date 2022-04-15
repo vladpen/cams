@@ -1,3 +1,13 @@
+## 1.1.3 - 2022-04-15
+
+- Video bars auto hiding
+- Clickable header in files mode
+- Improved navigation
+
+## 1.1.2 - 2022-04-13
+
+Auto updates for F-Droid
+
 ## 1.1.1 - 2022-04-12
 
 - The mute button

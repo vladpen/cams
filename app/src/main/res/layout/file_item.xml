@@ -3,6 +3,7 @@
     android:id="@+id/clFileRow"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="?attr/selectableItemBackground"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -23,7 +24,6 @@
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
         android:textColor="@color/text"
-        android:background="?attr/selectableItemBackground"
         app:layout_constraintStart_toEndOf="@+id/ivLabel"
         app:layout_constraintEnd_toStartOf="@+id/tvFileSize"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -34,7 +34,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/hint"
-        android:background="?attr/selectableItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
