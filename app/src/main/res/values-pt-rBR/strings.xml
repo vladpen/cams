@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Cams</string>
+    <string name="main_title">Câmeras</string>
+    <string name="add">Adicionar</string>
+    <string name="cam_add">Adicionar câmera</string>
+    <string name="cam_name">Nome *</string>
+    <string name="cam_name_hint">Nova câmera</string>
+    <string name="cam_url">Endereço *</string>
+    <string name="cam_url_hint">rtsp://usuário:senha@ip:porta/caminho</string>
+    <string name="sftp_url">endereço SFTP</string>
+    <string name="sftp_url_hint">sftp://usuário:senha@ip/pasta</string>
+    <string name="cam_tcp_udp">TCP/UDP</string>
+    <string name="cam_delete">Excluir câmera?</string>
+    <string name="save">Salvar</string>
+    <string name="delete">Excluir</string>
+    <string name="cancel">Cancelar</string>
+    <string name="settings">Configurações</string>
+    <string name="back">Voltar</string>
+    <string name="err_invalid">Valor incorreto</string>
+    <string name="err_cam_exists">A câmera já existe</string>
+    <string name="files">Arquivos</string>
+    <string name="live">ao vivo</string>
+    <string name="MB">MB</string>
+    <string name="speed_normal">1x</string>
+    <string name="speed_fast">4x</string>
+    <string name="file_prev">Arquivo anterior</string>
+    <string name="file_next">Próximo arquivo</string>
+    <string name="seek_back">Retrocesso rápido</string>
+    <string name="seek_fwd">Avanço rápido</string>
+    <string name="play_pause">Reproduzir/Pausar</string>
+    <string name="mute">Silenciar</string>
+</resources>
