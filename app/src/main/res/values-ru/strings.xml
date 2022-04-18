@@ -18,7 +18,7 @@
     <string name="back">Назад</string>
     <string name="err_invalid">Неверное значение</string>
     <string name="err_cam_exists">Такая камера уже существует</string>
-    <string name="files">Файлы</string>
+    <string name="files">Архив</string>
     <string name="live">Эфир</string>
     <string name="MB">МБ</string>
     <string name="speed_normal">1x</string>

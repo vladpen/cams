@@ -7,7 +7,7 @@
     <string name="cam_name_hint">Nova câmera</string>
     <string name="cam_url">Endereço *</string>
     <string name="cam_url_hint">rtsp://usuário:senha@ip:porta/caminho</string>
-    <string name="sftp_url">endereço SFTP</string>
+    <string name="sftp_url">Endereço SFTP</string>
     <string name="sftp_url_hint">sftp://usuário:senha@ip/pasta</string>
     <string name="cam_tcp_udp">TCP/UDP</string>
     <string name="cam_delete">Excluir câmera?</string>
