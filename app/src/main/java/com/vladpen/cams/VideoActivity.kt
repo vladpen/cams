@@ -24,6 +24,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     private lateinit var stream: StreamDataModel
 
     private lateinit var gestureDetector: VideoGestureDetector
+    private var gestureInProgress = false
 
     private var streamId: Int = -1 // -1 means "no stream"
     private var remotePath: String = "" // relative SFTP path
@@ -259,9 +260,17 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (event.action == MotionEvent.ACTION_UP)
-            initBars()
-        return gestureDetector.onTouchEvent(event) || super.onTouchEvent(event)
+        val res = gestureDetector.onTouchEvent(event)
+        if (res)
+            gestureInProgress = true
+
+        if (event.action == MotionEvent.ACTION_UP) {
+            if (!gestureInProgress)
+                initBars()
+            else
+                gestureInProgress = false
+        }
+        return res || super.onTouchEvent(event)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
