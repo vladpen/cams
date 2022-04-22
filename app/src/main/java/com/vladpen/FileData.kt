@@ -11,13 +11,6 @@ import java.io.IOException
 import java.lang.Thread.sleep
 
 data class FileDataModel(val name: String, val size: Long, val isDir: Boolean)
-data class SftpDataModel(
-    val user: String,
-    val password: String,
-    val host: String,
-    val port: Int,
-    val path: String
-)
 
 class FileData(private val context: Context, private val sftpUrl: String?) {
 
@@ -33,27 +26,6 @@ class FileData(private val context: Context, private val sftpUrl: String?) {
         fun getTmpFile(context: Context, file: String): File {
             val ext = file.substring(file.lastIndexOf(".") + 1)
             return File(context.cacheDir.path + "/video." + ext)
-        }
-
-        fun parseSftpUrl(sftpUrl: String?): SftpDataModel? {
-            if (sftpUrl == null)
-                return null
-
-            try {
-                val rex = "(sftp://)?((.+?)(:([^@]+))?@)?(.+?)(:(\\d+))?(/.*)?".toRegex()
-                val res = rex.matchEntire(sftpUrl) ?: return null
-                val r = res.groupValues
-                return SftpDataModel(
-                    r[3],
-                    r[5],
-                    r[6],
-                    r[8].toIntOrNull() ?: 22,
-                    if (r[9] != "" && r[9].last().toString() == "/") r[9] else r[9] + "/"
-                )
-            } catch (e: Exception) {
-                Log.e("SFTP", e.localizedMessage ?: "Can't parse $sftpUrl")
-            }
-            return null
         }
     }
 
@@ -170,7 +142,7 @@ class FileData(private val context: Context, private val sftpUrl: String?) {
     }
 
     private fun connect() { // suspend
-        val sftpData = parseSftpUrl(sftpUrl) ?: return
+        val sftpData = Utils.parseUrl(sftpUrl, 22) ?: return
 
         val policy = StrictMode.ThreadPolicy.Builder().permitNetwork().build()
         StrictMode.setThreadPolicy(policy)
@@ -179,9 +151,11 @@ class FileData(private val context: Context, private val sftpUrl: String?) {
             if (channel != null || session != null)
                 disconnect()
 
+            val password = Utils.decodeString(context, sftpData.password)
+
             val jsch = JSch()
             val session: Session = jsch.getSession(sftpData.user, sftpData.host, sftpData.port)
-            session.setPassword(sftpData.password)
+            session.setPassword(password)
             session.setConfig("StrictHostKeyChecking", "no")
             session.connect()
 

@@ -5,12 +5,16 @@ import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-data class StreamDataModel(val name: String, val url: String, val tcp: Boolean, var sftp: String?)
+data class StreamDataModel(
+    val name: String,
+    var url: String,
+    val tcp: Boolean,
+    var sftp: String?)
 
 object StreamData {
     private const val fileName = "streams.json"
-    private var streams = mutableListOf<StreamDataModel>()
     private const val muteFileName = "mute.bin"
+    private var streams = mutableListOf<StreamDataModel>()
 
     fun save(context: Context, streamId: Int, stream: StreamDataModel) {
         if (streamId < 0)

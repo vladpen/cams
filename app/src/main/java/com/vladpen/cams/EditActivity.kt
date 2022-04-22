@@ -8,11 +8,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.vladpen.StreamData
 import com.vladpen.StreamDataModel
+import com.vladpen.Utils
 import com.vladpen.cams.databinding.ActivityEditBinding
 
 class EditActivity : AppCompatActivity() {
     private val binding by lazy { ActivityEditBinding.inflate(layoutInflater) }
-    private val streams by lazy { StreamData.getStreams(this) }
     private var streamId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,8 +32,8 @@ class EditActivity : AppCompatActivity() {
             binding.toolbar.tvToolbarLabel.text = stream.name
 
             binding.etEditName.setText(stream.name)
-            binding.etEditUrl.setText(stream.url)
-            binding.etEditSftpUrl.setText(stream.sftp)
+            binding.etEditUrl.setText(safeUrl(stream.url))
+            binding.etEditSftpUrl.setText(safeUrl(stream.sftp))
             binding.scEditTcp.isChecked = !stream.tcp
 
             binding.tvDeleteLink.visibility = View.VISIBLE
@@ -50,6 +50,20 @@ class EditActivity : AppCompatActivity() {
         this.onBackPressedDispatcher.addCallback(callback)
     }
 
+    private fun safeUrl(url: String?): String {
+        return if (url != null) Utils.replacePassword(url, "***") else ""
+    }
+
+    private fun getEncodedUrl(newUrl: String, oldUrl: String?): String {
+        val new = Utils.parseUrl(newUrl)
+        val old = Utils.parseUrl(oldUrl)
+        if (new != null && old != null && new.password == "***")
+            return Utils.replacePassword(newUrl, old.password)
+        if (new != null && new.password != "")
+            return Utils.replacePassword(newUrl, Utils.encodeString(this, new.password))
+        return newUrl
+    }
+
     private val callback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             back()
@@ -60,11 +74,17 @@ class EditActivity : AppCompatActivity() {
         if (!validate())
             return
 
-        val sftpUrl = binding.etEditSftpUrl.text.toString().trim()
+        val stream = StreamData.getById(streamId)
+
+        var streamUrl = binding.etEditUrl.text.toString().trim()
+        streamUrl = getEncodedUrl(streamUrl, stream?.url)
+
+        var sftpUrl = binding.etEditSftpUrl.text.toString().trim()
+        sftpUrl = getEncodedUrl(sftpUrl, stream?.sftp)
 
         StreamData.save(this, streamId, StreamDataModel(
             binding.etEditName.text.toString().trim(),
-            binding.etEditUrl.text.toString().trim(),
+            streamUrl,
             !binding.scEditTcp.isChecked,
             if (sftpUrl != "") sftpUrl else null
         ))
@@ -74,6 +94,7 @@ class EditActivity : AppCompatActivity() {
     private fun validate(): Boolean {
         val name = binding.etEditName.text.toString().trim()
         val url = binding.etEditUrl.text.toString().trim()
+        val streams = StreamData.getStreams(this)
         var ok = true
 
         if (name.isEmpty() || name.length > 255) {
@@ -92,7 +113,7 @@ class EditActivity : AppCompatActivity() {
                 binding.etEditName.error = getString(R.string.err_cam_exists)
                 ok = false
             }
-            if (streams[i].name == url) {
+            if (streams[i].url == url) {
                 binding.etEditUrl.error = getString(R.string.err_cam_exists)
                 ok = false
             }

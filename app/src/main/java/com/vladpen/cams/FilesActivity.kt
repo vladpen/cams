@@ -13,7 +13,7 @@ class FilesActivity: AppCompatActivity() {
     private lateinit var remotePath: String
     private var streamId: Int = -1
     private lateinit var stream: StreamDataModel
-    private var sftpData: SftpDataModel? = null
+    private var sftpData: UrlDataModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +25,7 @@ class FilesActivity: AppCompatActivity() {
         streamId = intent.getIntExtra("streamId", -1)
         stream = StreamData.getById(streamId) ?: return
 
-        sftpData = FileData.parseSftpUrl(stream.sftp)
+        sftpData = Utils.parseUrl(stream.sftp, 22)
         if (sftpData == null) {
             videoScreen()
             return

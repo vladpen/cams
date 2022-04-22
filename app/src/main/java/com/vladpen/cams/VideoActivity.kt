@@ -184,7 +184,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         try {
             val media =
                 if (remotePath == "")
-                    Media(libVlc, Uri.parse(stream.url))
+                    Media(libVlc, Uri.parse(Utils.decodeUrl(this, stream.url)))
                 else
                     Media(libVlc, FileData.getTmpFile(this, remotePath).absolutePath)
 
