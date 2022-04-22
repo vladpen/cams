@@ -1,0 +1,3 @@
+- Enhanced security
+- Improved video bars behavior
+- Portuguese locale support

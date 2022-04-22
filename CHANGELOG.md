@@ -1,3 +1,9 @@
+## 1.1.4 - 2022-04-22
+
+- Enhanced security
+- Improved video bars behavior
+- Portuguese locale support
+
 ## 1.1.3 - 2022-04-15
 
 - Video bars auto hiding
