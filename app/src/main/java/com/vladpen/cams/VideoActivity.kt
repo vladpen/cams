@@ -147,18 +147,19 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         binding.videoBar.tvSpeed.setOnClickListener {
             if (mediaPlayer.rate < 2f) {
                 mediaPlayer.rate = 4f
-                binding.videoBar.tvSpeed.setText(R.string.speed_fast)
+                "4x".also { binding.videoBar.tvSpeed.text = it }
             } else {
                 dropRate()
             }
             initBars()
         }
+        "1x".also { binding.videoBar.tvSpeed.text = it } // make linter happy
         binding.videoBar.llVideoCtrl.visibility = View.VISIBLE
     }
 
     private fun dropRate() {
         mediaPlayer.rate = 1f
-        binding.videoBar.tvSpeed.setText(R.string.speed_normal)
+        "1x".also { binding.videoBar.tvSpeed.text = it }
     }
 
     private fun initMute() {

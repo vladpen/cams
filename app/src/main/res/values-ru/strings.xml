@@ -21,8 +21,6 @@
     <string name="files">Архив</string>
     <string name="live">Эфир</string>
     <string name="MB">МБ</string>
-    <string name="speed_normal">1x</string>
-    <string name="speed_fast">4x</string>
     <string name="file_prev">Предыдущий файл</string>
     <string name="file_next">Следующий файл</string>
     <string name="seek_back">Перемотка назад</string>

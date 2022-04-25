@@ -21,8 +21,6 @@
     <string name="files">Files</string>
     <string name="live">Live</string>
     <string name="MB">MB</string>
-    <string name="speed_normal">1x</string>
-    <string name="speed_fast">4x</string>
     <string name="file_prev">Previous file</string>
     <string name="file_next">Next file</string>
     <string name="seek_back">Seek back</string>

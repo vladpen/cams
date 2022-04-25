@@ -21,8 +21,6 @@
     <string name="files">Arquivos</string>
     <string name="live">ao vivo</string>
     <string name="MB">MB</string>
-    <string name="speed_normal">1x</string>
-    <string name="speed_fast">4x</string>
     <string name="file_prev">Arquivo anterior</string>
     <string name="file_next">Próximo arquivo</string>
     <string name="seek_back">Retrocesso rápido</string>
