@@ -101,7 +101,7 @@ class FileData(private val context: Context, private val sftpUrl: String?) {
             var files = getFiles(parentPath)
             val f = files.find { it.name == currentName }
             val fid = files.indexOf(f)
-            if ((fid < files.size - 1 && fwd) || (fid > 0 && !fwd)) {
+            if ((fid < files.count() - 1 && fwd) || (fid > 0 && !fwd)) {
                 val idx = if (fwd) fid + 1 else fid - 1
                 val newName = files[idx].name
 
@@ -110,16 +110,16 @@ class FileData(private val context: Context, private val sftpUrl: String?) {
                 return parentPath + newName
             }
 
-            if (path.size < 3)
+            if (path.count() < 3)
                 return ""
 
             // Find next/prev directory
             val grandPath = getParentPath(parentPath)
-            val currentDir = path[path.size - 2]
+            val currentDir = path[path.count() - 2]
             val dirs = getFiles(grandPath)
             val d = dirs.find { it.name == currentDir }
             val did = dirs.indexOf(d)
-            if ((did > dirs.size - 1 && fwd) || (did == 0 && !fwd)) {
+            if ((did > dirs.count() - 1 && fwd) || (did == 0 && !fwd)) {
                 return ""
             }
             val idx = if (fwd) did + 1 else did - 1
@@ -127,7 +127,7 @@ class FileData(private val context: Context, private val sftpUrl: String?) {
 
             // Find a file in next directory
             files = getFiles(newDir)
-            if (files.size == 0)
+            if (files.count() == 0)
                 return ""
             val newName = if (fwd) files.first().name else files.last().name
 

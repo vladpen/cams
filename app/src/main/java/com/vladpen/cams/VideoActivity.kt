@@ -28,6 +28,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
 
     private var streamId: Int = -1 // -1 means "no stream"
     private var remotePath: String = "" // relative SFTP path
+    private var groupId: Int = -1
     private val seekStep: Long = 10000 // milliseconds
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +40,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     private fun initActivity() {
         streamId = intent.getIntExtra("streamId", -1)
         remotePath = intent.getStringExtra("remotePath") ?: ""
+        groupId = intent.getIntExtra("groupId", -1)
 
         stream = StreamData.getById(streamId) ?: return
 
@@ -70,21 +72,29 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     }
 
     private fun back() {
-        if (remotePath == "") {
-            val mainIntent = Intent(this, MainActivity::class.java)
-            startActivity(mainIntent)
-        } else {
-            val filesIntent = Intent(this, FilesActivity::class.java)
-                .putExtra("streamId", streamId)
-                .putExtra("remotePath", FileData.getParentPath(remotePath))
-            startActivity(filesIntent)
+        when {
+            groupId > -1 -> {
+                val intent = Intent(this, GroupActivity::class.java)
+                    .putExtra("groupId", groupId)
+                Navigator.go(this, intent)
+            }
+            remotePath == "" -> {
+                val intent = Intent(this, MainActivity::class.java)
+                Navigator.go(this, intent)
+            }
+            else -> {
+                val intent = Intent(this, FilesActivity::class.java)
+                    .putExtra("streamId", streamId)
+                    .putExtra("remotePath", FileData.getParentPath(remotePath))
+                Navigator.go(this, intent)
+            }
         }
     }
 
     private fun filesHome() {
-        val filesIntent = Intent(this, FilesActivity::class.java)
+        val intent = Intent(this, FilesActivity::class.java)
             .putExtra("streamId", streamId)
-        startActivity(filesIntent)
+        Navigator.go(this, intent)
     }
 
     private fun initToolbar() {
@@ -114,9 +124,9 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
             if (remotePath == "") {
                 filesHome()
             } else {
-                val videoIntent = Intent(this, VideoActivity::class.java)
+                val intent = Intent(this, VideoActivity::class.java)
                     .putExtra("streamId", streamId)
-                startActivity(videoIntent)
+                Navigator.go(this, intent)
             }
         }
     }
@@ -153,7 +163,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
             }
             initBars()
         }
-        "1x".also { binding.videoBar.tvSpeed.text = it } // make linter happy
+        "1x".also { binding.videoBar.tvSpeed.text = it } // makes linter happy
         binding.videoBar.llVideoCtrl.visibility = View.VISIBLE
     }
 
@@ -213,7 +223,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         } else { // The most recent file was played, let's show live video
             finish()
             intent.putExtra("streamId", streamId).putExtra("remotePath", "")
-            startActivity(intent)
+            Navigator.go(this, intent)
         }
     }
 

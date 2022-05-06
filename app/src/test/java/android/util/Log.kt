@@ -21,5 +21,3 @@ fun d(tag: String, msg: String): Int {
     println("DEBUG: $tag: $msg")
     return 0
 }
-
-// https://stackoverflow.com/questions/36787449/how-to-mock-method-e-in-log

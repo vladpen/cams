@@ -67,22 +67,22 @@ class FilesActivity: AppCompatActivity() {
         if (sftpData == null || remotePath == sftpData?.path) {
             videoScreen()
         } else {
-            val filesIntent = Intent(this, FilesActivity::class.java)
+            val intent = Intent(this, FilesActivity::class.java)
                 .putExtra("streamId", streamId)
                 .putExtra("remotePath", FileData.getParentPath(remotePath))
-            startActivity(filesIntent)
+            Navigator.go(this, intent)
         }
     }
 
     private fun filesHome() {
-        val filesIntent = Intent(this, FilesActivity::class.java)
+        val intent = Intent(this, FilesActivity::class.java)
             .putExtra("streamId", streamId)
-        startActivity(filesIntent)
+        Navigator.go(this, intent)
     }
 
     private fun videoScreen() {
-        val videoIntent = Intent(this, VideoActivity::class.java)
+        val intent = Intent(this, VideoActivity::class.java)
             .putExtra("streamId", streamId)
-        startActivity(videoIntent)
+        Navigator.go(this, intent)
     }
 }

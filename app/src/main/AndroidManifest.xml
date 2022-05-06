@@ -30,6 +30,16 @@
         <activity
             android:name=".FilesActivity"
             android:exported="false" />
+        <activity
+            android:name=".EditGroupActivity"
+            android:exported="false" />
+        <activity
+            android:name=".GroupsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".GroupActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:exported="false" />
 
     </application>
 

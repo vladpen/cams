@@ -5,14 +5,11 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.abs
-import kotlin.math.round
-import kotlin.math.sign
+import kotlin.math.*
+
+private const val ASPECT_RATIO = 16f / 9f
 
 class VideoGestureDetector(context: Context, private val view: View) {
-    private val ratio = 16f / 9f
     private val maxScaleFactor = 20f
     private var scaleFactor = 1f
 
@@ -24,10 +21,10 @@ class VideoGestureDetector(context: Context, private val view: View) {
         fun set() {
             if (view.width > view.height) {
                 height = view.height
-                width = round(height * ratio).toInt()
+                width = (height * ASPECT_RATIO).roundToInt()
             } else {
                 width = view.width
-                height = round(width / ratio).toInt()
+                height = (width / ASPECT_RATIO).roundToInt()
             }
             availableX = max(0f, (width * (scaleFactor - 1) - view.width + width) / 2)
             availableY = max(0f, (height * (scaleFactor - 1) - view.height + height) / 2)

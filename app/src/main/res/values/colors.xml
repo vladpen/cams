@@ -12,5 +12,7 @@
     <color name="hint">#AAAAAA</color>
     <color name="error">#FF4400</color>
     <color name="live_link">#FF8844</color>
-    <color name="files_link">#88FFAA</color>
+    <color name="files_link">#44FFCC</color>
+    <color name="groups_link">#BB88FF</color>
+
 </resources>

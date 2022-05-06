@@ -27,4 +27,12 @@
     <string name="seek_fwd">Avanço rápido</string>
     <string name="play_pause">Reproduzir/Pausar</string>
     <string name="mute">Silenciar</string>
+
+    <string name="groups">Groups</string>
+    <string name="group_add">Add group</string>
+    <string name="group_name_hint">New group</string>
+    <string name="group_cams">Cameras *</string>
+    <string name="group_delete">Delete group?</string>
+    <string name="err_group_exists">Group already exists</string>
+    <string name="err_group_streams_count">From %1$d to %2$d rows</string>
 </resources>

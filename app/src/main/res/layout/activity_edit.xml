@@ -103,7 +103,6 @@
                     android:padding="10dp"
                     android:text="@string/delete"
                     android:textColor="@color/error"
-                    android:visibility="visible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>

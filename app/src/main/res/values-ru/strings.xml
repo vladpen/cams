@@ -27,4 +27,11 @@
     <string name="seek_fwd">Перемотка вперед</string>
     <string name="play_pause">Пуск/пауза</string>
     <string name="mute">Тишина</string>
+    <string name="groups">Группы</string>
+    <string name="group_add">Добвить группу</string>
+    <string name="group_name_hint">Новая группа</string>
+    <string name="group_cams">Камеры *</string>
+    <string name="group_delete">Удалить группу?</string>
+    <string name="err_group_exists">Такая группа уже существует</string>
+    <string name="err_group_streams_count">От %1$d до %2$d строк</string>
 </resources>

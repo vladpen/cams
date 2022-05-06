@@ -10,7 +10,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="20sp"
-        android:padding="16dp"
+        android:padding="10dp"
         android:textColor="@color/text"
         android:background="?attr/selectableItemBackground"
         app:layout_constraintStart_toStartOf="parent"

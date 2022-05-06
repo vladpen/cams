@@ -38,7 +38,7 @@ object Utils {
                 if (r[10] != "" && r[10].last().toString() == "/") r[10] else r[10] + "/"
             )
         } catch (e: Exception) {
-            Log.e("Utils", e.localizedMessage ?: "Can't parse $url")
+            Log.e("Utils", "Can't parse URL $url (${e.localizedMessage})")
         }
         return null
     }
@@ -63,7 +63,7 @@ object Utils {
             return cipher.doFinal(str.toByteArray()).toHexString()
 
         } catch (e: java.lang.Exception) {
-            Log.e("Utils", e.localizedMessage ?: "Can't encrypt password")
+            Log.e("Utils", "Can't encrypt password (${e.localizedMessage})")
         }
         return str
     }
@@ -78,7 +78,7 @@ object Utils {
             return String(cipher.doFinal(encoded))
 
         } catch (e: java.lang.Exception) {
-            Log.e("Utils", e.localizedMessage ?: "Can't encrypt password")
+            Log.e("Utils", "Can't decrypt password (${e.localizedMessage})")
         }
         return str
     }
@@ -101,7 +101,7 @@ object Utils {
                 .padStart(len, '.')
                 .takeLast(len)
         } catch (e: java.lang.Exception) {
-            Log.e("Utils", e.localizedMessage ?: "Can't get package info")
+            Log.e("Utils", "Key: can't get package info (${e.localizedMessage})")
         }
         return SecretKeySpec(key.toByteArray(), 0, len, "AES")
     }
@@ -115,7 +115,7 @@ object Utils {
                 .padEnd(len, '.')
                 .slice(0 until len)
         } catch (e: java.lang.Exception) {
-            Log.e("Utils", e.localizedMessage ?: "Can't get package info")
+            Log.e("Utils", "IV: can't get package info (${e.localizedMessage})")
         }
         return IvParameterSpec(iv.toByteArray())
     }

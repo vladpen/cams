@@ -30,7 +30,7 @@ class FilesAdapter(
         holder.bind(row)
     }
 
-    override fun getItemCount(): Int = dataSet.size
+    override fun getItemCount(): Int = dataSet.count()
 
     inner class FileHolder(private val context: Context, private val binding: FileItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -62,13 +62,13 @@ class FilesAdapter(
                 .setFlags(FLAG_ACTIVITY_NEW_TASK)
                 .putExtra("remotePath", remotePath + file.name)
                 .putExtra("streamId", streamId)
-            context.startActivity(intent)
+            Navigator.go(context, intent)
         } else {
             val intent = Intent(context, FilesActivity::class.java)
                 .setFlags(FLAG_ACTIVITY_NEW_TASK)
                 .putExtra("remotePath", remotePath + file.name + "/")
                 .putExtra("streamId", streamId)
-            context.startActivity(intent)
+            Navigator.go(context, intent)
         }
     }
 }

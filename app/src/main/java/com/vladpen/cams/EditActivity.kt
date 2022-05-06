@@ -6,6 +6,7 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.vladpen.Navigator
 import com.vladpen.StreamData
 import com.vladpen.StreamDataModel
 import com.vladpen.Utils
@@ -28,6 +29,7 @@ class EditActivity : AppCompatActivity() {
         if (stream == null) {
             streamId = -1
             binding.toolbar.tvToolbarLabel.text = getString(R.string.cam_add)
+            binding.tvDeleteLink.visibility = View.GONE
         } else {
             binding.toolbar.tvToolbarLabel.text = stream.name
 
@@ -36,7 +38,6 @@ class EditActivity : AppCompatActivity() {
             binding.etEditSftpUrl.setText(safeUrl(stream.sftp))
             binding.scEditTcp.isChecked = !stream.tcp
 
-            binding.tvDeleteLink.visibility = View.VISIBLE
             binding.tvDeleteLink.setOnClickListener {
                 delete()
             }
@@ -86,7 +87,8 @@ class EditActivity : AppCompatActivity() {
             binding.etEditName.text.toString().trim(),
             streamUrl,
             !binding.scEditTcp.isChecked,
-            if (sftpUrl != "") sftpUrl else null
+            if (sftpUrl != "") sftpUrl else null,
+            stream?.id
         ))
         back()
     }
@@ -135,6 +137,7 @@ class EditActivity : AppCompatActivity() {
     }
 
     private fun back() {
-        startActivity(Intent(this, MainActivity::class.java))
+        val intent = Intent(this, MainActivity::class.java)
+        Navigator.go(this, intent)
     }
 }

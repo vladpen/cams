@@ -23,7 +23,7 @@ class StreamsAdapter(private val dataSet: List<StreamDataModel>) :
         holder.bind(idx, row)
     }
 
-    override fun getItemCount(): Int = dataSet.size
+    override fun getItemCount(): Int = dataSet.count()
 
     inner class StreamHolder(private val context: Context, private val binding: StreamItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -32,18 +32,18 @@ class StreamsAdapter(private val dataSet: List<StreamDataModel>) :
                 tvStreamName.text = row.name
                 tvStreamName.setOnClickListener {
                     val intent = Intent(context, VideoActivity::class.java)
-                    navigate(context, intent, idx)
+                    navigate(intent, idx)
                 }
                 btnEdit.setOnClickListener {
                     val intent = Intent(context, EditActivity::class.java)
-                    navigate(context, intent, idx)
+                    navigate(intent, idx)
                 }
             }
         }
-    }
 
-    private fun navigate(context: Context, intent: Intent,  idx: Int) {
-        intent.setFlags(FLAG_ACTIVITY_NEW_TASK).putExtra("streamId", idx)
-        context.startActivity(intent)
+        private fun navigate(intent: Intent,  idx: Int) {
+            intent.setFlags(FLAG_ACTIVITY_NEW_TASK).putExtra("streamId", idx)
+            Navigator.go(context, intent)
+        }
     }
 }
