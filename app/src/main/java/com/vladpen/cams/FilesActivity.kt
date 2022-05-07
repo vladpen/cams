@@ -46,10 +46,10 @@ class FilesActivity: AppCompatActivity() {
             }
         }
         binding.toolbar.tvToolbarLink.text = getString(R.string.live)
+        binding.toolbar.tvToolbarLink.setTextColor(getColor(R.color.live_link))
         binding.toolbar.tvToolbarLink.setOnClickListener {
             videoScreen()
         }
-        binding.toolbar.tvToolbarLink.setTextColor(getColor(R.color.live_link))
 
         val files = FileData(this, stream.sftp).getFiles(remotePath)
 
@@ -70,19 +70,19 @@ class FilesActivity: AppCompatActivity() {
             val intent = Intent(this, FilesActivity::class.java)
                 .putExtra("streamId", streamId)
                 .putExtra("remotePath", FileData.getParentPath(remotePath))
-            Navigator.go(this, intent)
+            startActivity(intent)
         }
     }
 
     private fun filesHome() {
         val intent = Intent(this, FilesActivity::class.java)
             .putExtra("streamId", streamId)
-        Navigator.go(this, intent)
+        startActivity(intent)
     }
 
     private fun videoScreen() {
         val intent = Intent(this, VideoActivity::class.java)
             .putExtra("streamId", streamId)
-        Navigator.go(this, intent)
+        startActivity(intent)
     }
 }

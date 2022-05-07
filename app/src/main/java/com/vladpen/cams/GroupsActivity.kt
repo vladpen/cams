@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vladpen.GroupData
 import com.vladpen.GroupsAdapter
-import com.vladpen.Navigator
 import com.vladpen.cams.databinding.ActivityGroupsBinding
 
 class GroupsActivity: AppCompatActivity() {
@@ -25,14 +24,11 @@ class GroupsActivity: AppCompatActivity() {
         binding.recyclerView.adapter = GroupsAdapter(groups)
 
         binding.toolbar.tvToolbarLabel.text = getString(R.string.groups)
-        binding.toolbar.tvToolbarLink.text = getString(R.string.main_title)
-        binding.toolbar.tvToolbarLink.setOnClickListener {
-            back()
+        binding.fab.btnAdd.setOnClickListener {
+            editScreen()
         }
-        binding.toolbar.tvToolbarLink.setTextColor(getColor(R.color.live_link))
-        binding.toolbar.btnBack.setImageResource(R.drawable.ic_baseline_menu_24)
         binding.toolbar.btnBack.setOnClickListener {
-            MainMenu(this).showPopupMenu(it)
+            back()
         }
         this.onBackPressedDispatcher.addCallback(callback)
     }
@@ -45,6 +41,11 @@ class GroupsActivity: AppCompatActivity() {
 
     private fun back() {
         val intent = Intent(this, MainActivity::class.java)
-        Navigator.go(this, intent)
+        startActivity(intent)
+    }
+
+    private fun editScreen() {
+        val intent = Intent(this, EditGroupActivity::class.java)
+        startActivity(intent)
     }
 }

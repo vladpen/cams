@@ -6,7 +6,6 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.vladpen.Navigator
 import com.vladpen.StreamData
 import com.vladpen.StreamDataModel
 import com.vladpen.Utils
@@ -138,6 +137,6 @@ class EditActivity : AppCompatActivity() {
 
     private fun back() {
         val intent = Intent(this, MainActivity::class.java)
-        Navigator.go(this, intent)
+        startActivity(intent)
     }
 }

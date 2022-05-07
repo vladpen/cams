@@ -43,7 +43,7 @@ class GroupsAdapter(private val dataSet: List<GroupDataModel>) :
 
         private fun navigate(intent: Intent,  idx: Int) {
             intent.setFlags(FLAG_ACTIVITY_NEW_TASK).putExtra("groupId", idx)
-            Navigator.go(context, intent)
+            context.startActivity(intent)
         }
     }
 }

@@ -33,10 +33,17 @@ class GroupActivity : AppCompatActivity() {
         groupId = intent.getIntExtra("groupId", -1)
         group = GroupData.getById(groupId) ?: return
 
+        binding.toolbar.tvToolbarLink.text = getString(R.string.main_title)
+        binding.toolbar.tvToolbarLink.setTextColor(getColor(R.color.live_link))
+        binding.toolbar.tvToolbarLink.setOnClickListener {
+            mainScreen()
+        }
+
         initToolbar()
         resizeGrid()
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         this.onBackPressedDispatcher.addCallback(callback)
+        GroupData.currentGroupId = groupId  // save for back navigation
     }
 
     private fun initFragments() {
@@ -45,7 +52,7 @@ class GroupActivity : AppCompatActivity() {
             for ((i, id) in group.streams.withIndex()) {
                 if (i > 3)
                     break
-                val fragment = VideoFragment.newInstance(streamsMap[id]!!, groupId)
+                val fragment = VideoFragment.newInstance(streamsMap[id]!!)
                 val viewId = cells[i]
                 supportFragmentManager.beginTransaction().add(viewId, fragment).commit()
             }
@@ -68,8 +75,14 @@ class GroupActivity : AppCompatActivity() {
     }
 
     private fun back() {
+        GroupData.currentGroupId = -1
         val intent = Intent(this, GroupsActivity::class.java)
-        Navigator.go(this, intent)
+        startActivity(intent)
+    }
+
+    private fun mainScreen() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
     }
 
     private fun resizeGrid() {

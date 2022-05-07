@@ -12,11 +12,13 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="44dp"
+        android:paddingBottom="76dp"
         android:textColor="@color/text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
         tools:listitem="@layout/stream_item" />
+
+    <include android:id="@+id/fab" layout="@layout/fab" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

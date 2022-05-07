@@ -23,7 +23,7 @@
         android:id="@+id/tvToolbarLabel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingStart="6dp"
+        android:paddingStart="10dp"
         android:paddingEnd="2dp"
         android:textColor="@android:color/white"
         android:textSize="20sp"

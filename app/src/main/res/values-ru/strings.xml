@@ -34,4 +34,5 @@
     <string name="group_delete">Удалить группу?</string>
     <string name="err_group_exists">Такая группа уже существует</string>
     <string name="err_group_streams_count">От %1$d до %2$d строк</string>
+    <string name="about">О программе</string>
 </resources>

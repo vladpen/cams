@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken
 data class GroupDataModel(val name: String, var streams: MutableList<Int>)
 
 object GroupData {
+    var currentGroupId = -1
     private const val fileName = "groups.json"
     private var groups = mutableListOf<GroupDataModel>()
 

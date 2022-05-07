@@ -62,13 +62,13 @@ class FilesAdapter(
                 .setFlags(FLAG_ACTIVITY_NEW_TASK)
                 .putExtra("remotePath", remotePath + file.name)
                 .putExtra("streamId", streamId)
-            Navigator.go(context, intent)
+            context.startActivity(intent)
         } else {
             val intent = Intent(context, FilesActivity::class.java)
                 .setFlags(FLAG_ACTIVITY_NEW_TASK)
                 .putExtra("remotePath", remotePath + file.name + "/")
                 .putExtra("streamId", streamId)
-            Navigator.go(context, intent)
+            context.startActivity(intent)
         }
     }
 }

@@ -43,7 +43,7 @@ class StreamsAdapter(private val dataSet: List<StreamDataModel>) :
 
         private fun navigate(intent: Intent,  idx: Int) {
             intent.setFlags(FLAG_ACTIVITY_NEW_TASK).putExtra("streamId", idx)
-            Navigator.go(context, intent)
+            context.startActivity(intent)
         }
     }
 }

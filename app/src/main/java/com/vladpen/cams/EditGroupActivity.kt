@@ -185,6 +185,6 @@ class EditGroupActivity : AppCompatActivity() {
 
     private fun back() {
         val intent = Intent(this, GroupsActivity::class.java)
-        Navigator.go(this, intent)
+        startActivity(intent)
     }
 }

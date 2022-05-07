@@ -1,10 +1,8 @@
 package com.vladpen.cams
 
 import android.content.Context
-import android.content.Intent
 import android.view.View
 import android.widget.PopupMenu
-import com.vladpen.Navigator
 
 class MainMenu(val context: Context) {
     fun showPopupMenu(view: View) {
@@ -13,28 +11,16 @@ class MainMenu(val context: Context) {
 
         popup.setOnMenuItemClickListener { item ->
             when (item!!.itemId) {
-                R.id.iStreamAdd -> {
-                    editScreen()
+                R.id.iAbout -> {
+                     aboutScreen()
                 }
-                R.id.iGroupAdd -> {
-                    editGroupScreen()
-                }
-                // R.id.iAbout -> {
-                //     aboutScreen()
-                // }
             }
             true
         }
         popup.show()
     }
-
-    private fun editScreen() {
-        val intent = Intent(context, EditActivity::class.java)
-        Navigator.go(context, intent)
-    }
-
-    private fun editGroupScreen() {
-        val intent = Intent(context, EditGroupActivity::class.java)
-        Navigator.go(context, intent)
+    private fun aboutScreen() {
+        // val intent = Intent(context, AboutActivity::class.java)
+        // context.startActivity(intent)
     }
 }

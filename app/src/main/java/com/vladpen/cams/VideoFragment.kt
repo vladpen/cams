@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.vladpen.Navigator
 import com.vladpen.StreamData
 import com.vladpen.StreamDataModel
 import com.vladpen.Utils
@@ -26,7 +25,6 @@ class VideoFragment : Fragment() {
     private lateinit var videoLayout: VLCVideoLayout
 
     private var streamId: Int = -1
-    private var groupId: Int = -1
     private lateinit var stream: StreamDataModel
 
     companion object {
@@ -34,15 +32,13 @@ class VideoFragment : Fragment() {
          * Factory method to create a new instance of this fragment using the provided parameters
          *
          * @param streamId
-         * @param groupId
          * @return A new instance of this fragment
          */
         @JvmStatic
-        fun newInstance(streamId: Int, groupId: Int) =
+        fun newInstance(streamId: Int) =
             VideoFragment().apply {
                 arguments = Bundle().apply {
                     putInt("streamId", streamId)
-                    putInt("groupId", groupId)
                 }
             }
     }
@@ -51,7 +47,6 @@ class VideoFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             streamId = it.getInt("streamId", -1)
-            groupId = it.getInt("groupId", -1)
         }
         stream = StreamData.getById(streamId) ?: return
         initFragment()
@@ -61,12 +56,10 @@ class VideoFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
         binding.root.setOnClickListener {
-            binding.pbLoading.visibility = View.VISIBLE
             val intent = Intent(context, VideoActivity::class.java)
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 .putExtra("streamId", streamId)
-                .putExtra("groupId", groupId)
-            context?.let { ctx -> Navigator.go(ctx, intent) }
+            context?.startActivity(intent)
         }
         return binding.root
     }

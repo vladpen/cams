@@ -34,4 +34,5 @@
     <string name="group_delete">Delete group?</string>
     <string name="err_group_exists">Group already exists</string>
     <string name="err_group_streams_count">From %1$d to %2$d rows</string>
+    <string name="about">About</string>
 </resources>

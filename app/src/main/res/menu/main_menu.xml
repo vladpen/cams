@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/iStreamAdd"
-        android:title="@string/cam_add" />
-    <item
-        android:id="@+id/iGroupAdd"
-        android:title="@string/group_add" />
+        android:id="@+id/iAbout"
+        android:title="@string/about" />
 </menu>
