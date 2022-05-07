@@ -6,6 +6,7 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.vladpen.GroupData
 import com.vladpen.StreamData
 import com.vladpen.StreamsAdapter
 import com.vladpen.cams.databinding.ActivityMainBinding
@@ -17,7 +18,10 @@ class MainActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        initActivity()
+        if (streams.count() == 0)
+            editScreen()
+        else
+            initActivity()
     }
 
     private fun initActivity() {
@@ -50,7 +54,10 @@ class MainActivity: AppCompatActivity() {
     }
 
     private fun groupsScreen() {
-        val intent = Intent(this, GroupsActivity::class.java)
+        val intent = if (GroupData.getGroups(this).count() == 0)
+            Intent(this, EditGroupActivity::class.java)
+        else
+            Intent(this, GroupsActivity::class.java)
         startActivity(intent)
     }
 
