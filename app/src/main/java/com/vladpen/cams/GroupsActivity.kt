@@ -7,10 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vladpen.GroupData
 import com.vladpen.GroupsAdapter
-import com.vladpen.cams.databinding.ActivityGroupsBinding
+import com.vladpen.cams.databinding.ActivityMainBinding
 
 class GroupsActivity: AppCompatActivity() {
-    private val binding by lazy { ActivityGroupsBinding.inflate(layoutInflater) }
+    private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val groups by lazy { GroupData.getGroups(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,10 +24,13 @@ class GroupsActivity: AppCompatActivity() {
         binding.recyclerView.adapter = GroupsAdapter(groups)
 
         binding.toolbar.tvToolbarLabel.text = getString(R.string.groups)
-        binding.fab.btnAdd.setOnClickListener {
-            editScreen()
-        }
+        binding.toolbar.btnBack.setImageResource(R.drawable.ic_baseline_menu_24)
         binding.toolbar.btnBack.setOnClickListener {
+            MainMenu(this).showPopupMenu(it, "groupAdd")
+        }
+        binding.toolbar.tvToolbarLink.text = getString(R.string.main_title)
+        binding.toolbar.tvToolbarLink.setTextColor(getColor(R.color.live_link))
+        binding.toolbar.tvToolbarLink.setOnClickListener {
             back()
         }
         this.onBackPressedDispatcher.addCallback(callback)
@@ -41,11 +44,6 @@ class GroupsActivity: AppCompatActivity() {
 
     private fun back() {
         val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun editScreen() {
-        val intent = Intent(this, EditGroupActivity::class.java)
         startActivity(intent)
     }
 }

@@ -2,7 +2,6 @@ package com.vladpen.cams
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,16 +34,10 @@ class MainActivity: AppCompatActivity() {
                 groupsScreen()
             }
         }
-        binding.fab.btnAdd.setOnClickListener {
-            editScreen()
-        }
-        binding.toolbar.btnBack.visibility = View.GONE
-        /*
         binding.toolbar.btnBack.setImageResource(R.drawable.ic_baseline_menu_24)
         binding.toolbar.btnBack.setOnClickListener {
-            MainMenu(this).showPopupMenu(it)
+            MainMenu(this).showPopupMenu(it, "streamAdd")
         }
-        */
         this.onBackPressedDispatcher.addCallback(callback)
     }
 
