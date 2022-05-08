@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.LinearLayout
@@ -20,6 +21,7 @@ class GroupActivity : AppCompatActivity() {
     private var groupId: Int = -1
     private lateinit var group: GroupDataModel
     private val cells = listOf(R.id.llCell1, R.id.llCell2, R.id.llCell3, R.id.llCell4)
+    private var hideBars = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,10 +103,12 @@ class GroupActivity : AppCompatActivity() {
             binding.llRow2.orientation = LinearLayout.VERTICAL
 
             val groupAspectRatio = ASPECT_RATIO / group.streams.count()
-            frameHeight = if (screenAspectRatio > groupAspectRatio)
-                screenHeight / group.streams.count()
-            else
-                (screenWidth / ASPECT_RATIO).toInt()
+            if (screenAspectRatio > groupAspectRatio) {
+                frameHeight = screenHeight / group.streams.count()
+                hideBars = true
+            } else {
+                frameHeight = (screenWidth / ASPECT_RATIO).toInt()
+            }
         } else {
             binding.llRow1.orientation = LinearLayout.HORIZONTAL
             binding.llRow2.orientation = LinearLayout.HORIZONTAL
@@ -114,10 +118,12 @@ class GroupActivity : AppCompatActivity() {
             else
                 ASPECT_RATIO
 
-            frameHeight = if (screenAspectRatio > groupAspectRatio)
-                screenHeight / 2
-            else
-                (screenWidth / (ASPECT_RATIO * 2)).toInt()
+            if (screenAspectRatio > groupAspectRatio) {
+                frameHeight = screenHeight / 2
+                hideBars = true
+            } else {
+                frameHeight = (screenWidth / (ASPECT_RATIO * 2)).toInt()
+            }
         }
         for (i in group.streams.indices) {
             val view = findViewById<LinearLayout>(cells[i])
@@ -130,6 +136,14 @@ class GroupActivity : AppCompatActivity() {
     private fun initBars() {
         Effects.cancel()
         binding.toolbar.root.visibility = View.VISIBLE
+        if (hideBars) {
+            Effects.delayedFadeOut(this, arrayOf(binding.toolbar.root))
+        }
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        initBars()
+        return super.onTouchEvent(event)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
