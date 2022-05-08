@@ -7,15 +7,15 @@ import android.widget.PopupMenu
 
 class MainMenu(val context: Context) {
 
-    fun showPopupMenu(view: View, showItem: String) {
+    fun showPopupMenu(view: View, parentScreen: String) {
         val popup = PopupMenu(context, view)
         popup.menuInflater.inflate(R.menu.main_menu, popup.menu)
 
-        when (showItem) {
-            "streamAdd" -> {
+        when (parentScreen) {
+            "main" -> {
                 popup.menu.findItem(R.id.iStreamAdd).isVisible = true
             }
-            "groupAdd" -> {
+            "groups" -> {
                 popup.menu.findItem(R.id.iGroupAdd).isVisible = true
             }
         }
@@ -29,7 +29,7 @@ class MainMenu(val context: Context) {
                     editGroupScreen()
                 }
                 R.id.iAbout -> {
-                     aboutScreen()
+                     aboutScreen(parentScreen)
                 }
             }
             true
@@ -47,8 +47,9 @@ class MainMenu(val context: Context) {
         context.startActivity(intent)
     }
 
-    private fun aboutScreen() {
-        // val intent = Intent(context, AboutActivity::class.java)
-        // context.startActivity(intent)
+    private fun aboutScreen(parentScreen: String) {
+        val intent = Intent(context, AboutActivity::class.java)
+            .putExtra("parentScreen", parentScreen)
+        context.startActivity(intent)
     }
 }

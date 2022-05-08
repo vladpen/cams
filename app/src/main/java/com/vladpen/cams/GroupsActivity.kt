@@ -26,7 +26,7 @@ class GroupsActivity: AppCompatActivity() {
         binding.toolbar.tvToolbarLabel.text = getString(R.string.groups)
         binding.toolbar.btnBack.setImageResource(R.drawable.ic_baseline_menu_24)
         binding.toolbar.btnBack.setOnClickListener {
-            MainMenu(this).showPopupMenu(it, "groupAdd")
+            MainMenu(this).showPopupMenu(it, "groups")
         }
         binding.toolbar.tvToolbarLink.text = getString(R.string.main_title)
         binding.toolbar.tvToolbarLink.setTextColor(getColor(R.color.live_link))

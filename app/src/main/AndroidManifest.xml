@@ -40,6 +40,9 @@
             android:name=".GroupActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:exported="false" />
+        <activity
+            android:name=".AboutActivity"
+            android:exported="false" />
 
     </application>
 

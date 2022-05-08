@@ -36,7 +36,7 @@ class MainActivity: AppCompatActivity() {
         }
         binding.toolbar.btnBack.setImageResource(R.drawable.ic_baseline_menu_24)
         binding.toolbar.btnBack.setOnClickListener {
-            MainMenu(this).showPopupMenu(it, "streamAdd")
+            MainMenu(this).showPopupMenu(it, "main")
         }
         this.onBackPressedDispatcher.addCallback(callback)
     }

@@ -35,4 +35,13 @@
     <string name="err_group_exists">Group already exists</string>
     <string name="err_group_streams_count">From %1$d to %2$d rows</string>
     <string name="about">About</string>
+    <string name="about_text">
+        <![CDATA[
+            <h1>Cams, Version %1$s</h1><br/>
+            Copyright &copy; %2$s vladpen under MIT license<br/><br/>
+            <a href="https://github.com/vladpen/cams">Home page</a><br/><br/>
+            <a href="https://github.com/vladpen/cams/issues">
+                Bug reports and issue tracker</a>
+        ]]>
+    </string>
 </resources>

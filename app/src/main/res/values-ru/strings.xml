@@ -35,4 +35,13 @@
     <string name="err_group_exists">Такая группа уже существует</string>
     <string name="err_group_streams_count">От %1$d до %2$d строк</string>
     <string name="about">О программе</string>
+    <string name="about_text">
+        <![CDATA[
+            <h1>Камеры, версия %1$s</h1><br/>
+            Copyright &copy; %2$s vladpen, лицензия MIT<br/><br/>
+            <a href="https://github.com/vladpen/cams">Домашняя страница</a><br/><br/>
+            <a href="https://github.com/vladpen/cams/issues">
+                Отчеты об ошибках и трекер задач</a>
+        ]]>
+    </string>
 </resources>
