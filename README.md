@@ -1,12 +1,13 @@
 ## Cams
 
-![Cams](https://raw.githubusercontent.com/vladpen/cams/screenshots/img/cover.png)
+![Cams](https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/1_cover.png)
 
 Простое мобильное приложение под Android для воспроизведения RTSP потоков с IP камер.
 
 Особенности:
 
 - Просмотр RTSP потоков c любых IP камер, включая H.265+.
+- Одновременный просмотр нескольких потоков.
 - Возможность переключения протокола TCP/UDP.
   Эта опция важна при просмотре камер через интернет, где UDP может не поддерживаться или работать плохо.
 - Просмотр видеозаписей по протоколу SFTP.
@@ -14,21 +15,24 @@
 - Максимальная скорость подключения.
 - Предельная простота навигации и управления.
 
-<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/main.png"
+<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/2_main_ru.png"
 alt="Main screen"
 width="200">&nbsp;
-<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/edit.png"
+<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/3_edit_ru.png"
 alt="Edit screen"
 width="200">&nbsp;
-<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/files.png"
+<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/4_files_ru.png"
 alt="Files screen"
 width="200">&nbsp;
-<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/video.png"
+<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/5_video_ru.png"
 alt="Video screen"
 width="200">
 
 Приложение написано специально для работы с сервером [python-rtsp-server](https://github.com/vladpen/python-rtsp-server),
-но прекрасно работает автономно благодаря возможности подключения к любым RTSP потокам и видеорегистраторам, поддерживающим SFTP.
+но прекрасно работает автономно благодаря возможности подключения к любым потокам и видеорегистраторам, поддерживающим SFTP.
+
+Воспроизводит большинство типов видеопотоков (не только RTSP).
+На снимке экрана выше показано изображение с реальной видеокамеры и три тестовых ролика в режиме "Группа".
 
 ## Установка
 

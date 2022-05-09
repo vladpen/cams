@@ -1,3 +1,8 @@
+## 1.2.0 - 2022-05-09
+
+- Groups
+- Fixes, tweaks and improvements
+
 ## 1.1.4 - 2022-04-22
 
 - Enhanced security
