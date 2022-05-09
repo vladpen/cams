@@ -1,6 +1,6 @@
 ## Cams
 
-![Cams](https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/1_cover.png)
+![Cams](https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/1_cover.jpg)
 
 Простое мобильное приложение под Android для воспроизведения RTSP потоков с IP камер.
 
@@ -15,16 +15,16 @@
 - Максимальная скорость подключения.
 - Предельная простота навигации и управления.
 
-<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/2_main_ru.png"
+<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/2_main_ru.jpg"
 alt="Main screen"
 width="200">&nbsp;
-<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/3_edit_ru.png"
+<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/3_edit_ru.jpg"
 alt="Edit screen"
 width="200">&nbsp;
-<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/4_files_ru.png"
+<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/4_files_ru.jpg"
 alt="Files screen"
 width="200">&nbsp;
-<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/5_video_ru.png"
+<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/5_video_ru.jpg"
 alt="Video screen"
 width="200">
 
