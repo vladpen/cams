@@ -43,7 +43,7 @@ class MainMenu(val context: Context) {
     }
 
     private fun editGroupScreen() {
-        val intent = Intent(context, EditGroupActivity::class.java)
+        val intent = Intent(context, GroupEditActivity::class.java)
         context.startActivity(intent)
     }
 

@@ -48,7 +48,7 @@ class MainActivity: AppCompatActivity() {
 
     private fun groupsScreen() {
         val intent = if (GroupData.getGroups(this).count() == 0)
-            Intent(this, EditGroupActivity::class.java)
+            Intent(this, GroupEditActivity::class.java)
         else
             Intent(this, GroupsActivity::class.java)
         startActivity(intent)

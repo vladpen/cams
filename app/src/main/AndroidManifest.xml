@@ -31,7 +31,7 @@
             android:name=".FilesActivity"
             android:exported="false" />
         <activity
-            android:name=".EditGroupActivity"
+            android:name=".GroupEditActivity"
             android:exported="false" />
         <activity
             android:name=".GroupsActivity"

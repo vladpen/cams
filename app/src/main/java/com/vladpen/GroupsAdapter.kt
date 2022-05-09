@@ -6,7 +6,7 @@ import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.vladpen.cams.EditGroupActivity
+import com.vladpen.cams.GroupEditActivity
 import com.vladpen.cams.GroupActivity
 import com.vladpen.cams.databinding.GroupItemBinding
 
@@ -35,7 +35,7 @@ class GroupsAdapter(private val dataSet: List<GroupDataModel>) :
                     navigate(intent, idx)
                 }
                 btnEdit.setOnClickListener {
-                    val intent = Intent(context, EditGroupActivity::class.java)
+                    val intent = Intent(context, GroupEditActivity::class.java)
                     navigate(intent, idx)
                 }
             }

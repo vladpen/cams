@@ -6,6 +6,7 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.setPadding
 import com.vladpen.StreamData
 import com.vladpen.StreamDataModel
 import com.vladpen.Utils
@@ -14,6 +15,7 @@ import com.vladpen.cams.databinding.ActivityEditBinding
 class EditActivity : AppCompatActivity() {
     private val binding by lazy { ActivityEditBinding.inflate(layoutInflater) }
     private var streamId: Int = -1
+    private val streams by lazy { StreamData.getStreams(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,8 +46,13 @@ class EditActivity : AppCompatActivity() {
         binding.btnSave.setOnClickListener {
             save()
         }
-        binding.toolbar.btnBack.setOnClickListener {
-            back()
+        if (streams.count() > 0) {
+            binding.toolbar.btnBack.setOnClickListener {
+                back()
+            }
+        } else {
+            binding.toolbar.btnBack.visibility = View.GONE
+            binding.toolbar.tvToolbarLabel.setPadding(30)
         }
         this.onBackPressedDispatcher.addCallback(callback)
     }
@@ -66,7 +73,10 @@ class EditActivity : AppCompatActivity() {
 
     private val callback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            back()
+            if (streams.count() > 0)
+                back()
+            else
+                finishAffinity()
         }
     }
 
@@ -95,7 +105,6 @@ class EditActivity : AppCompatActivity() {
     private fun validate(): Boolean {
         val name = binding.etEditName.text.toString().trim()
         val url = binding.etEditUrl.text.toString().trim()
-        val streams = StreamData.getStreams(this)
         var ok = true
 
         if (name.isEmpty() || name.length > 255) {
