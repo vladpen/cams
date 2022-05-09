@@ -49,10 +49,11 @@ class GroupEditActivity : AppCompatActivity() {
                 delete()
             }
         }
-        if (group == null || group.streams.count() < STREAMS_MAX)
-            binding.tvAddStream.setOnClickListener {
-                showPopupMenu(it)
-            }
+        if (group != null && group.streams.count() >= STREAMS_MAX)
+            binding.tvAddStream.visibility = View.GONE
+        binding.tvAddStream.setOnClickListener {
+            showPopupMenu(it)
+        }
         binding.btnSave.setOnClickListener {
             save()
         }
@@ -90,6 +91,7 @@ class GroupEditActivity : AppCompatActivity() {
             override fun onSwipe() {
                 binding.llStreams.removeView(tv)
                 selectedStreams.remove(streamId)
+                binding.tvAddStream.visibility = View.VISIBLE
             }
         })
     }
