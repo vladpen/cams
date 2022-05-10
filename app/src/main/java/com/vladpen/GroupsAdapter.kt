@@ -25,6 +25,10 @@ class GroupsAdapter(private val dataSet: List<GroupDataModel>) :
 
     override fun getItemCount(): Int = dataSet.count()
 
+    fun moveItem(context: Context, from: Int, to: Int) {
+        GroupData.moveItem(context, from, to)
+    }
+
     inner class GroupHolder(private val context: Context, private val binding: GroupItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(idx: Int, row: GroupDataModel) {

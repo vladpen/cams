@@ -25,6 +25,10 @@ class StreamsAdapter(private val dataSet: List<StreamDataModel>) :
 
     override fun getItemCount(): Int = dataSet.count()
 
+    fun moveItem(context: Context, from: Int, to: Int) {
+        StreamData.moveItem(context, from, to)
+    }
+
     inner class StreamHolder(private val context: Context, private val binding: StreamItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(idx: Int, row: StreamDataModel) {

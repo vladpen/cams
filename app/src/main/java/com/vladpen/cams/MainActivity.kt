@@ -6,6 +6,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vladpen.GroupData
+import com.vladpen.ItemTouch
 import com.vladpen.StreamData
 import com.vladpen.StreamsAdapter
 import com.vladpen.cams.databinding.ActivityMainBinding
@@ -26,6 +27,7 @@ class MainActivity: AppCompatActivity() {
     private fun initActivity() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = StreamsAdapter(streams)
+        ItemTouch.helper(this, "streams").attachToRecyclerView(binding.recyclerView)
 
         binding.toolbar.tvToolbarLabel.text = getString(R.string.main_title)
         if (streams.count() >= 2) {

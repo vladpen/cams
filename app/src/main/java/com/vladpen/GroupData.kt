@@ -76,6 +76,12 @@ object GroupData {
             write(context)
     }
 
+    fun moveItem(context: Context, from: Int, to: Int) {
+        val item = groups.removeAt(from)
+        groups.add(to, item)
+        write(context)
+    }
+
     private fun initGroups(json: String) {
         if (json == "")
             return

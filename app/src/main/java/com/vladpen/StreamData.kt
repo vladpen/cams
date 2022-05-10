@@ -42,6 +42,12 @@ object StreamData {
         write(context)
     }
 
+    fun moveItem(context: Context, from: Int, to: Int) {
+        val stream = streams.removeAt(from)
+        streams.add(to, stream)
+        write(context)
+    }
+
     fun getStreams(context: Context): MutableList<StreamDataModel> {
         if (streams.count() == 0) {
             try {

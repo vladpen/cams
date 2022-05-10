@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vladpen.GroupData
 import com.vladpen.GroupsAdapter
+import com.vladpen.ItemTouch
 import com.vladpen.cams.databinding.ActivityMainBinding
 
 class GroupsActivity: AppCompatActivity() {
@@ -22,6 +23,7 @@ class GroupsActivity: AppCompatActivity() {
     private fun initActivity() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = GroupsAdapter(groups)
+        ItemTouch.helper(this, "groups").attachToRecyclerView(binding.recyclerView)
 
         binding.toolbar.tvToolbarLabel.text = getString(R.string.groups)
         binding.toolbar.btnBack.setImageResource(R.drawable.ic_baseline_menu_24)
