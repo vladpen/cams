@@ -23,7 +23,6 @@ object StreamData {
         else
             streams[streamId] = stream
 
-        streams.sortBy { it.name }
         write(context)
     }
 
