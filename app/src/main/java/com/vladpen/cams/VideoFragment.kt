@@ -69,6 +69,7 @@ class VideoFragment : Fragment() {
         libVlc = LibVLC(requireContext(), ArrayList<String>().apply {
             if (stream.tcp)
                 add("--rtsp-tcp")
+            add("--verbose=-1")
         })
         mediaPlayer = MediaPlayer(libVlc)
     }
