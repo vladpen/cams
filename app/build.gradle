@@ -43,6 +43,7 @@ android {
             universalApk true
         }
     }
+    namespace 'com.vladpen.cams'
 }
 
 dependencies {
