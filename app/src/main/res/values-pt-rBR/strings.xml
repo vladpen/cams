@@ -38,7 +38,7 @@
     <string name="about">About</string>
     <string name="about_text">
         <![CDATA[
-            <h1>Cams, Version %1$s</h1><br/>
+            <h1>Cams, version %1$s</h1><br/>
             Copyright &copy; %2$s vladpen under MIT license<br/><br/>
             <a href="https://github.com/vladpen/cams">Home page</a><br/><br/>
             <a href="https://github.com/vladpen/cams/issues">
