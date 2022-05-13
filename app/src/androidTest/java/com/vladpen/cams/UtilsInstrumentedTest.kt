@@ -19,7 +19,7 @@ class UtilsInstrumentedTest {
 
     @Test fun decodeUrl() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        val plainPassword = "test"
+        val plainPassword = "password:with/invalid@chars"
         val encodedPassword = Utils.encodeString(context, plainPassword)
         val encodedUrl = "user:$encodedPassword@ip"
         val decodedUrl = Utils.decodeUrl(context, encodedUrl)

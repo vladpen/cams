@@ -26,7 +26,7 @@ object Utils {
         if (url == null)
             return null
         try {
-            val rex = "(([^:]+)://)?((.+?)(:([^@]+))?@)?(.+?)(:(\\d+))?(/.*)?".toRegex()
+            val rex = "((.+?)://)?((.+?)(:(.+))?@)?(.+?)(:(\\d+))?(/.*)?".toRegex()
             val res = rex.matchEntire(url) ?: return null
             val r = res.groupValues
             return UrlDataModel(
@@ -44,7 +44,7 @@ object Utils {
     }
 
     fun replacePassword(url: String, replacement: String): String {
-        return ":[^:]+@".toRegex().replace(url, ":$replacement@")
+        return "(.+?://)?(.+?):.+@".toRegex().replace(url, "$1$2:$replacement@")
     }
 
     fun decodeUrl(context: Context, url: String): String {
