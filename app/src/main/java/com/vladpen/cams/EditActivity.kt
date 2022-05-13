@@ -46,7 +46,7 @@ class EditActivity : AppCompatActivity() {
         binding.btnSave.setOnClickListener {
             save()
         }
-        if (streams.count() > 0) {
+        if (streams.isNotEmpty()) {
             binding.toolbar.btnBack.setOnClickListener {
                 back()
             }
@@ -73,7 +73,7 @@ class EditActivity : AppCompatActivity() {
 
     private val callback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            if (streams.count() > 0)
+            if (streams.isNotEmpty())
                 back()
             else
                 finishAffinity()

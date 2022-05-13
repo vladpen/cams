@@ -127,7 +127,7 @@ class FileData(private val context: Context, private val sftpUrl: String?) {
 
             // Find a file in next directory
             files = getFiles(newDir)
-            if (files.count() == 0)
+            if (files.isEmpty())
                 return ""
             val newName = if (fwd) files.first().name else files.last().name
 

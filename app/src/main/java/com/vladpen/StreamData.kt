@@ -48,7 +48,7 @@ object StreamData {
     }
 
     fun getStreams(context: Context): MutableList<StreamDataModel> {
-        if (streams.count() == 0) {
+        if (streams.isEmpty()) {
             try {
                 context.openFileInput(fileName).use { stream ->
                     val json = stream.bufferedReader().use {

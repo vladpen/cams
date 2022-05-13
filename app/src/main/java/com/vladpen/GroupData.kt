@@ -29,7 +29,7 @@ object GroupData {
     }
 
     fun getGroups(context: Context): MutableList<GroupDataModel> {
-        if (groups.count() == 0) {
+        if (groups.isEmpty()) {
             try {
                 context.openFileInput(fileName).use { group ->
                     val json = group.bufferedReader().use {

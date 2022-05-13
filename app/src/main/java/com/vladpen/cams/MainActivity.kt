@@ -18,7 +18,7 @@ class MainActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        if (streams.count() == 0)
+        if (streams.isEmpty())
             editScreen()
         else
             initActivity()
@@ -49,7 +49,7 @@ class MainActivity: AppCompatActivity() {
     }
 
     private fun groupsScreen() {
-        val intent = if (GroupData.getGroups(this).count() == 0)
+        val intent = if (GroupData.getGroups(this).isEmpty())
             Intent(this, GroupEditActivity::class.java)
         else
             Intent(this, GroupsActivity::class.java)

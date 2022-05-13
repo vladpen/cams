@@ -70,7 +70,7 @@ class GroupEditActivity : AppCompatActivity() {
     }
 
     private fun setStreams(ids: List<Int>?) {
-        if (ids == null || streamsMap.count() == 0) // this is impossible
+        if (ids == null || streamsMap.isEmpty()) // this is impossible
             return
         for (id in ids) {
             if (!streamsMap.containsKey(id))
