@@ -26,11 +26,14 @@ object StreamData {
         write(context)
     }
 
-    private fun write(context: Context) {
-        val json = Gson().toJson(streams)
+    fun write(context: Context) {
         context.openFileOutput(fileName, Context.MODE_PRIVATE).use {
-            it.write(json.toByteArray())
+            it.write(toJson().toByteArray())
         }
+    }
+
+    fun toJson(): String {
+        return Gson().toJson(streams)
     }
 
     fun delete(context: Context, streamId: Int) {
@@ -120,7 +123,7 @@ object StreamData {
         return 0
     }
 
-    private fun initStreams(json: String) {
+    fun initStreams(json: String) {
         if (json == "")
             return
         val listType = object : TypeToken<List<StreamDataModel>>() { }.type

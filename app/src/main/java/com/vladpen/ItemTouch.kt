@@ -1,11 +1,11 @@
 package com.vladpen
 
-import android.content.Context
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.vladpen.cams.MainActivity
 
 object ItemTouch {
-    fun helper(context: Context, cast: String): ItemTouchHelper {
+    fun helper(context: MainActivity): ItemTouchHelper {
         val itemTouchCallback = object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP
                 or ItemTouchHelper.DOWN or ItemTouchHelper.START or ItemTouchHelper.END, 0) {
 
@@ -16,9 +16,9 @@ object ItemTouch {
                 val from = viewHolder.adapterPosition
                 val to = target.adapterPosition
 
-                if (cast == "streams")
+                if (context.getMode() == "streams")
                     (adapter as StreamsAdapter).moveItem(context, from, to)
-                else if (cast == "groups")
+                else if (context.getMode() == "groups")
                     (adapter as GroupsAdapter).moveItem(context, from, to)
 
                 adapter?.notifyItemMoved(from, to)

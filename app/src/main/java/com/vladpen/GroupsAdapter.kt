@@ -8,13 +8,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.vladpen.cams.GroupEditActivity
 import com.vladpen.cams.GroupActivity
-import com.vladpen.cams.databinding.GroupItemBinding
+import com.vladpen.cams.databinding.MainItemBinding
 
 class GroupsAdapter(private val dataSet: List<GroupDataModel>) :
     RecyclerView.Adapter<GroupsAdapter.GroupHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupHolder {
-        val binding = GroupItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = MainItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return GroupHolder(parent.context, binding)
     }
 
@@ -29,12 +29,12 @@ class GroupsAdapter(private val dataSet: List<GroupDataModel>) :
         GroupData.moveItem(context, from, to)
     }
 
-    inner class GroupHolder(private val context: Context, private val binding: GroupItemBinding) :
+    inner class GroupHolder(private val context: Context, private val binding: MainItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(idx: Int, row: GroupDataModel) {
             with(binding) {
-                tvGroupName.text = row.name
-                tvGroupName.setOnClickListener {
+                tvItemName.text = row.name
+                tvItemName.setOnClickListener {
                     val intent = Intent(context, GroupActivity::class.java)
                     navigate(intent, idx)
                 }

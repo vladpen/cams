@@ -1,7 +1,7 @@
 ## 1.2.1 - 2022-05-13
 
 - Cameras and groups: manual sorting
-- Url transcoding: critical error fix
+- URL transcoding: critical error fix
 - Enhanced security
 - Tweaks and improvements
 

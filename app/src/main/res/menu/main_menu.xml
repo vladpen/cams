@@ -9,6 +9,12 @@
         android:title="@string/group_add"
         android:visible="false"/>
     <item
+        android:id="@+id/iExport"
+        android:title="@string/export_settings"/>
+    <item
+        android:id="@+id/iImport"
+        android:title="@string/import_settings"/>
+    <item
         android:id="@+id/iAbout"
-        android:title="@string/about" />
+        android:title="@string/about"/>
 </menu>

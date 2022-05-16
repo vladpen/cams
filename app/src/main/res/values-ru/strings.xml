@@ -19,7 +19,7 @@
     <string name="err_invalid">Неверное значение</string>
     <string name="err_cam_exists">Такая камера уже существует</string>
     <string name="files">Архив</string>
-    <string name="live">Эфир</string>
+    <string name="live">Камера</string>
     <string name="MB">МБ</string>
     <string name="file_prev">Предыдущий файл</string>
     <string name="file_next">Следующий файл</string>
@@ -34,6 +34,10 @@
     <string name="group_delete">Удалить группу?</string>
     <string name="err_group_exists">Такая группа уже существует</string>
     <string name="err_group_streams_count">От %1$d до %2$d строк</string>
+    <string name="export_settings">Экспорт настроек</string>
+    <string name="import_settings">Импорт настроек</string>
+    <string name="renew_settings">Обновить настройки?</string>
+    <string name="ok">Да</string>
     <string name="about">О программе</string>
     <string name="about_text">
         <![CDATA[

@@ -34,6 +34,10 @@
     <string name="group_delete">Delete group?</string>
     <string name="err_group_exists">Group already exists</string>
     <string name="err_group_streams_count">From %1$d to %2$d rows</string>
+    <string name="export_settings">Export settings</string>
+    <string name="import_settings">Import settings</string>
+    <string name="renew_settings">Renew settings?</string>
+    <string name="ok">OK</string>
     <string name="about">About</string>
     <string name="about_text">
         <![CDATA[

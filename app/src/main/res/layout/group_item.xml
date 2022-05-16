@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/tvGroupName"
+        android:id="@+id/tvItemName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="20sp"

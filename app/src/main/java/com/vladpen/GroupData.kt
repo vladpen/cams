@@ -21,11 +21,14 @@ object GroupData {
         write(context)
     }
 
-    private fun write(context: Context) {
-        val json = Gson().toJson(groups)
+    fun write(context: Context) {
         context.openFileOutput(fileName, Context.MODE_PRIVATE).use {
-            it.write(json.toByteArray())
+            it.write(toJson().toByteArray())
         }
+    }
+
+    fun toJson(): String {
+        return Gson().toJson(groups)
     }
 
     fun getGroups(context: Context): MutableList<GroupDataModel> {
@@ -82,7 +85,7 @@ object GroupData {
         write(context)
     }
 
-    private fun initGroups(json: String) {
+    fun initGroups(json: String) {
         if (json == "")
             return
         val listType = object : TypeToken<List<GroupDataModel>>() { }.type

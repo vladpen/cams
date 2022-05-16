@@ -10,7 +10,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -33,16 +32,12 @@
             android:name=".GroupEditActivity"
             android:exported="false" />
         <activity
-            android:name=".GroupsActivity"
-            android:exported="false" />
-        <activity
             android:name=".GroupActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:exported="false" />
         <activity
             android:name=".AboutActivity"
             android:exported="false" />
-
     </application>
 
 </manifest>

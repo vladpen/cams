@@ -78,7 +78,7 @@ class GroupActivity : AppCompatActivity() {
 
     private fun back() {
         GroupData.currentGroupId = -1
-        val intent = Intent(this, GroupsActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
 

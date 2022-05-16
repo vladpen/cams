@@ -8,13 +8,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.vladpen.cams.VideoActivity
 import com.vladpen.cams.EditActivity
-import com.vladpen.cams.databinding.StreamItemBinding
+import com.vladpen.cams.databinding.MainItemBinding
 
 class StreamsAdapter(private val dataSet: List<StreamDataModel>) :
     RecyclerView.Adapter<StreamsAdapter.StreamHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StreamHolder {
-        val binding = StreamItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = MainItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return StreamHolder(parent.context, binding)
     }
 
@@ -29,12 +29,12 @@ class StreamsAdapter(private val dataSet: List<StreamDataModel>) :
         StreamData.moveItem(context, from, to)
     }
 
-    inner class StreamHolder(private val context: Context, private val binding: StreamItemBinding) :
+    inner class StreamHolder(private val context: Context, private val binding: MainItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(idx: Int, row: StreamDataModel) {
             with(binding) {
-                tvStreamName.text = row.name
-                tvStreamName.setOnClickListener {
+                tvItemName.text = row.name
+                tvItemName.setOnClickListener {
                     val intent = Intent(context, VideoActivity::class.java)
                     navigate(intent, idx)
                 }

@@ -13,7 +13,6 @@ import java.util.*
 
 class AboutActivity: AppCompatActivity() {
     private val binding by lazy { ActivityAboutBinding.inflate(layoutInflater) }
-    private var parentScreen: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,8 +21,6 @@ class AboutActivity: AppCompatActivity() {
     }
 
     private fun initActivity() {
-        parentScreen = intent.getStringExtra("parentScreen") ?: ""
-
         binding.toolbar.tvToolbarLabel.text = getString(R.string.about)
         binding.toolbar.btnBack.setOnClickListener {
             back()
@@ -48,13 +45,8 @@ class AboutActivity: AppCompatActivity() {
     }
 
     private fun back() {
-        if (parentScreen == "groups") {
-            val intent = Intent(this, GroupsActivity::class.java)
-            startActivity(intent)
-        } else {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-        }
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
     }
 
     private val callback = object : OnBackPressedCallback(true) {

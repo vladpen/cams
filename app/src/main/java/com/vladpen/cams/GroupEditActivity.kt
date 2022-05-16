@@ -182,7 +182,7 @@ class GroupEditActivity : AppCompatActivity() {
     }
 
     private fun back() {
-        val intent = Intent(this, GroupsActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
 }
