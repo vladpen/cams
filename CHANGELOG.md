@@ -1,3 +1,8 @@
+## 1.2.2 - 2022-05-16
+
+- Export/import settings
+- Fixes, tweaks and improvements
+
 ## 1.2.1 - 2022-05-13
 
 - Cameras and groups: manual sorting

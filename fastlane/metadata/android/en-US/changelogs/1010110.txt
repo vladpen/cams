@@ -1,0 +1,2 @@
+- Export/import settings
+- Fixes, tweaks and improvements

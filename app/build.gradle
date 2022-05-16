@@ -10,8 +10,8 @@ android {
         applicationId "com.vladpen.cams"
         minSdk 23
         targetSdk 32
-        versionCode 1010109
-        versionName "1.2.1"
+        versionCode 1010110
+        versionName "1.2.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
