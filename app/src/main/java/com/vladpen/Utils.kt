@@ -44,7 +44,14 @@ object Utils {
     }
 
     fun replacePassword(url: String, replacement: String): String {
-        return ":.+@".toRegex().replace(url, ":$replacement@")
+        val parsedUrl = parseUrl(url) ?: return url
+        var prefix = ""
+        if (parsedUrl.scheme != "")
+            prefix = "${parsedUrl.scheme}://"
+        if (parsedUrl.user != "")
+            prefix += parsedUrl.user
+
+        return ".+@".toRegex().replace(url, "$prefix:$replacement@")
     }
 
     fun decodeUrl(context: Context, url: String): String {
