@@ -44,7 +44,7 @@ object Utils {
     }
 
     fun replacePassword(url: String, replacement: String): String {
-        return "(.+?://)?(.+?):.+@".toRegex().replace(url, "$1$2:$replacement@")
+        return ":.+@".toRegex().replace(url, ":$replacement@")
     }
 
     fun decodeUrl(context: Context, url: String): String {
