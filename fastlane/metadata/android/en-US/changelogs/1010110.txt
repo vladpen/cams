@@ -1,2 +1,5 @@
+- Groups
+- Manual sorting
 - Export/import settings
+- Enhanced security
 - Fixes, tweaks and improvements
