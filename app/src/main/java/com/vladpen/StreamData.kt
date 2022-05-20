@@ -28,12 +28,12 @@ object StreamData {
 
     fun write(context: Context) {
         context.openFileOutput(fileName, Context.MODE_PRIVATE).use {
-            it.write(toJson().toByteArray())
+            it.write(toJson(getStreams(context)).toByteArray())
         }
     }
 
-    fun toJson(): String {
-        return Gson().toJson(streams)
+    fun toJson(data: List<StreamDataModel>): String {
+        return Gson().toJson(data)
     }
 
     fun delete(context: Context, streamId: Int) {
@@ -64,6 +64,10 @@ object StreamData {
             }
         }
         return streams
+    }
+
+    fun setStreams(data: MutableList<StreamDataModel>) {
+        streams = data
     }
 
     fun getById(streamId: Int): StreamDataModel? {
@@ -123,11 +127,15 @@ object StreamData {
         return 0
     }
 
-    fun initStreams(json: String) {
+    private fun initStreams(json: String) {
         if (json == "")
             return
+        streams = fromJson(json)
+    }
+
+    fun fromJson(json: String): MutableList<StreamDataModel> {
         val listType = object : TypeToken<List<StreamDataModel>>() { }.type
-        streams = Gson().fromJson<List<StreamDataModel>>(json, listType).toMutableList()
+        return Gson().fromJson<List<StreamDataModel>>(json, listType).toMutableList()
     }
 
     private fun generateUniqueId(): Int {

@@ -9,6 +9,8 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
+const val KEY_LEN = 16
+
 data class UrlDataModel(
     val scheme: String,
     val user: String,
@@ -62,11 +64,11 @@ object Utils {
         return replacePassword(url, password)
     }
 
-    fun encodeString(context: Context, str: String): String {
+    fun encodeString(context: Context, str: String, key: String? = null): String {
         if (str == "") return str
         try {
             val cipher = Cipher.getInstance(transformation)
-            cipher.init(Cipher.ENCRYPT_MODE, getKey(context), getIv(context))
+            cipher.init(Cipher.ENCRYPT_MODE, getKey(context, key), getIv(context, key))
             return cipher.doFinal(str.toByteArray()).toHexString()
 
         } catch (e: java.lang.Exception) {
@@ -75,13 +77,13 @@ object Utils {
         return str
     }
 
-    fun decodeString(context: Context, str: String): String {
+    fun decodeString(context: Context, str: String, key: String? = null): String {
         if (str == "") return str
         try {
             val encoded = str.decodeHex()
 
             val cipher = Cipher.getInstance(transformation)
-            cipher.init(Cipher.DECRYPT_MODE, getKey(context), getIv(context))
+            cipher.init(Cipher.DECRYPT_MODE, getKey(context, key), getIv(context, key))
             return String(cipher.doFinal(encoded))
 
         } catch (e: java.lang.Exception) {
@@ -99,32 +101,42 @@ object Utils {
             .toByteArray()
     }
 
-    private fun getKey(context: Context): SecretKey {
-        val len = 16
-        var key = "...secret.key..." // $len bytes
+    private fun getKey(context: Context, key: String? = null): SecretKey {
+        if (key != null)
+            return getKeySpec(key)
+
+        var installationKey = "...secret.key..."
         try {
             val info = getPackageInfo(context)
-            key = (info.applicationInfo.uid.toString() + info.firstInstallTime)
-                .padStart(len, '.')
-                .takeLast(len)
+            installationKey = (info.applicationInfo.uid.toString() + info.firstInstallTime)
         } catch (e: java.lang.Exception) {
             Log.e("Utils", "Key: can't get package info (${e.localizedMessage})")
         }
-        return SecretKeySpec(key.toByteArray(), 0, len, "AES")
+        return getKeySpec(installationKey)
     }
 
-    private fun getIv(context: Context): IvParameterSpec {
-        val len = 16
-        var iv = ".initial.vector." // $len bytes
+    private fun getKeySpec(key: String): SecretKeySpec {
+        val out = key.padStart(KEY_LEN, '.').takeLast(KEY_LEN)
+        return SecretKeySpec(out.toByteArray(), 0, KEY_LEN, "AES")
+    }
+
+    private fun getIv(context: Context, iv: String? = null): IvParameterSpec {
+        if (iv != null)
+            return getIvSpec(iv)
+
+        var installationIv = ".initial.vector."
         try {
             val info = getPackageInfo(context)
-            iv = (info.applicationInfo.uid.toString() + info.firstInstallTime)
-                .padEnd(len, '.')
-                .slice(0 until len)
+            installationIv = (info.applicationInfo.uid.toString() + info.firstInstallTime)
         } catch (e: java.lang.Exception) {
             Log.e("Utils", "IV: can't get package info (${e.localizedMessage})")
         }
-        return IvParameterSpec(iv.toByteArray())
+        return getIvSpec(installationIv)
+    }
+
+    private fun getIvSpec(iv: String): IvParameterSpec {
+        val out = iv.padEnd(KEY_LEN, '.').slice(0 until KEY_LEN)
+        return IvParameterSpec(out.toByteArray())
     }
 
     private fun getPackageInfo(context: Context): PackageInfo {

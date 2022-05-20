@@ -23,12 +23,12 @@ object GroupData {
 
     fun write(context: Context) {
         context.openFileOutput(fileName, Context.MODE_PRIVATE).use {
-            it.write(toJson().toByteArray())
+            it.write(toJson(getGroups(context)).toByteArray())
         }
     }
 
-    fun toJson(): String {
-        return Gson().toJson(groups)
+    fun toJson(data: List<GroupDataModel>): String {
+        return Gson().toJson(data)
     }
 
     fun getGroups(context: Context): MutableList<GroupDataModel> {

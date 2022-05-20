@@ -3,6 +3,7 @@ package com.vladpen.cams
 import android.content.Intent
 import android.view.View
 import android.widget.PopupMenu
+import com.vladpen.Settings
 
 class MainMenu(val context: MainActivity) {
 
@@ -19,8 +20,8 @@ class MainMenu(val context: MainActivity) {
             when (item!!.itemId) {
                 R.id.iStreamAdd -> editScreen()
                 R.id.iGroupAdd -> editGroupScreen()
-                R.id.iExport -> exportScreen()
-                R.id.iImport -> importScreen()
+                R.id.iExport -> export()
+                R.id.iImport -> import()
                 R.id.iAbout -> aboutScreen()
             }
             true
@@ -38,16 +39,11 @@ class MainMenu(val context: MainActivity) {
         context.startActivity(intent)
     }
 
-    private fun exportScreen() {
-        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "application/octet-stream"
-            putExtra(Intent.EXTRA_TITLE, "cams.cfg")
-        }
-        context.exportSettings.launch(intent)
+    private fun export() {
+        Settings(context).exportDialog(context.exportSettings)
     }
 
-    private fun importScreen() {
+    private fun import() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "*/*"
