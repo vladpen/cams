@@ -74,7 +74,7 @@
                 android:padding="10dp"
                 android:text="@string/cam_add"
                 android:textStyle="bold"
-                android:textColor="@color/groups_link" />
+                android:textColor="@color/group_link" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

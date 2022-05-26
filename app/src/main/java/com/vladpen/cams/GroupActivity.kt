@@ -14,6 +14,7 @@ import com.vladpen.*
 import com.vladpen.cams.databinding.ActivityGroupBinding
 
 private const val ASPECT_RATIO = 16f / 9f
+private const val STREAMS_MAX = 4
 
 class GroupActivity : AppCompatActivity() {
     private val binding by lazy { ActivityGroupBinding.inflate(layoutInflater) }
@@ -33,40 +34,38 @@ class GroupActivity : AppCompatActivity() {
 
     private fun initActivity() {
         groupId = intent.getIntExtra("groupId", -1)
+
+        this.onBackPressedDispatcher.addCallback(callback)
+        binding.toolbar.btnBack.setOnClickListener {
+            back()
+        }
         group = GroupData.getById(groupId) ?: return
 
-        binding.toolbar.tvToolbarLink.text = getString(R.string.main_title)
-        binding.toolbar.tvToolbarLink.setTextColor(getColor(R.color.live_link))
-        binding.toolbar.tvToolbarLink.setOnClickListener {
-            mainScreen()
-        }
+        binding.toolbar.tvToolbarLabel.text = group.name
 
-        initToolbar()
         resizeGrid()
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        this.onBackPressedDispatcher.addCallback(callback)
         GroupData.currentGroupId = groupId  // save for back navigation
     }
 
     private fun initFragments() {
         try { // prevents exception if group file is corrupted
-            val streamsMap = StreamData.getStreamsMap(this)
             for ((i, id) in group.streams.withIndex()) {
-                if (i > 3)
+                if (i > STREAMS_MAX - 1)
                     break
-                val fragment = VideoFragment.newInstance(streamsMap[id]!!)
+                if (id > StreamData.getAll().count())
+                    throw Exception("invalid group ID")
+
+                val fragment = VideoFragment.newInstance(id)
                 val viewId = cells[i]
                 supportFragmentManager.beginTransaction().add(viewId, fragment).commit()
             }
         } catch (e: Exception) {
             Log.e("Group", "Data is corrupted (${e.localizedMessage})")
-        }
-    }
 
-    private fun initToolbar() {
-        binding.toolbar.tvToolbarLabel.text = group.name
-        binding.toolbar.btnBack.setOnClickListener {
-            back()
+            val intent = Intent(this, GroupEditActivity::class.java)
+                .putExtra("groupId", groupId)
+            startActivity(intent)
         }
     }
 
@@ -78,11 +77,6 @@ class GroupActivity : AppCompatActivity() {
 
     private fun back() {
         GroupData.currentGroupId = -1
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun mainScreen() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
@@ -137,7 +131,7 @@ class GroupActivity : AppCompatActivity() {
         Effects.cancel()
         binding.toolbar.root.visibility = View.VISIBLE
         if (hideBars) {
-            Effects.delayedFadeOut(this, arrayOf(binding.toolbar.root))
+            Effects.delayedFadeOut(arrayOf(binding.toolbar.root))
         }
     }
 

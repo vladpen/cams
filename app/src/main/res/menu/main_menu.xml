@@ -2,12 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/iStreamAdd"
-        android:title="@string/cam_add"
-        android:visible="false"/>
+        android:title="@string/cam_add"/>
     <item
         android:id="@+id/iGroupAdd"
-        android:title="@string/group_add"
-        android:visible="false"/>
+        android:title="@string/group_add"/>
     <item
         android:id="@+id/iExport"
         android:title="@string/export_settings"/>

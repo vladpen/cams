@@ -76,7 +76,7 @@ class VideoFragment : Fragment() {
 
     private fun play() {
         try {
-            val media = Media(libVlc, Uri.parse(Utils.decodeUrl(requireContext(), stream.url)))
+            val media = Media(libVlc, Uri.parse(Utils.decodeUrl(stream.url)))
 
             media.apply {
                 setHWDecoderEnabled(false, false)

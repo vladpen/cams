@@ -16,6 +16,7 @@ import java.io.FileOutputStream
 private const val MIN_PASSWORD_LEN = 6
 
 class Settings(val context: MainActivity)  {
+    private val fileName = "cams.cfg"
     private val input by lazy { getEditText() }
 
     companion object {
@@ -36,7 +37,7 @@ class Settings(val context: MainActivity)  {
                         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                             addCategory(Intent.CATEGORY_OPENABLE)
                             type = "application/octet-stream"
-                            putExtra(Intent.EXTRA_TITLE, "cams.cfg")
+                            putExtra(Intent.EXTRA_TITLE, fileName)
                         }
                         launcher.launch(intent)
                         dismiss()
@@ -76,7 +77,7 @@ class Settings(val context: MainActivity)  {
                             val fileContent = inputStream?.bufferedReader().use {
                                 it?.readText()?.trim()?.lines()
                             }
-                            if (fileContent?.count() == 2)
+                            if (fileContent != null)
                                 decodeSettings(fileContent)
                             else
                                 Log.e("Settings", "Invalid file content")
@@ -116,14 +117,18 @@ class Settings(val context: MainActivity)  {
             stream.url = restoreUrl(stream.url, password)!!
             stream.sftp = restoreUrl(stream.sftp, password)
         }
-        StreamData.setStreams(streams)
-        StreamData.write(context)
-        try {
-            GroupData.initGroups(content[1])
-            GroupData.write(context)
-        } catch (e: Exception) {
-            Log.e("Settings", "Can't restore (${e.localizedMessage})")
+        StreamData.save()
+        if (content.count() > 1) {
+            GroupData.fromJson(content[1])
+            GroupData.save()
         }
+        if (content.count() > 2) {
+            SourceData.fromJson(content[2])
+            SourceData.save()
+        } else {
+            SourceData.createSources()
+        }
+        SourceData.validate()
         context.finish()
         val intent = Intent(context, MainActivity::class.java)
         context.startActivity(intent)
@@ -137,21 +142,23 @@ class Settings(val context: MainActivity)  {
         if (parsedUrl == null || parsedUrl.password == "")
             return url
 
-        val decodedPassword = Utils.decodeString(context, parsedUrl.password, password)
+        val decodedPassword = Utils.decodeString(parsedUrl.password, password)
         if (decodedPassword == parsedUrl.password)
             throw Exception("invalid password")
-        val encodedPassword = Utils.encodeString(context, decodedPassword)
+        val encodedPassword = Utils.encodeString(decodedPassword)
         return Utils.replacePassword(url, encodedPassword)
     }
 
     private fun encodeSettings(): String {
-        val reEncodedStreams = StreamData.getStreams(context).map { it.copy() }
+        val reEncodedStreams = StreamData.getAll().map { it.copy() }
         for (stream in reEncodedStreams) {
             stream.url = storeUrl(stream.url, password)!!
             stream.sftp = storeUrl(stream.sftp, password)
         }
-        val groups = GroupData.getGroups(context)
-        return "${StreamData.toJson(reEncodedStreams)}\n${GroupData.toJson(groups)}"
+        val streams = StreamData.toJson(reEncodedStreams)
+        val groups = GroupData.toJson(GroupData.getAll())
+        val sources = SourceData.toJson(SourceData.getAll())
+        return "$streams\n$groups\n$sources"
     }
 
     private fun storeUrl(url: String?, password: String): String? {
@@ -162,8 +169,8 @@ class Settings(val context: MainActivity)  {
         if (parsedUrl == null || parsedUrl.password == "")
             return url
 
-        val decodedPassword = Utils.decodeString(context, parsedUrl.password)
-        val encodedPassword = Utils.encodeString(context, decodedPassword, password)
+        val decodedPassword = Utils.decodeString(parsedUrl.password)
+        val encodedPassword = Utils.encodeString(decodedPassword, password)
         return Utils.replacePassword(url, encodedPassword)
     }
 

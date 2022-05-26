@@ -11,11 +11,6 @@ class MainMenu(val context: MainActivity) {
         val popup = PopupMenu(context, view)
         popup.menuInflater.inflate(R.menu.main_menu, popup.menu)
 
-        if (context.getMode() == "streams")
-            popup.menu.findItem(R.id.iStreamAdd).isVisible = true
-        else if (context.getMode() == "groups")
-            popup.menu.findItem(R.id.iGroupAdd).isVisible = true
-
         popup.setOnMenuItemClickListener { item ->
             when (item!!.itemId) {
                 R.id.iStreamAdd -> editScreen()

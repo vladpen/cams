@@ -27,7 +27,7 @@
     <string name="seek_fwd">Seek forward</string>
     <string name="play_pause">Play/Pause</string>
     <string name="mute">Mute</string>
-    <string name="groups">Groups</string>
+    <string name="group">Group</string>
     <string name="group_add">Add group</string>
     <string name="group_name_hint">New group</string>
     <string name="group_cams">Cameras *</string>

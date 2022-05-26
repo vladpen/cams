@@ -1,9 +1,9 @@
 package com.vladpen
 
-import android.content.Context
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.util.Log
+import com.vladpen.cams.MainApp.Companion.context
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
 import javax.crypto.spec.IvParameterSpec
@@ -56,19 +56,19 @@ object Utils {
         return ".+@".toRegex().replace(url, "$prefix:$replacement@")
     }
 
-    fun decodeUrl(context: Context, url: String): String {
+    fun decodeUrl(url: String): String {
         val parts = parseUrl(url) ?: return url
         if (parts.password == "")
             return url
-        val password = decodeString(context, parts.password)
+        val password = decodeString(parts.password)
         return replacePassword(url, password)
     }
 
-    fun encodeString(context: Context, str: String, key: String? = null): String {
+    fun encodeString(str: String, key: String? = null): String {
         if (str == "") return str
         try {
             val cipher = Cipher.getInstance(transformation)
-            cipher.init(Cipher.ENCRYPT_MODE, getKey(context, key), getIv(context, key))
+            cipher.init(Cipher.ENCRYPT_MODE, getKey(key), getIv(key))
             return cipher.doFinal(str.toByteArray()).toHexString()
 
         } catch (e: java.lang.Exception) {
@@ -77,13 +77,13 @@ object Utils {
         return str
     }
 
-    fun decodeString(context: Context, str: String, key: String? = null): String {
+    fun decodeString(str: String, key: String? = null): String {
         if (str == "") return str
         try {
             val encoded = str.decodeHex()
 
             val cipher = Cipher.getInstance(transformation)
-            cipher.init(Cipher.DECRYPT_MODE, getKey(context, key), getIv(context, key))
+            cipher.init(Cipher.DECRYPT_MODE, getKey(key), getIv(key))
             return String(cipher.doFinal(encoded))
 
         } catch (e: java.lang.Exception) {
@@ -101,13 +101,13 @@ object Utils {
             .toByteArray()
     }
 
-    private fun getKey(context: Context, key: String? = null): SecretKey {
+    private fun getKey(key: String? = null): SecretKey {
         if (key != null)
             return getKeySpec(key)
 
         var installationKey = "...secret.key..."
         try {
-            val info = getPackageInfo(context)
+            val info = getPackageInfo()
             installationKey = (info.applicationInfo.uid.toString() + info.firstInstallTime)
         } catch (e: java.lang.Exception) {
             Log.e("Utils", "Key: can't get package info (${e.localizedMessage})")
@@ -120,13 +120,13 @@ object Utils {
         return SecretKeySpec(out.toByteArray(), 0, KEY_LEN, "AES")
     }
 
-    private fun getIv(context: Context, iv: String? = null): IvParameterSpec {
+    private fun getIv(iv: String? = null): IvParameterSpec {
         if (iv != null)
             return getIvSpec(iv)
 
         var installationIv = ".initial.vector."
         try {
-            val info = getPackageInfo(context)
+            val info = getPackageInfo()
             installationIv = (info.applicationInfo.uid.toString() + info.firstInstallTime)
         } catch (e: java.lang.Exception) {
             Log.e("Utils", "IV: can't get package info (${e.localizedMessage})")
@@ -139,7 +139,7 @@ object Utils {
         return IvParameterSpec(out.toByteArray())
     }
 
-    private fun getPackageInfo(context: Context): PackageInfo {
+    private fun getPackageInfo(): PackageInfo {
         if (::packageInfo.isInitialized)
             return packageInfo
         return context.packageManager.getPackageInfo(

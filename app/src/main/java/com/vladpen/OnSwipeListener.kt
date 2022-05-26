@@ -1,15 +1,15 @@
 package com.vladpen
 
-import android.content.Context
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import com.vladpen.cams.MainApp.Companion.context
 import kotlin.math.abs
 
 private const val SWIPE_THRESHOLD = 100
 private const val SWIPE_VELOCITY_THRESHOLD = 100
 
-open class OnSwipeListener(context: Context) : View.OnTouchListener {
+open class OnSwipeListener : View.OnTouchListener {
     private val gestureDetector = GestureDetector(context, GestureListener())
 
     override fun onTouch(v: View?, e: MotionEvent?): Boolean {

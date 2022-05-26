@@ -7,15 +7,13 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.setPadding
-import com.vladpen.StreamData
-import com.vladpen.StreamDataModel
-import com.vladpen.Utils
+import com.vladpen.*
 import com.vladpen.cams.databinding.ActivityEditBinding
 
 class EditActivity : AppCompatActivity() {
     private val binding by lazy { ActivityEditBinding.inflate(layoutInflater) }
     private var streamId: Int = -1
-    private val streams by lazy { StreamData.getStreams(this) }
+    private val streams by lazy { StreamData.getAll() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +65,7 @@ class EditActivity : AppCompatActivity() {
         if (new != null && old != null && new.password == "***")
             return Utils.replacePassword(newUrl, old.password)
         if (new != null && new.password != "")
-            return Utils.replacePassword(newUrl, Utils.encodeString(this, new.password))
+            return Utils.replacePassword(newUrl, Utils.encodeString(new.password))
         return newUrl
     }
 
@@ -84,21 +82,25 @@ class EditActivity : AppCompatActivity() {
         if (!validate())
             return
 
-        val stream = StreamData.getById(streamId)
+        val oldStream = StreamData.getById(streamId)
 
         var streamUrl = binding.etEditUrl.text.toString().trim()
-        streamUrl = getEncodedUrl(streamUrl, stream?.url)
+        streamUrl = getEncodedUrl(streamUrl, oldStream?.url)
 
         var sftpUrl = binding.etEditSftpUrl.text.toString().trim()
-        sftpUrl = getEncodedUrl(sftpUrl, stream?.sftp)
+        sftpUrl = getEncodedUrl(sftpUrl, oldStream?.sftp)
 
-        StreamData.save(this, streamId, StreamDataModel(
+        val newStream = StreamDataModel(
             binding.etEditName.text.toString().trim(),
             streamUrl,
             !binding.scEditTcp.isChecked,
-            if (sftpUrl != "") sftpUrl else null,
-            stream?.id
-        ))
+            if (sftpUrl != "") sftpUrl else null
+        )
+        if (streamId < 0) {
+            StreamData.add(newStream)
+        } else {
+            StreamData.update(streamId, newStream)
+        }
         back()
     }
 
@@ -135,7 +137,7 @@ class EditActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setMessage(R.string.cam_delete)
             .setPositiveButton(R.string.delete) { _, _ ->
-                StreamData.delete(this, streamId)
+                StreamData.delete(streamId)
                 back()
             }
             .setNegativeButton(R.string.cancel) { dialog, _ ->

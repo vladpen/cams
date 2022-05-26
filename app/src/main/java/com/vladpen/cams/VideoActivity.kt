@@ -57,7 +57,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
             initVideoBar()
         initMute()
 
-        gestureDetector = VideoGestureDetector(this, videoLayout)
+        gestureDetector = VideoGestureDetector(videoLayout)
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
@@ -73,9 +73,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     private fun back() {
         if (remotePath == "") {
             if (GroupData.currentGroupId > -1) {
-                val intent = Intent(this, GroupActivity::class.java)
-                    .putExtra("groupId", GroupData.currentGroupId)
-                startActivity(intent)
+                groupScreen()
             } else {
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
@@ -88,21 +86,26 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         }
     }
 
-    private fun filesHome() {
+    private fun filesScreen() {
         val intent = Intent(this, FilesActivity::class.java)
             .putExtra("streamId", streamId)
         startActivity(intent)
     }
 
+    private fun groupScreen() {
+        val intent = Intent(this, GroupActivity::class.java)
+            .putExtra("groupId", GroupData.currentGroupId)
+        startActivity(intent)
+    }
+
+    private fun videoScreen() {
+        finish()
+        intent.putExtra("streamId", streamId).putExtra("remotePath", "")
+        startActivity(intent)
+    }
+
     private fun initToolbar() {
-        val label = binding.toolbar.tvToolbarLabel
-        label.text = stream.name
-        if (remotePath != "") {
-            Effects.setTextViewClickable(this, label, R.color.files_link)
-            label.setOnClickListener {
-                filesHome()
-            }
-        }
+        binding.toolbar.tvToolbarLabel.text = stream.name
         binding.toolbar.btnBack.setOnClickListener {
             back()
         }
@@ -114,16 +117,22 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
             binding.toolbar.tvToolbarLink.text = getString(R.string.files)
             binding.toolbar.tvToolbarLink.setTextColor(getColor(R.color.files_link))
         } else {
-            binding.toolbar.tvToolbarLink.text = getString(R.string.live)
-            binding.toolbar.tvToolbarLink.setTextColor(getColor(R.color.live_link))
+            if (GroupData.currentGroupId > -1) {
+                binding.toolbar.tvToolbarLink.text = getString(R.string.group)
+                binding.toolbar.tvToolbarLink.setTextColor(getColor(R.color.group_link))
+            } else {
+                binding.toolbar.tvToolbarLink.text = getString(R.string.live)
+                binding.toolbar.tvToolbarLink.setTextColor(getColor(R.color.live_link))
+            }
         }
         binding.toolbar.tvToolbarLink.setOnClickListener {
             if (remotePath == "") {
-                filesHome()
+                filesScreen()
             } else {
-                val intent = Intent(this, VideoActivity::class.java)
-                    .putExtra("streamId", streamId)
-                startActivity(intent)
+                if (GroupData.currentGroupId > -1)
+                    groupScreen()
+                else
+                    videoScreen()
             }
         }
     }
@@ -171,10 +180,10 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
 
     private fun initMute() {
         binding.videoBar.btnMute.setOnClickListener {
-            var mute = StreamData.getMute(this)
+            var mute = StreamData.getMute()
             mute = if (mute == 0) 1 else 0
             setMute(mute)
-            StreamData.setMute(this, mute)
+            StreamData.setMute(mute)
             initBars()
         }
     }
@@ -193,9 +202,9 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         try {
             val media =
                 if (remotePath == "")
-                    Media(libVlc, Uri.parse(Utils.decodeUrl(this, stream.url)))
+                    Media(libVlc, Uri.parse(Utils.decodeUrl(stream.url)))
                 else
-                    Media(libVlc, FileData.getTmpFile(this, remotePath).absolutePath)
+                    Media(libVlc, FileData.getTmpFile(remotePath).absolutePath)
 
             media.apply {
                 setHWDecoderEnabled(false, false)
@@ -205,7 +214,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
 
             mediaPlayer.play()
 
-            setMute(StreamData.getMute(this))
+            setMute(StreamData.getMute())
 
         } catch (e: IOException) {
             e.printStackTrace()
@@ -213,14 +222,12 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     }
 
     private fun next(fwd: Boolean = true) {
-        remotePath = FileData(this, stream.sftp).getNext(remotePath, fwd)
+        remotePath = FileData(stream.sftp).getNext(remotePath, fwd)
         if (remotePath != "") {
             binding.videoBar.btnPlay.setBackgroundResource(R.drawable.ic_baseline_pause_24)
             play()
         } else { // The most recent file was played, let's show live video
-            finish()
-            intent.putExtra("streamId", streamId).putExtra("remotePath", "")
-            startActivity(intent)
+            videoScreen()
         }
     }
 
@@ -230,12 +237,8 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         Effects.cancel()
         binding.toolbar.root.visibility = View.VISIBLE
         binding.videoBar.root.visibility = View.VISIBLE
-        if (landscape) {
-            Effects.delayedFadeOut(
-                this,
-                arrayOf(binding.toolbar.root, binding.videoBar.root)
-            )
-        }
+        if (landscape)
+            Effects.delayedFadeOut(arrayOf(binding.toolbar.root, binding.videoBar.root))
     }
 
     override fun onStart() {

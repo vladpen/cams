@@ -19,9 +19,7 @@ private const val STREAMS_MAX = 4
 class GroupEditActivity : AppCompatActivity() {
     private val binding by lazy { ActivityEditGroupBinding.inflate(layoutInflater) }
     private var groupId: Int = -1
-    private lateinit var streams: List<StreamDataModel>
-    private var selectedStreams = mutableMapOf<Int, Int>()
-    private val streamsMap by lazy { StreamData.getStreamsMap(this) }
+    private var selectedStreams = mutableListOf<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +29,6 @@ class GroupEditActivity : AppCompatActivity() {
 
     private fun initActivity() {
         groupId = intent.getIntExtra("groupId", -1)
-        streams = StreamData.getStreams(this)
 
         val group = GroupData.getById(groupId)
         if (group == null) {
@@ -43,8 +40,14 @@ class GroupEditActivity : AppCompatActivity() {
 
             binding.etEditName.setText(group.name)
 
-            setStreams(group.streams)
-
+            selectedStreams = group.streams
+            for (id in selectedStreams) {
+                if (id > StreamData.getAll().count() - 1) { // group data is invalid, drop
+                    selectedStreams.clear()
+                    break
+                }
+                addStreamToView(id)
+            }
             binding.tvDeleteLink.setOnClickListener {
                 delete()
             }
@@ -69,25 +72,13 @@ class GroupEditActivity : AppCompatActivity() {
         }
     }
 
-    private fun setStreams(ids: List<Int>?) {
-        if (ids == null || streamsMap.isEmpty()) // this is impossible
-            return
-        for (id in ids) {
-            if (!streamsMap.containsKey(id))
-                continue
-            val i = streamsMap[id]!!.toInt()
-            selectedStreams[i] = i
-            addStreamToView(i)
-        }
-    }
-
     @SuppressLint("ClickableViewAccessibility")
     private fun addStreamToView(streamId: Int) {
         val tv = View.inflate(this, R.layout.group_stream_item, null) as TextView
-        tv.text = streams[streamId].name
+        tv.text = StreamData.getAll()[streamId].name
         binding.llStreams.addView(tv)
 
-        tv.setOnTouchListener(object : OnSwipeListener(this) {
+        tv.setOnTouchListener(object : OnSwipeListener() {
             override fun onSwipe() {
                 binding.llStreams.removeView(tv)
                 selectedStreams.remove(streamId)
@@ -98,19 +89,18 @@ class GroupEditActivity : AppCompatActivity() {
 
     private fun showPopupMenu(view: View) {
         val popup = PopupMenu(this, view)
-
-        for ((i, stream) in streams.withIndex()) {
-            if (!selectedStreams.containsKey(i))
-                popup.menu.add(Menu.NONE, i, i, stream.name)
+        for ((i, source) in SourceData.getAll().withIndex()) {
+            if (source.type == "stream" && !selectedStreams.contains(source.id))
+                popup.menu.add(Menu.NONE, source.id, i, StreamData.getById(source.id)?.name)
         }
         popup.setOnMenuItemClickListener { item ->
-            val i = item.itemId
-            selectedStreams[i] = i
+            val streamId = item.itemId
+            selectedStreams.add(streamId)
 
-            popup.menu.findItem(i).isVisible = false
-            addStreamToView(i)
+            popup.menu.findItem(streamId).isVisible = false
+            addStreamToView(streamId)
 
-            if (!popup.menu.hasVisibleItems() || selectedStreams.count() > 3)
+            if (!popup.menu.hasVisibleItems() || selectedStreams.count() > STREAMS_MAX - 1)
                 binding.tvAddStream.visibility = View.GONE
 
             true
@@ -119,21 +109,24 @@ class GroupEditActivity : AppCompatActivity() {
     }
 
     private fun save() {
-        val ids = StreamData.getStreamsIds(this, selectedStreams.keys)
-
-        if (!validate(ids))
+        if (!validate())
             return
 
-        GroupData.save(this, groupId, GroupDataModel(
+        val newGroup = GroupDataModel(
             binding.etEditName.text.toString().trim(),
-            ids
-        ))
+            selectedStreams
+        )
+        if (groupId < 0) {
+            GroupData.add(newGroup)
+        } else {
+            GroupData.update(groupId, newGroup)
+        }
         back()
     }
 
-    private fun validate(ids: List<Int>): Boolean {
+    private fun validate(): Boolean {
         val name = binding.etEditName.text.toString().trim()
-        val groups = GroupData.getGroups(this)
+        val groups = GroupData.getAll()
         var ok = true
 
         if (name.isEmpty() || name.length > 255) {
@@ -148,7 +141,8 @@ class GroupEditActivity : AppCompatActivity() {
                 binding.etEditName.error = getString(R.string.err_group_exists)
                 ok = false
             }
-            if (groups[i].streams.count() == ids.count() && groups[i].streams.containsAll(ids)) {
+            if (groups[i].streams.count() == selectedStreams.count() &&
+                groups[i].streams.containsAll(selectedStreams)) {
                 binding.tvStreamsError.text = getString(R.string.err_group_exists)
                 ok = false
             }
@@ -172,7 +166,7 @@ class GroupEditActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setMessage(R.string.group_delete)
             .setPositiveButton(R.string.delete) { _, _ ->
-                GroupData.delete(this, groupId)
+                GroupData.delete(groupId)
                 back()
             }
             .setNegativeButton(R.string.cancel) { dialog, _ ->

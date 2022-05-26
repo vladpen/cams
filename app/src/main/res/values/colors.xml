@@ -12,8 +12,8 @@
     <color name="fabBackground">#007700</color>
     <color name="hint">#AAAAAA</color>
     <color name="error">#FF4400</color>
-    <color name="live_link">#FF8844</color>
+    <color name="live_link">#FFAA00</color>
     <color name="files_link">#44FFCC</color>
-    <color name="groups_link">#BB88FF</color>
+    <color name="group_link">#EEAAFF</color>
 
 </resources>

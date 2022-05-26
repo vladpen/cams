@@ -1,15 +1,15 @@
 package com.vladpen
 
-import android.content.Context
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
+import com.vladpen.cams.MainApp.Companion.context
 import kotlin.math.*
 
 private const val ASPECT_RATIO = 16f / 9f
 
-class VideoGestureDetector(context: Context, private val view: View) {
+class VideoGestureDetector(private val view: View) {
     private val maxScaleFactor = 20f
     private var scaleFactor = 1f
 

@@ -4,60 +4,23 @@ import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.vladpen.cams.MainApp.Companion.context
 
-data class StreamDataModel(
-    val name: String,
-    var url: String,
-    val tcp: Boolean,
-    var sftp: String?,
-    var id: Int?)
+data class StreamDataModel(val name: String, var url: String, val tcp: Boolean, var sftp: String?)
 
 object StreamData {
     private const val fileName = "streams.json"
     private const val muteFileName = "mute.bin"
-    private var streams = mutableListOf<StreamDataModel>()
+    private lateinit var streams: MutableList<StreamDataModel>
 
-    fun save(context: Context, streamId: Int, stream: StreamDataModel) {
-        if (streamId < 0)
-            streams.add(stream)
-        else
-            streams[streamId] = stream
-
-        write(context)
-    }
-
-    fun write(context: Context) {
-        context.openFileOutput(fileName, Context.MODE_PRIVATE).use {
-            it.write(toJson(getStreams(context)).toByteArray())
-        }
-    }
-
-    fun toJson(data: List<StreamDataModel>): String {
-        return Gson().toJson(data)
-    }
-
-    fun delete(context: Context, streamId: Int) {
-        if (streamId < 0)
-            return
-        GroupData.deleteStream(context, streamId)
-        streams.removeAt(streamId)
-        write(context)
-    }
-
-    fun moveItem(context: Context, from: Int, to: Int) {
-        val stream = streams.removeAt(from)
-        streams.add(to, stream)
-        write(context)
-    }
-
-    fun getStreams(context: Context): MutableList<StreamDataModel> {
-        if (streams.isEmpty()) {
+    fun getAll(): MutableList<StreamDataModel> {
+        if (!this::streams.isInitialized) {
             try {
-                context.openFileInput(fileName).use { stream ->
-                    val json = stream.bufferedReader().use {
+                context.openFileInput(fileName).use { inputStream ->
+                    val json = inputStream.bufferedReader().use {
                         it.readText()
                     }
-                    initStreams(json)
+                    fromJson(json)
                 }
             } catch (e: Exception) {
                 Log.e("Data", "Can't read data file $fileName (${e.localizedMessage})")
@@ -66,47 +29,55 @@ object StreamData {
         return streams
     }
 
-    fun setStreams(data: MutableList<StreamDataModel>) {
-        streams = data
-    }
-
     fun getById(streamId: Int): StreamDataModel? {
         if (streamId < 0 || streamId >= streams.count())
             return null
         return streams[streamId]
     }
 
-    fun getStreamsMap(context: Context, flip: Boolean = false): MutableMap<Int, Int> {
-        val allStreams = getStreams(context)
-        val streamsMap = mutableMapOf<Int, Int>()
-        for ((i, stream) in allStreams.withIndex()) {
-            if (stream.id != null) {
-                if (!flip)
-                    streamsMap[stream.id!!] = i
-                else
-                    streamsMap[i] = stream.id!!
-            }
-        }
-        return streamsMap
+    fun add(stream: StreamDataModel) {
+        streams.add(stream)
+        save()
+        SourceData.add(SourceDataModel("stream", streams.count() - 1))
     }
 
-    fun getStreamsIds(context: Context, indices: MutableSet<Int>): MutableList<Int> {
-        streams = getStreams(context)
-        val streamsIds = mutableListOf<Int>()
-        var toWrite = false
-        for (i in indices) {
-            if (streams[i].id == null) {
-                streams[i].id = generateUniqueId()
-                toWrite = true
-            }
-            streamsIds.add(streams[i].id!!)
-        }
-        if (toWrite)
-            write(context)
-        return streamsIds
+    fun update(streamId: Int, stream: StreamDataModel) {
+        streams[streamId] = stream
+        save()
     }
 
-    fun setMute(context: Context, mute: Int) {
+    fun save() {
+        context.openFileOutput(fileName, Context.MODE_PRIVATE).use {
+            it.write(toJson(streams).toByteArray())
+        }
+    }
+
+    fun delete(streamId: Int) {
+        if (streamId < 0)
+            return
+        streams.removeAt(streamId)
+        save()
+        GroupData.deleteStream(streamId)
+        SourceData.delete("stream", streamId)
+    }
+
+    fun toJson(data: List<StreamDataModel>): String {
+        return Gson().toJson(data)
+    }
+
+    fun fromJson(json: String): MutableList<StreamDataModel> {
+        if (json == "")
+            return streams
+        try {
+            val listType = object : TypeToken<List<StreamDataModel>>() { }.type
+            streams = Gson().fromJson<List<StreamDataModel>>(json, listType).toMutableList()
+        } catch (e: Exception) {
+            Log.e("StreamData", "Can't parse (${e.localizedMessage})")
+        }
+        return streams
+    }
+
+    fun setMute(mute: Int) {
         try {
             context.openFileOutput(muteFileName, Context.MODE_PRIVATE).use {
                 it.write(mute)
@@ -116,7 +87,7 @@ object StreamData {
         }
     }
 
-    fun getMute(context: Context): Int {
+    fun getMute(): Int {
         try {
             context.openFileInput(muteFileName).use {
                 return it.read()
@@ -125,32 +96,5 @@ object StreamData {
             Log.e("Data", "Can't read the file $muteFileName (${e.localizedMessage})")
         }
         return 0
-    }
-
-    private fun initStreams(json: String) {
-        if (json == "")
-            return
-        streams = fromJson(json)
-    }
-
-    fun fromJson(json: String): MutableList<StreamDataModel> {
-        val listType = object : TypeToken<List<StreamDataModel>>() { }.type
-        return Gson().fromJson<List<StreamDataModel>>(json, listType).toMutableList()
-    }
-
-    private fun generateUniqueId(): Int {
-        var id = (100000..999999).random()
-        var done = false
-        while (!done) {
-            done = true
-            for (s in streams) {
-                if (s.id != id)
-                    continue
-                id = (100000..999999).random()
-                done = false
-                break
-            }
-        }
-        return id
     }
 }

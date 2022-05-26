@@ -36,25 +36,26 @@ class FilesActivity: AppCompatActivity() {
             back()
         }
         this.onBackPressedDispatcher.addCallback(callback)
+        binding.toolbar.tvToolbarLabel.text = stream.name
 
-        val label = binding.toolbar.tvToolbarLabel
-        label.text = stream.name
-        if (remotePath != sftpData!!.path) {
-            Effects.setTextViewClickable(this, label, R.color.files_link)
-            label.setOnClickListener {
-                filesHome()
+        if (GroupData.currentGroupId > -1) {
+            binding.toolbar.tvToolbarLink.text = getString(R.string.group)
+            binding.toolbar.tvToolbarLink.setTextColor(getColor(R.color.group_link))
+            binding.toolbar.tvToolbarLink.setOnClickListener {
+                groupScreen()
+            }
+        } else {
+            binding.toolbar.tvToolbarLink.text = getString(R.string.live)
+            binding.toolbar.tvToolbarLink.setTextColor(getColor(R.color.live_link))
+            binding.toolbar.tvToolbarLink.setOnClickListener {
+                videoScreen()
             }
         }
-        binding.toolbar.tvToolbarLink.text = getString(R.string.live)
-        binding.toolbar.tvToolbarLink.setTextColor(getColor(R.color.live_link))
-        binding.toolbar.tvToolbarLink.setOnClickListener {
-            videoScreen()
-        }
 
-        val files = FileData(this, stream.sftp).getFiles(remotePath)
+        val files = FileData(stream.sftp).getAll(remotePath)
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
-        binding.recyclerView.adapter = FilesAdapter(files, remotePath, streamId, stream.sftp)
+        binding.recyclerView.adapter = FileAdapter(files, remotePath, streamId, stream.sftp)
     }
 
     private val callback = object : OnBackPressedCallback(true) {
@@ -74,15 +75,15 @@ class FilesActivity: AppCompatActivity() {
         }
     }
 
-    private fun filesHome() {
-        val intent = Intent(this, FilesActivity::class.java)
+    private fun videoScreen() {
+        val intent = Intent(this, VideoActivity::class.java)
             .putExtra("streamId", streamId)
         startActivity(intent)
     }
 
-    private fun videoScreen() {
-        val intent = Intent(this, VideoActivity::class.java)
-            .putExtra("streamId", streamId)
+    private fun groupScreen() {
+        val intent = Intent(this, GroupActivity::class.java)
+            .putExtra("groupId", GroupData.currentGroupId)
         startActivity(intent)
     }
 }

@@ -20,13 +20,13 @@
       "filters": [
         {
           "filterType": "ABI",
-          "value": "x86"
+          "value": "armeabi-v7a"
         }
       ],
       "attributes": [],
       "versionCode": 1010110,
       "versionName": "1.2.2",
-      "outputFile": "app-x86-release.apk"
+      "outputFile": "app-armeabi-v7a-release.apk"
     },
     {
       "type": "ONE_OF_MANY",
@@ -59,13 +59,13 @@
       "filters": [
         {
           "filterType": "ABI",
-          "value": "armeabi-v7a"
+          "value": "x86"
         }
       ],
       "attributes": [],
       "versionCode": 1010110,
       "versionName": "1.2.2",
-      "outputFile": "app-armeabi-v7a-release.apk"
+      "outputFile": "app-x86-release.apk"
     }
   ],
   "elementType": "File"

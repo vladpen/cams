@@ -4,41 +4,23 @@ import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.vladpen.cams.MainApp.Companion.context
 
 data class GroupDataModel(val name: String, var streams: MutableList<Int>)
 
 object GroupData {
-    var currentGroupId = -1
     private const val fileName = "groups.json"
-    private var groups = mutableListOf<GroupDataModel>()
+    private lateinit var groups: MutableList<GroupDataModel>
+    var currentGroupId = -1
 
-    fun save(context: Context, groupId: Int, group: GroupDataModel) {
-        if (groupId < 0)
-            groups.add(group)
-        else
-            groups[groupId] = group
-
-        write(context)
-    }
-
-    fun write(context: Context) {
-        context.openFileOutput(fileName, Context.MODE_PRIVATE).use {
-            it.write(toJson(getGroups(context)).toByteArray())
-        }
-    }
-
-    fun toJson(data: List<GroupDataModel>): String {
-        return Gson().toJson(data)
-    }
-
-    fun getGroups(context: Context): MutableList<GroupDataModel> {
-        if (groups.isEmpty()) {
+    fun getAll(): MutableList<GroupDataModel> {
+        if (!this::groups.isInitialized) {
             try {
-                context.openFileInput(fileName).use { group ->
-                    val json = group.bufferedReader().use {
+                context.openFileInput(fileName).use { inputStream ->
+                    val json = inputStream.bufferedReader().use {
                         it.readText()
                     }
-                    initGroups(json)
+                    fromJson(json)
                 }
             } catch (e: Exception) {
                 Log.e("Data", "Can't read data file $fileName (${e.localizedMessage})")
@@ -53,42 +35,58 @@ object GroupData {
         return groups[groupId]
     }
 
-    fun delete(context: Context, groupId: Int) {
+    fun add(group: GroupDataModel) {
+        groups.add(group)
+        save()
+        SourceData.add(SourceDataModel("group", groups.count() - 1))
+    }
+
+    fun update(groupId: Int, group: GroupDataModel) {
+        groups[groupId] = group
+        save()
+    }
+
+    fun save() {
+        context.openFileOutput(fileName, Context.MODE_PRIVATE).use {
+            it.write(toJson(groups).toByteArray())
+        }
+    }
+
+    fun delete(groupId: Int) {
         if (groupId < 0)
             return
         groups.removeAt(groupId)
-        write(context)
+        save()
+        SourceData.delete("group", groupId)
     }
 
-    fun deleteStream(context: Context, streamId: Int) {
-        if (streamId < 0)
-            return
-        groups = getGroups(context)
-        val streamsMap = StreamData.getStreamsMap(context, true)
-
-        var toWrite = false
-        for ((i, group) in groups.withIndex()) {
-            if (!group.streams.contains(streamsMap[streamId]))
-                continue
-            toWrite = true
-            group.streams.remove(streamsMap[streamId])
+    fun deleteStream(streamId: Int) {
+        for ((id, group) in groups.withIndex()) {
+            if (group.streams.contains(streamId))
+                group.streams.remove(streamId)
+            for (i in group.streams.indices) {
+                if (group.streams[i] > streamId)
+                    group.streams[i] -= 1
+            }
             if (group.streams.count() < 2)
-                delete(context, i)
+                delete(id)
         }
-        if (toWrite)
-            write(context)
+        save()
     }
 
-    fun moveItem(context: Context, from: Int, to: Int) {
-        val item = groups.removeAt(from)
-        groups.add(to, item)
-        write(context)
+    fun toJson(data: List<GroupDataModel>): String {
+        return Gson().toJson(data)
     }
 
-    fun initGroups(json: String) {
+    fun fromJson(json: String): MutableList<GroupDataModel> {
         if (json == "")
-            return
-        val listType = object : TypeToken<List<GroupDataModel>>() { }.type
-        groups = Gson().fromJson<List<GroupDataModel>>(json, listType).toMutableList()
+            return groups
+        try {
+            val listType = object : TypeToken<List<GroupDataModel>>() { }.type
+            groups = Gson().fromJson<List<GroupDataModel>>(json, listType).toMutableList()
+        } catch (e: Exception) {
+            Log.e("GroupData", "Can't parse (${e.localizedMessage})")
+        }
+        return groups
     }
 }

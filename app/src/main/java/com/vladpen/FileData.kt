@@ -1,18 +1,18 @@
 package com.vladpen
 
-import android.content.Context
 import android.os.StrictMode
 import android.util.Log
 import com.jcraft.jsch.ChannelSftp
 import com.jcraft.jsch.JSch
 import com.jcraft.jsch.Session
+import com.vladpen.cams.MainApp.Companion.context
 import java.io.File
 import java.io.IOException
 import java.lang.Thread.sleep
 
 data class FileDataModel(val name: String, val size: Long, val isDir: Boolean)
 
-class FileData(private val context: Context, private val sftpUrl: String?) {
+class FileData(private val sftpUrl: String?) {
 
     companion object {
         private var session: Session? = null
@@ -23,13 +23,13 @@ class FileData(private val context: Context, private val sftpUrl: String?) {
             return p.substring(0, p.lastIndexOf("/") + 1)
         }
 
-        fun getTmpFile(context: Context, file: String): File {
+        fun getTmpFile(file: String): File {
             val ext = file.substring(file.lastIndexOf(".") + 1)
             return File(context.cacheDir.path + "/video." + ext)
         }
     }
 
-    fun getFiles(remotePath: String): MutableList<FileDataModel> {
+    fun getAll(remotePath: String): MutableList<FileDataModel> {
         val files = mutableListOf<FileDataModel>()
 
         connect()
@@ -59,7 +59,7 @@ class FileData(private val context: Context, private val sftpUrl: String?) {
      * @param file file name
      */
     fun remoteToCache(path: String, file: String) {
-        val tmpFile = getTmpFile(context, file)
+        val tmpFile = getTmpFile(file)
 
         try {
             tmpFile.writeText("") // create if not exists and set zero size
@@ -98,7 +98,7 @@ class FileData(private val context: Context, private val sftpUrl: String?) {
             val parentPath = getParentPath(remotePath)
 
             // Find a file in current folder
-            var files = getFiles(parentPath)
+            var files = getAll(parentPath)
             val f = files.find { it.name == currentName }
             val fid = files.indexOf(f)
             if ((fid < files.count() - 1 && fwd) || (fid > 0 && !fwd)) {
@@ -116,7 +116,7 @@ class FileData(private val context: Context, private val sftpUrl: String?) {
             // Find next/prev directory
             val grandPath = getParentPath(parentPath)
             val currentDir = path[path.count() - 2]
-            val dirs = getFiles(grandPath)
+            val dirs = getAll(grandPath)
             val d = dirs.find { it.name == currentDir }
             val did = dirs.indexOf(d)
             if ((did > dirs.count() - 1 && fwd) || (did == 0 && !fwd)) {
@@ -126,7 +126,7 @@ class FileData(private val context: Context, private val sftpUrl: String?) {
             val newDir = grandPath + dirs[idx].name + "/"
 
             // Find a file in next directory
-            files = getFiles(newDir)
+            files = getAll(newDir)
             if (files.isEmpty())
                 return ""
             val newName = if (fwd) files.first().name else files.last().name
@@ -151,7 +151,7 @@ class FileData(private val context: Context, private val sftpUrl: String?) {
             if (channel != null || session != null)
                 disconnect()
 
-            val password = Utils.decodeString(context, sftpData.password)
+            val password = Utils.decodeString(sftpData.password)
 
             val jsch = JSch()
             val session: Session = jsch.getSession(sftpData.user, sftpData.host, sftpData.port)
