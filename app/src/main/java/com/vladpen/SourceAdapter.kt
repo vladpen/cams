@@ -58,7 +58,6 @@ class SourceAdapter(private val dataSet: List<SourceDataModel>) :
 
         private fun initGroup(id: Int) {
             with(binding) {
-                tvItemName.setTypeface(null, Typeface.ITALIC)
                 tvItemName.setTextColor(context.getColor(R.color.group_link))
                 tvItemName.text = GroupData.getById(id)?.name
                 tvItemName.setOnClickListener {
