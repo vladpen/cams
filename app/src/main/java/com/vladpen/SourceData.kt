@@ -10,10 +10,10 @@ data class SourceDataModel(val type: String, var id: Int)
 
 object SourceData {
     private const val fileName = "sources.json"
-    private lateinit var sources: MutableList<SourceDataModel>
+    private var sources = mutableListOf<SourceDataModel>()
 
     fun getAll(): MutableList<SourceDataModel> {
-        if (!this::sources.isInitialized) {
+        if (sources.isEmpty()) {
             try {
                 context.openFileInput(fileName).use { inputStream ->
                     val json = inputStream.bufferedReader().use {

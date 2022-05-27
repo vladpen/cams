@@ -11,10 +11,10 @@ data class StreamDataModel(val name: String, var url: String, val tcp: Boolean, 
 object StreamData {
     private const val fileName = "streams.json"
     private const val muteFileName = "mute.bin"
-    private lateinit var streams: MutableList<StreamDataModel>
+    private var streams = mutableListOf<StreamDataModel>()
 
     fun getAll(): MutableList<StreamDataModel> {
-        if (!this::streams.isInitialized) {
+        if (streams.isEmpty()) {
             try {
                 context.openFileInput(fileName).use { inputStream ->
                     val json = inputStream.bufferedReader().use {

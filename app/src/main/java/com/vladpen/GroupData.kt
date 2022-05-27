@@ -10,11 +10,11 @@ data class GroupDataModel(val name: String, var streams: MutableList<Int>)
 
 object GroupData {
     private const val fileName = "groups.json"
-    private lateinit var groups: MutableList<GroupDataModel>
+    private var groups = mutableListOf<GroupDataModel>()
     var currentGroupId = -1
 
     fun getAll(): MutableList<GroupDataModel> {
-        if (!this::groups.isInitialized) {
+        if (groups.isEmpty()) {
             try {
                 context.openFileInput(fileName).use { inputStream ->
                     val json = inputStream.bufferedReader().use {
