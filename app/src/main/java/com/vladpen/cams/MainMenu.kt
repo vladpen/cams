@@ -4,12 +4,16 @@ import android.content.Intent
 import android.view.View
 import android.widget.PopupMenu
 import com.vladpen.Settings
+import com.vladpen.StreamData
 
 class MainMenu(val context: MainActivity) {
 
     fun showPopupMenu(view: View) {
         val popup = PopupMenu(context, view)
         popup.menuInflater.inflate(R.menu.main_menu, popup.menu)
+
+        if (StreamData.getAll().count() < 2)
+            popup.menu.findItem(R.id.iGroupAdd).isVisible = false
 
         popup.setOnMenuItemClickListener { item ->
             when (item!!.itemId) {
