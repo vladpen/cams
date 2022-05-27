@@ -5,6 +5,7 @@ import android.content.Intent
 import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.view.Gravity
+import android.view.ViewGroup
 import android.widget.EditText
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -187,6 +188,7 @@ class Settings(val context: MainActivity)  {
             .setView(input)
             .setPositiveButton(R.string.btn_continue, null)
             .setNegativeButton(R.string.cancel) { dialog, _ ->
+                (input.parent as ViewGroup).removeView(input)
                 dialog.dismiss()
             }
             .create()
