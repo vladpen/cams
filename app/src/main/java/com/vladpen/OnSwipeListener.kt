@@ -2,6 +2,8 @@ package com.vladpen
 
 import android.view.GestureDetector
 import android.view.MotionEvent
+import android.view.MotionEvent.ACTION_DOWN
+import android.view.MotionEvent.ACTION_UP
 import android.view.View
 import com.vladpen.cams.MainApp.Companion.context
 import kotlin.math.abs
@@ -15,6 +17,12 @@ open class OnSwipeListener : View.OnTouchListener {
     override fun onTouch(v: View?, e: MotionEvent?): Boolean {
         if (e == null)
             return true
+
+        if (e.action == ACTION_DOWN)
+            v?.alpha = 0.5f
+        else if (e.action == ACTION_UP)
+            v?.alpha = 1f
+
         val res = gestureDetector.onTouchEvent(e)
         return res || v?.performClick() ?: true
     }
