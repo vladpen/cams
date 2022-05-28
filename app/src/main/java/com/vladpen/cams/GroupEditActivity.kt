@@ -40,7 +40,7 @@ class GroupEditActivity : AppCompatActivity() {
 
             binding.etEditName.setText(group.name)
 
-            selectedStreams = group.streams
+            selectedStreams = group.streams.map { it } as MutableList<Int>
             for (id in selectedStreams) {
                 if (id > StreamData.getAll().count() - 1) { // group data is invalid, drop
                     selectedStreams.clear()
@@ -52,7 +52,9 @@ class GroupEditActivity : AppCompatActivity() {
                 delete()
             }
         }
-        if (group != null && group.streams.count() >= STREAMS_MAX)
+        if (group != null && (
+                group.streams.count() >= STREAMS_MAX ||
+                group.streams.count() >= StreamData.getAll().count()))
             binding.tvAddStream.visibility = View.GONE
         binding.tvAddStream.setOnClickListener {
             showPopupMenu(it)
