@@ -4,7 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.vladpen.*
 import com.vladpen.cams.databinding.ActivityMainBinding
 
@@ -25,7 +27,12 @@ class MainActivity: AppCompatActivity() {
     }
 
     private fun initActivity() {
-        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        if (resources.displayMetrics.heightPixels > resources.displayMetrics.widthPixels)
+            binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        else
+            GridLayoutManager(this,2, RecyclerView.VERTICAL,false)
+                .apply { binding.recyclerView.layoutManager = this }
+
         binding.toolbar.btnBack.setImageResource(R.drawable.ic_baseline_menu_24)
         binding.toolbar.btnBack.setOnClickListener {
             MainMenu(this).showPopupMenu(it)
