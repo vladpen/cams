@@ -2,9 +2,9 @@ package com.vladpen
 
 import android.view.GestureDetector
 import android.view.MotionEvent
-import android.view.MotionEvent.ACTION_DOWN
-import android.view.MotionEvent.ACTION_UP
+import android.view.MotionEvent.*
 import android.view.View
+import android.view.ViewGroup
 import com.vladpen.cams.MainApp.Companion.context
 import kotlin.math.abs
 
@@ -13,18 +13,23 @@ private const val SWIPE_VELOCITY_THRESHOLD = 100
 
 open class OnSwipeListener : View.OnTouchListener {
     private val gestureDetector = GestureDetector(context, GestureListener())
+    private lateinit var childView: View
+    private var childViewX = 0f
 
     override fun onTouch(v: View?, e: MotionEvent?): Boolean {
-        if (e == null)
+        if (e == null || v == null)
             return true
 
-        if (e.action == ACTION_DOWN)
-            v?.alpha = 0.5f
-        else if (e.action == ACTION_UP)
-            v?.alpha = 1f
+        childView = (v as ViewGroup).getChildAt(0)
 
-        val res = gestureDetector.onTouchEvent(e)
-        return res || v?.performClick() ?: true
+        if (e.action == ACTION_DOWN) {
+            v.alpha = 0.5f
+            childViewX = childView.x
+        } else if (e.action == ACTION_UP) {
+            v.alpha = 1f
+            childView.x = childViewX
+        }
+        return gestureDetector.onTouchEvent(e) || v.performClick()
     }
 
     private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
@@ -47,6 +52,13 @@ open class OnSwipeListener : View.OnTouchListener {
                 e.printStackTrace()
             }
             return false
+        }
+
+        override fun onScroll(
+            e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float
+        ): Boolean {
+            childView.x -= distanceX
+            return true
         }
     }
 

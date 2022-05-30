@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
+import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
@@ -76,13 +77,13 @@ class GroupEditActivity : AppCompatActivity() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun addStreamToView(streamId: Int) {
-        val tv = View.inflate(this, R.layout.group_stream_item, null) as TextView
-        tv.text = StreamData.getAll()[streamId].name
-        binding.llStreams.addView(tv)
+        val row = View.inflate(this, R.layout.group_stream_item, null) as ViewGroup
+        (row.getChildAt(0) as TextView).text = StreamData.getAll()[streamId].name
+        binding.llStreams.addView(row)
 
-        tv.setOnTouchListener(object : OnSwipeListener() {
+        row.setOnTouchListener(object : OnSwipeListener() {
             override fun onSwipe() {
-                binding.llStreams.removeView(tv)
+                binding.llStreams.removeView(row)
                 selectedStreams.remove(streamId)
                 binding.tvAddStream.visibility = View.VISIBLE
             }
