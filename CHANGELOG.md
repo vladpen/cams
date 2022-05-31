@@ -1,3 +1,12 @@
+## 1.3.0 - 2022-05-30
+
+- Common screen of cameras and groups
+- Export/Import: password encryption
+- Grid at main screen
+- Visualization of swiping
+- Refactoring and optimizations
+- Fixes
+
 ## 1.2.2 - 2022-05-16
 
 - Export/import settings

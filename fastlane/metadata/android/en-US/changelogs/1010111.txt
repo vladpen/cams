@@ -1,0 +1,6 @@
+- Common screen of cameras and groups
+- Export/Import: password encryption
+- Grid at main screen
+- Visualization of swiping
+- Refactoring and optimizations
+- Fixes

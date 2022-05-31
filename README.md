@@ -1,6 +1,6 @@
 ## Cams
 
-![Cams](https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/1_cover.jpg)
+![Cams](https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/5_cover.jpg)
 
 Простое мобильное приложение под Android для воспроизведения RTSP потоков с IP камер.
 
@@ -15,20 +15,20 @@
   Эта опция важна при просмотре камер через интернет, где UDP может не поддерживаться или работать плохо.
 - Предельная простота навигации и управления.
 
-<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/2_main_ru.jpg"
+<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/1_main_ru.jpg"
 alt="Main screen"
 width="200">&nbsp;
-<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/3_edit_ru.jpg"
+<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/2_edit_ru.jpg"
 alt="Edit screen"
 width="200">&nbsp;
-<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/4_files_ru.jpg"
+<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/3_files_ru.jpg"
 alt="Files screen"
 width="200">&nbsp;
-<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/5_video_ru.jpg"
+<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/4_video_ru.jpg"
 alt="Video screen"
 width="200">
 
-Приложение написано специально для работы с сервером [python-rtsp-server](https://github.com/vladpen/python-rtsp-server),
+Приложение написано для совместного использования с сервером [python-rtsp-server](https://github.com/vladpen/python-rtsp-server),
 но прекрасно работает автономно благодаря возможности подключения к любым IP камерам, а также видеорегистраторам, поддерживающим SFTP.
 
 Воспроизводит большинство типов видеопотоков (не только RTSP).
