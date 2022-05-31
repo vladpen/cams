@@ -54,8 +54,8 @@ class GroupEditActivity : AppCompatActivity() {
             }
         }
         if (group != null && (
-                group.streams.count() >= STREAMS_MAX ||
-                group.streams.count() >= StreamData.getAll().count()))
+                selectedStreams.count() >= STREAMS_MAX ||
+                selectedStreams.count() >= StreamData.getAll().count()))
             binding.tvAddStream.visibility = View.GONE
         binding.tvAddStream.setOnClickListener {
             showPopupMenu(it)
