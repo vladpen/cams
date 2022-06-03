@@ -64,8 +64,9 @@ height="80">](https://github.com/vladpen/cams/tree/main/app/release/)
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
 alt="Get it on F-Droid"
 height="80">](https://f-droid.org/packages/com.vladpen.cams/)
+
 [<img src="https://store.nashstore.ru/assets/images/logo.svg"
 alt="Get it on NashStore"
-height="80">](https://store.nashstore.ru/store/628380ec4891a5de4cd8d26f)
+height="40">](https://store.nashstore.ru/store/628380ec4891a5de4cd8d26f)
 
 *Copyright (c) 2022 vladpen under MIT license. Use it with absolutely no warranty.*
