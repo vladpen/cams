@@ -11,6 +11,7 @@ data class SourceDataModel(val type: String, var id: Int)
 object SourceData {
     private const val fileName = "sources.json"
     private var sources = mutableListOf<SourceDataModel>()
+    var editShown = false
 
     fun getAll(): MutableList<SourceDataModel> {
         if (sources.isEmpty()) {

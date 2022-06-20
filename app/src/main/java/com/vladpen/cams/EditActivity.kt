@@ -44,15 +44,11 @@ class EditActivity : AppCompatActivity() {
         binding.btnSave.setOnClickListener {
             save()
         }
-        if (streams.isNotEmpty()) {
-            binding.toolbar.btnBack.setOnClickListener {
-                back()
-            }
-        } else {
-            binding.toolbar.btnBack.visibility = View.GONE
-            binding.toolbar.tvToolbarLabel.setPadding(30)
+        binding.toolbar.btnBack.setOnClickListener {
+            back()
         }
         this.onBackPressedDispatcher.addCallback(callback)
+        SourceData.editShown = true
     }
 
     private fun safeUrl(url: String?): String {
