@@ -2,6 +2,7 @@ package com.vladpen.cams
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
@@ -20,10 +21,7 @@ class MainActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        if (sources.isEmpty() && !SourceData.editShown)
-            editScreen()
-        else
-            initActivity()
+        initActivity()
     }
 
     private fun initActivity() {
@@ -41,12 +39,22 @@ class MainActivity: AppCompatActivity() {
         ItemTouch.helper().attachToRecyclerView(binding.recyclerView)
 
         binding.toolbar.tvToolbarLabel.text = getString(R.string.main_title)
+
+        if (sources.isEmpty())
+            initEmpty()
+
         this.onBackPressedDispatcher.addCallback(callback)
     }
 
-    private fun editScreen() {
-        val intent = Intent(this, EditActivity::class.java)
-        startActivity(intent)
+    private fun initEmpty() {
+        binding.emptyBox.emptyContent.visibility = View.VISIBLE
+        binding.emptyBox.btnEdit.setOnClickListener {
+            val intent = Intent(this, EditActivity::class.java)
+            startActivity(intent)
+        }
+        binding.emptyBox.btnImport.setOnClickListener {
+            MainMenu(this).import()
+        }
     }
 
     private val callback = object : OnBackPressedCallback(true) {

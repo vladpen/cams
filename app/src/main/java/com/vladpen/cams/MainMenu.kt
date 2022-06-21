@@ -42,7 +42,7 @@ class MainMenu(val context: MainActivity) {
         Settings(context).exportDialog(context.exportSettings)
     }
 
-    private fun import() {
+    fun import() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "*/*"

@@ -48,7 +48,6 @@ class EditActivity : AppCompatActivity() {
             back()
         }
         this.onBackPressedDispatcher.addCallback(callback)
-        SourceData.editShown = true
     }
 
     private fun safeUrl(url: String?): String {
