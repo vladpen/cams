@@ -15,6 +15,9 @@ class MainMenu(val context: MainActivity) {
         if (StreamData.getAll().count() < 2)
             popup.menu.findItem(R.id.iGroupAdd).isVisible = false
 
+        if (StreamData.getAll().isEmpty())
+            popup.menu.findItem(R.id.iExport).isVisible = false
+
         popup.setOnMenuItemClickListener { item ->
             when (item!!.itemId) {
                 R.id.iStreamAdd -> editScreen()
