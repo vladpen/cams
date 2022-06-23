@@ -90,12 +90,14 @@ object SourceData {
         val groupSources = sources.filter { it.type == "group" }
         val streamCount = StreamData.getAll().count()
         val groupCount = GroupData.getAll().count()
+        val maxStreamId = streamSources.maxByOrNull { it.id }?.id
+        val maxGroupId = groupSources.maxByOrNull { it.id }?.id
 
         if (sources.count() != streamCount + groupCount ||
             streamSources.count() != streamCount ||
             groupSources.count() != groupCount ||
-            streamSources.maxByOrNull { it.id }?.id!! > streamCount - 1 ||
-            groupSources.maxByOrNull { it.id }?.id!! > groupCount - 1
+            (maxStreamId != null && maxStreamId > streamCount - 1) ||
+            (maxGroupId != null && maxGroupId > groupCount - 1)
         )
             createSources()
     }
