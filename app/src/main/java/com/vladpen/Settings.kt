@@ -7,38 +7,49 @@ import android.util.Log
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import com.vladpen.cams.MainActivity
 import com.vladpen.cams.R
 import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.*
 
 private const val MIN_PASSWORD_LEN = 6
 
 class Settings(val context: MainActivity)  {
-    private val fileName = "cams.cfg"
+    private val filePrefix = "cams"
+    private val fileExt = "cfg"
     private val input by lazy { getEditText() }
+    private val inputConfirm by lazy { getEditText() }
 
     companion object {
         private var password: String = ""
     }
 
     fun exportDialog(launcher: ActivityResultLauncher<Intent>) {
-        val dialog = getDialog(context.getString(R.string.export_password, MIN_PASSWORD_LEN))
+        val dialog = getDialog(getExportDialogContent())
         dialog.apply {
             setOnShowListener {
                 getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                     val userPassword = input.text.toString().trim()
                     if (userPassword.length < MIN_PASSWORD_LEN) {
                         input.error = context.getString(R.string.err_invalid)
+                    } else if (inputConfirm.text.toString().trim() != userPassword) {
+                        inputConfirm.error = context.getString(R.string.err_invalid)
                     } else {
                         password = userPassword
+
+                        val sdf = SimpleDateFormat("yyMMdd", Locale.getDefault())
+                        val currentDate = sdf.format(Date())
 
                         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                             addCategory(Intent.CATEGORY_OPENABLE)
                             type = "application/octet-stream"
-                            putExtra(Intent.EXTRA_TITLE, fileName)
+                            putExtra(Intent.EXTRA_TITLE, "$filePrefix$currentDate.$fileExt")
                         }
                         launcher.launch(intent)
                         dismiss()
@@ -91,7 +102,7 @@ class Settings(val context: MainActivity)  {
     }
 
     private fun decodeSettings(content: List<String>) {
-        val dialog = getDialog(context.getString(R.string.import_password))
+        val dialog = getDialog(getImportDialogContent())
         dialog.apply {
             setOnShowListener {
                 getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
@@ -182,15 +193,45 @@ class Settings(val context: MainActivity)  {
         return editText
     }
 
-    private fun getDialog(title: String): AlertDialog {
+    private fun getDialog(layout: LinearLayout): AlertDialog {
         return AlertDialog.Builder(context)
-            .setMessage(title)
-            .setView(input)
+            .setView(layout)
             .setPositiveButton(R.string.btn_continue, null)
             .setNegativeButton(R.string.cancel) { dialog, _ ->
-                (input.parent as ViewGroup).removeView(input)
+                (layout.parent as ViewGroup).removeView(layout)
                 dialog.dismiss()
             }
             .create()
+    }
+
+    private fun getLayout(): LinearLayout {
+        val layout = LinearLayout(context)
+        layout.orientation = LinearLayout.VERTICAL
+        layout.setPadding(64, 0, 64, 0)
+        return layout
+    }
+
+    private fun getTextView(title: String): TextView {
+        val tv = TextView(context)
+        tv.text = title
+        tv.setPadding(0, 64, 0, 0)
+        return tv
+    }
+
+    private fun getExportDialogContent(): LinearLayout {
+        val layout = getLayout()
+        layout.addView(getTextView(context.getString(R.string.export_password, MIN_PASSWORD_LEN)))
+        layout.addView(input)
+
+        layout.addView(getTextView(context.getString(R.string.export_password_confirm)))
+        layout.addView(inputConfirm)
+        return layout
+    }
+
+    private fun getImportDialogContent(): LinearLayout {
+        val layout = getLayout()
+        layout.addView(getTextView(context.getString(R.string.import_password)))
+        layout.addView(input)
+        return layout
     }
 }

@@ -37,6 +37,7 @@
     <string name="export_settings">Экспорт настроек</string>
     <string name="import_settings">Импорт настроек</string>
     <string name="export_password">Пароль (не менее %1$d символов):</string>
+    <string name="export_password_confirm">Проверка пароля:</string>
     <string name="import_password">Пароль, указанный при экспорте:</string>
     <string name="btn_continue">Продолжить</string>
     <string name="about">О программе</string>

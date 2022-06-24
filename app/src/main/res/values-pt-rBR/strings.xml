@@ -38,6 +38,7 @@
     <string name="export_settings">Export settings</string>
     <string name="import_settings">Import settings</string>
     <string name="export_password">Password (at least %1$d characters):</string>
+    <string name="export_password_confirm">Confirm password:</string>
     <string name="import_password">Password specified during export:</string>
     <string name="btn_continue">Continue</string>
     <string name="about">About</string>
