@@ -1,3 +1,8 @@
+## 1.3.1 - 2022-06-24
+
+- Export/import: password confirmation and current date in the file name
+- Fixes and improvements
+
 ## 1.3.0 - 2022-05-30
 
 - Common screen of cameras and groups
