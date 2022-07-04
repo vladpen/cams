@@ -12,6 +12,7 @@ object StreamData {
     private const val fileName = "streams.json"
     private const val muteFileName = "mute.bin"
     private var streams = mutableListOf<StreamDataModel>()
+    var logConnections = false
 
     fun getAll(): MutableList<StreamDataModel> {
         if (streams.isEmpty()) {

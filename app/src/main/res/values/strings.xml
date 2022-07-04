@@ -50,4 +50,8 @@
                 Bug reports and issue tracker</a>
         ]]>
     </string>
+    <string name="logs">Device logs</string>
+    <string name="line_count">Lines count:</string>
+    <string name="log_cons_label">Log connections to cameras</string>
+    <string name="log_cons_hint">(not recommended for security reasons)</string>
 </resources>

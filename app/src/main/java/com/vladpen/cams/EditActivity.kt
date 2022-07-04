@@ -6,7 +6,6 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.setPadding
 import com.vladpen.*
 import com.vladpen.cams.databinding.ActivityEditBinding
 

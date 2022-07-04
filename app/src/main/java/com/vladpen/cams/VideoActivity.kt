@@ -47,7 +47,8 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         libVlc = LibVLC(this, ArrayList<String>().apply {
             if (stream.tcp && remotePath == "")
                 add("--rtsp-tcp")
-            add("--verbose=-1")
+            if (!StreamData.logConnections)
+                add("--verbose=-1")
         })
         mediaPlayer = MediaPlayer(libVlc)
         mediaPlayer.setEventListener(this)

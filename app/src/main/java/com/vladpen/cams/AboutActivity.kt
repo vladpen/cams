@@ -42,6 +42,10 @@ class AboutActivity: AppCompatActivity() {
             getString(R.string.about_text, versionName, year),
             HtmlCompat.FROM_HTML_MODE_COMPACT)
         binding.tvAbout.movementMethod = LinkMovementMethod.getInstance()
+
+        binding.tvLog.setOnClickListener {
+            logScreen()
+        }
     }
 
     private fun back() {
@@ -53,5 +57,10 @@ class AboutActivity: AppCompatActivity() {
         override fun handleOnBackPressed() {
             back()
         }
+    }
+
+    private fun logScreen() {
+        val intent = Intent(this, LogActivity::class.java)
+        startActivity(intent)
     }
 }

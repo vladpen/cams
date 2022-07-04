@@ -50,4 +50,8 @@
                 Отчеты об ошибках и трекер задач</a>
         ]]>
     </string>
+    <string name="logs">Логи устройства</string>
+    <string name="line_count">Число строк:</string>
+    <string name="log_cons_label">Логировать подключения к камерам</string>
+    <string name="log_cons_hint">(не рекомендуется по соображениям безопасности)</string>
 </resources>
