@@ -70,6 +70,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         NetworkState(isLocal).observe(this) { isConnected ->
             if (isConnected) {
                 binding.tvAlert.visibility = View.GONE
+                mediaPlayer.stop()
                 mediaPlayer.play()
             } else {
                 binding.tvAlert.visibility = View.VISIBLE
