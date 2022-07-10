@@ -45,6 +45,15 @@ object Utils {
         return null
     }
 
+    fun isUrlLocal(url: String): Boolean {
+        val parsedUrl = parseUrl(url)
+        if (parsedUrl == null || parsedUrl.host == "")
+            return false
+        if (parsedUrl.host.startsWith("192.") || parsedUrl.host.startsWith("10."))
+            return true
+        return false
+    }
+
     fun replacePassword(url: String, replacement: String): String {
         val parsedUrl = parseUrl(url) ?: return url
         var prefix = ""

@@ -63,6 +63,20 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         this.onBackPressedDispatcher.addCallback(callback)
+
+        if (remotePath != "")
+            return
+        val isLocal = Utils.isUrlLocal(stream.url)
+        NetworkState(isLocal).observe(this) { isConnected ->
+            if (isConnected) {
+                binding.tvAlert.visibility = View.GONE
+                mediaPlayer.play()
+            } else {
+                binding.tvAlert.visibility = View.VISIBLE
+                binding.tvAlert.text =
+                    if (isLocal) getString(R.string.no_wifi) else getString(R.string.no_internet)
+            }
+        }
     }
 
     private val callback = object : OnBackPressedCallback(true) {
