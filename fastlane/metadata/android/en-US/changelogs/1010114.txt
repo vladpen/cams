@@ -1,0 +1,2 @@
+- Connection lost handler
+- Device log reader (section "About")

@@ -1,3 +1,8 @@
+## 1.3.2 - 2022-07-11
+
+- Connection lost handler
+- Device log reader (section "About")
+
 ## 1.3.1 - 2022-06-24
 
 - Export/import: password confirmation and current date in the file name
