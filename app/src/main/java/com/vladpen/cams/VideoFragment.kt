@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.vladpen.NetworkState
 import com.vladpen.StreamData
 import com.vladpen.StreamDataModel
 import com.vladpen.Utils
@@ -73,6 +74,8 @@ class VideoFragment : Fragment() {
                 add("--verbose=-1")
         })
         mediaPlayer = MediaPlayer(libVlc)
+
+        observeNetworkState()
     }
 
     private fun play() {
@@ -116,5 +119,20 @@ class VideoFragment : Fragment() {
         super.onDestroy()
         mediaPlayer.release()
         libVlc.release()
+    }
+
+    private fun observeNetworkState() {
+        val isLocal = Utils.isUrlLocal(stream.url)
+        NetworkState(isLocal).observe(this) { isConnected ->
+            if (isConnected) {
+                binding.tvAlert.visibility = View.GONE
+                mediaPlayer.stop()
+                mediaPlayer.play()
+            } else {
+                binding.tvAlert.visibility = View.VISIBLE
+                binding.tvAlert.text =
+                    if (isLocal) getString(R.string.no_wifi) else getString(R.string.no_internet)
+            }
+        }
     }
 }

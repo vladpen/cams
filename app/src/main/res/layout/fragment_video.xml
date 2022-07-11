@@ -18,4 +18,20 @@
         android:layout_gravity="center"
         android:indeterminate="true" />
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal">
+
+        <TextView
+            android:id="@+id/tvAlert"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/overlay_background"
+            android:gravity="center"
+            android:textColor="@color/text"
+            android:textSize="20sp"
+            android:padding="8dp" />
+    </RelativeLayout>
+
 </FrameLayout>

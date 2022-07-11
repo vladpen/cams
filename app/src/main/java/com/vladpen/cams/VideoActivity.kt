@@ -64,20 +64,8 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
 
         this.onBackPressedDispatcher.addCallback(callback)
 
-        if (remotePath != "")
-            return
-        val isLocal = Utils.isUrlLocal(stream.url)
-        NetworkState(isLocal).observe(this) { isConnected ->
-            if (isConnected) {
-                binding.tvAlert.visibility = View.GONE
-                mediaPlayer.stop()
-                mediaPlayer.play()
-            } else {
-                binding.tvAlert.visibility = View.VISIBLE
-                binding.tvAlert.text =
-                    if (isLocal) getString(R.string.no_wifi) else getString(R.string.no_internet)
-            }
-        }
+        if (remotePath == "")
+            observeNetworkState()
     }
 
     private val callback = object : OnBackPressedCallback(true) {
@@ -304,5 +292,20 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         super.onConfigurationChanged(newConfig)
         gestureDetector.reset()
         initBars(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
+    }
+
+    private fun observeNetworkState() {
+        val isLocal = Utils.isUrlLocal(stream.url)
+        NetworkState(isLocal).observe(this) { isConnected ->
+            if (isConnected) {
+                binding.tvAlert.visibility = View.GONE
+                mediaPlayer.stop()
+                mediaPlayer.play()
+            } else {
+                binding.tvAlert.visibility = View.VISIBLE
+                binding.tvAlert.text =
+                    if (isLocal) getString(R.string.no_wifi) else getString(R.string.no_internet)
+            }
+        }
     }
 }

@@ -34,7 +34,7 @@
         android:id="@+id/tvAlert"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background"
+        android:background="@color/overlay_background"
         android:gravity="center"
         android:textColor="@color/text"
         android:textSize="20sp"
