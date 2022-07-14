@@ -1,3 +1,7 @@
+## 1.3.2.1 - 2022-07-14
+
+- Network connection alert visibility fix
+
 ## 1.3.2 - 2022-07-11
 
 - Connection lost handler
