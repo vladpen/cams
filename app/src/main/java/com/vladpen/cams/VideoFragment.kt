@@ -119,6 +119,7 @@ class VideoFragment : Fragment() {
 
     fun play() {
         mediaPlayer.play()
+        mediaPlayer.volume = 0
     }
 
     private fun observeNetworkState() {
@@ -128,6 +129,7 @@ class VideoFragment : Fragment() {
                 binding.tvAlert.visibility = View.GONE
                 mediaPlayer.stop()
                 mediaPlayer.play()
+                mediaPlayer.volume = 0
             } else {
                 binding.tvAlert.visibility = View.VISIBLE
                 binding.tvAlert.text =

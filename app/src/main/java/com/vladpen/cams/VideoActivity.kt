@@ -217,7 +217,6 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
             }.release()
 
             mediaPlayer.play()
-
             setMute(StreamData.getMute())
 
         } catch (e: IOException) {
@@ -301,6 +300,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
                 binding.tvAlert.visibility = View.GONE
                 mediaPlayer.stop()
                 mediaPlayer.play()
+                setMute(StreamData.getMute())
             } else {
                 binding.tvAlert.visibility = View.VISIBLE
                 binding.tvAlert.text =
