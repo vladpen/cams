@@ -50,6 +50,7 @@
                 Отчеты об ошибках и трекер задач</a>
         ]]>
     </string>
+    <string name="copy">Копировать</string>
     <string name="no_wifi">Нет Wi-Fi</string>
     <string name="no_internet">Нет подключения</string>
     <string name="logs">Логи устройства</string>
