@@ -1,10 +1,13 @@
 package com.vladpen
 
+import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.RelativeLayout
 import com.vladpen.cams.MainApp.Companion.context
 
 object Effects {
@@ -33,6 +36,16 @@ object Effects {
         })
         for (view in views)
             view.startAnimation(animation)
+    }
+
+    fun dimmer(view: ViewGroup) {
+        val overlay = RelativeLayout(context)
+        overlay.layoutParams = RelativeLayout.LayoutParams(
+            RelativeLayout.LayoutParams.MATCH_PARENT,
+            RelativeLayout.LayoutParams.MATCH_PARENT
+        )
+        overlay.setBackgroundColor(Color.parseColor("#80FFFFFF"))
+        view.addView(overlay)
     }
 
     fun cancel() {

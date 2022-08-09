@@ -12,6 +12,7 @@ private const val ASPECT_RATIO = 16f / 9f
 class VideoGestureDetector(private val view: View) {
     private val maxScaleFactor = 20f
     private var scaleFactor = 1f
+    private var aspectRatio = ASPECT_RATIO
 
     private val visibleSize = object {
         var width = 0
@@ -19,12 +20,12 @@ class VideoGestureDetector(private val view: View) {
         var availableX = 0f
         var availableY = 0f
         fun set() {
-            if (view.width > view.height) {
+            if (view.width.toFloat() / view.height.toFloat() > aspectRatio) {
                 height = view.height
-                width = (height * ASPECT_RATIO).roundToInt()
+                width = (height * aspectRatio).roundToInt()
             } else {
                 width = view.width
-                height = (width / ASPECT_RATIO).roundToInt()
+                height = (width / aspectRatio).roundToInt()
             }
             availableX = max(0f, (width * (scaleFactor - 1) - view.width + width) / 2)
             availableY = max(0f, (height * (scaleFactor - 1) - view.height + height) / 2)
@@ -47,7 +48,8 @@ class VideoGestureDetector(private val view: View) {
         else gestureDetector.onTouchEvent(event)
     }
 
-    fun reset() {
+    fun reset(videoAspectRatio: Float = ASPECT_RATIO) {
+        aspectRatio = videoAspectRatio
         scaleFactor = 1f
         view.scaleX = scaleFactor
         view.scaleY = scaleFactor
@@ -99,7 +101,7 @@ class VideoGestureDetector(private val view: View) {
             distanceY: Float
         ): Boolean {
             move(distanceX, distanceY)
-            return true
+            return scaleFactor > 1f // allow single click handling if the image is not scaled
         }
 
         override fun onDown(e: MotionEvent?): Boolean {

@@ -2,11 +2,13 @@ package com.vladpen.cams
 
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -24,11 +26,16 @@ class GroupActivity : AppCompatActivity() {
     private val cells = listOf(R.id.llCell1, R.id.llCell2, R.id.llCell3, R.id.llCell4)
     private var hideBars = false
 
+    private lateinit var gestureDetector: VideoGestureDetector
+    private var gestureInProgress = 0
+    private var aspectRatio = 1f
+    private var fragments = arrayListOf<VideoFragment>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         initActivity()
-        if(savedInstanceState == null)
+        if (savedInstanceState == null)
             initFragments()
     }
 
@@ -44,6 +51,9 @@ class GroupActivity : AppCompatActivity() {
         binding.toolbar.tvToolbarLabel.text = group.name
 
         resizeGrid()
+        gestureDetector = VideoGestureDetector(binding.clGroupBox)
+        gestureDetector.reset(aspectRatio)
+
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         GroupData.currentGroupId = groupId  // save for back navigation
     }
@@ -57,15 +67,17 @@ class GroupActivity : AppCompatActivity() {
                     throw Exception("invalid group ID")
 
                 val fragment = VideoFragment.newInstance(id)
-                val viewId = cells[i]
-                supportFragmentManager.beginTransaction().add(viewId, fragment).commit()
+                val frame = findViewById<FrameLayout>(cells[i])
+                supportFragmentManager.beginTransaction().add(frame.id, fragment).commit()
+                frame.setOnClickListener {
+                    videoScreen(i)
+                }
+                fragments.add(fragment)
             }
         } catch (e: Exception) {
             Log.e("Group", "Data is corrupted (${e.localizedMessage})")
-
-            val intent = Intent(this, GroupEditActivity::class.java)
-                .putExtra("groupId", groupId)
-            startActivity(intent)
+            startActivity(Intent(this, GroupEditActivity::class.java)
+                .putExtra("groupId", groupId))
         }
     }
 
@@ -77,8 +89,7 @@ class GroupActivity : AppCompatActivity() {
 
     private fun back() {
         GroupData.currentGroupId = -1
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(this, MainActivity::class.java))
     }
 
     private fun resizeGrid() {
@@ -96,8 +107,8 @@ class GroupActivity : AppCompatActivity() {
             binding.llRow1.orientation = LinearLayout.VERTICAL
             binding.llRow2.orientation = LinearLayout.VERTICAL
 
-            val groupAspectRatio = ASPECT_RATIO / group.streams.count()
-            if (screenAspectRatio > groupAspectRatio) {
+            aspectRatio = ASPECT_RATIO / group.streams.count()
+            if (screenAspectRatio > aspectRatio) {
                 frameHeight = screenHeight / group.streams.count()
                 hideBars = true
             } else {
@@ -107,12 +118,12 @@ class GroupActivity : AppCompatActivity() {
             binding.llRow1.orientation = LinearLayout.HORIZONTAL
             binding.llRow2.orientation = LinearLayout.HORIZONTAL
 
-            val groupAspectRatio = if (group.streams.count() == 2)
+            aspectRatio = if (group.streams.count() == 2)
                 ASPECT_RATIO * 2
             else
                 ASPECT_RATIO
 
-            if (screenAspectRatio > groupAspectRatio) {
+            if (screenAspectRatio > aspectRatio) {
                 frameHeight = screenHeight / 2
                 hideBars = true
             } else {
@@ -120,11 +131,49 @@ class GroupActivity : AppCompatActivity() {
             }
         }
         for (i in group.streams.indices) {
-            val view = findViewById<LinearLayout>(cells[i])
-            view.layoutParams.height = frameHeight
-            view.layoutParams.width = (frameHeight * ASPECT_RATIO).toInt()
+            val frame = findViewById<FrameLayout>(cells[i])
+            frame.layoutParams.height = frameHeight
+            frame.layoutParams.width = (frameHeight * ASPECT_RATIO).toInt()
         }
         initBars()
+    }
+
+    override fun dispatchTouchEvent(e: MotionEvent?): Boolean {
+        if (e == null)
+            return super.dispatchTouchEvent(e)
+
+        val res = gestureDetector.onTouchEvent(e) || e.pointerCount > 1
+        if (res)
+            gestureInProgress = e.pointerCount + 1
+
+        if (e.action == MotionEvent.ACTION_UP) {
+            if (gestureInProgress == 0)
+                initBars()
+            else
+                gestureInProgress -= 1
+
+            for ((i, fragment) in fragments.withIndex()) {
+                if (findViewById<FrameLayout>(cells[i]).getGlobalVisibleRect(Rect()))
+                    fragment.play()
+                else
+                    fragment.stop()
+            }
+        }
+        return res || super.dispatchTouchEvent(e)
+    }
+
+    private fun videoScreen(i: Int) {
+        if (gestureInProgress > 0)
+            return
+
+        val frame = findViewById<FrameLayout>(cells[i])
+        Effects.dimmer(frame)
+
+        val id = group.streams[i]
+        startActivity(
+            Intent(this, VideoActivity::class.java)
+                .putExtra("streamId", id)
+        )
     }
 
     private fun initBars() {
@@ -135,13 +184,9 @@ class GroupActivity : AppCompatActivity() {
         }
     }
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        initBars()
-        return super.onTouchEvent(event)
-    }
-
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         resizeGrid()
+        gestureDetector.reset(aspectRatio)
     }
 }

@@ -1,6 +1,5 @@
 package com.vladpen.cams
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -55,13 +54,6 @@ class VideoFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-
-        binding.root.setOnClickListener {
-            val intent = Intent(context, VideoActivity::class.java)
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                .putExtra("streamId", streamId)
-            context?.startActivity(intent)
-        }
         return binding.root
     }
 
@@ -78,7 +70,7 @@ class VideoFragment : Fragment() {
         observeNetworkState()
     }
 
-    private fun play() {
+    private fun start() {
         try {
             val media = Media(libVlc, Uri.parse(Utils.decodeUrl(stream.url)))
 
@@ -101,7 +93,7 @@ class VideoFragment : Fragment() {
 
         mediaPlayer.attachViews(videoLayout, null, false, false)
         mediaPlayer.volume = 0
-        play()
+        start()
 
         mediaPlayer.setEventListener {
             if (it.type == MediaPlayer.Event.Buffering && it.buffering == 100f)
@@ -119,6 +111,14 @@ class VideoFragment : Fragment() {
         super.onDestroy()
         mediaPlayer.release()
         libVlc.release()
+    }
+
+    fun stop() {
+        mediaPlayer.stop()
+    }
+
+    fun play() {
+        mediaPlayer.play()
     }
 
     private fun observeNetworkState() {
