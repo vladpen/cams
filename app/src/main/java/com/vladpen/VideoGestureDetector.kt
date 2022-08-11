@@ -13,24 +13,10 @@ class VideoGestureDetector(private val view: View) {
     private val maxScaleFactor = 20f
     private var scaleFactor = 1f
     private var aspectRatio = ASPECT_RATIO
-
-    private val visibleSize = object {
-        var width = 0
-        var height = 0
-        var availableX = 0f
-        var availableY = 0f
-        fun set() {
-            if (view.width.toFloat() / view.height.toFloat() > aspectRatio) {
-                height = view.height
-                width = (height * aspectRatio).roundToInt()
-            } else {
-                width = view.width
-                height = (width / aspectRatio).roundToInt()
-            }
-            availableX = max(0f, (width * (scaleFactor - 1) - view.width + width) / 2)
-            availableY = max(0f, (height * (scaleFactor - 1) - view.height + height) / 2)
-        }
-    }
+    private var width = 0
+    private var height = 0
+    private var availableX = 0f
+    private var availableY = 0f
 
     private val gestureDetector = GestureDetector(
         context,
@@ -55,18 +41,34 @@ class VideoGestureDetector(private val view: View) {
         view.scaleY = scaleFactor
         view.x = 0f
         view.y = 0f
+        width = 0
+        height = 0
+    }
+
+    private fun setSize() {
+        if (width == 0 || height == 0) {
+            if (view.width.toFloat() / view.height.toFloat() > aspectRatio) {
+                height = view.height
+                width = (height * aspectRatio).roundToInt()
+            } else {
+                width = view.width
+                height = (width / aspectRatio).roundToInt()
+            }
+        }
+        availableX = max(0f, (width * (scaleFactor - 1) - view.width + width) / 2)
+        availableY = max(0f, (height * (scaleFactor - 1) - view.height + height) / 2)
     }
 
     private fun move(distanceX: Float, distanceY: Float) {
-        if (abs(view.x - distanceX) < visibleSize.availableX)
+        if (abs(view.x - distanceX) < availableX)
             view.x -= distanceX
         else
-            view.x = visibleSize.availableX * sign(view.x)
+            view.x = availableX * sign(view.x)
 
-        if (abs(view.y - distanceY) < visibleSize.availableY)
+        if (abs(view.y - distanceY) < availableY)
             view.y -= distanceY
         else
-            view.y = visibleSize.availableY * sign(view.y)
+            view.y = availableY * sign(view.y)
     }
 
     private inner class VideoScaleDetectorListener :
@@ -80,16 +82,11 @@ class VideoGestureDetector(private val view: View) {
             if (scaleFactor == maxScaleFactor && detector.scaleFactor > 1)
                 return true
 
-            visibleSize.set()
+            setSize()
             val distanceX = view.x * (1 - detector.scaleFactor)
             val distanceY = view.y * (1 - detector.scaleFactor)
             move(distanceX, distanceY)
             return true
-        }
-
-        override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
-            visibleSize.set()
-            return super.onScaleBegin(detector)
         }
     }
 
@@ -102,11 +99,6 @@ class VideoGestureDetector(private val view: View) {
         ): Boolean {
             move(distanceX, distanceY)
             return scaleFactor > 1f // allow single click handling if the image is not scaled
-        }
-
-        override fun onDown(e: MotionEvent?): Boolean {
-            visibleSize.set()
-            return super.onDown(e)
         }
     }
 }

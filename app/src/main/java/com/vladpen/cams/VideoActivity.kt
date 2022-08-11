@@ -59,6 +59,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         initMute()
 
         gestureDetector = VideoGestureDetector(videoLayout)
+        gestureDetector.reset()
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
