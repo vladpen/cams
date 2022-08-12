@@ -41,20 +41,19 @@ class VideoGestureDetector(private val view: View) {
         view.scaleY = scaleFactor
         view.x = 0f
         view.y = 0f
-        width = 0
-        height = 0
     }
 
     private fun setSize() {
-        if (width == 0 || height == 0) {
-            if (view.width.toFloat() / view.height.toFloat() > aspectRatio) {
-                height = view.height
-                width = (height * aspectRatio).roundToInt()
-            } else {
-                width = view.width
-                height = (width / aspectRatio).roundToInt()
-            }
+        if (view.width.toFloat() / view.height.toFloat() > aspectRatio) {
+            height = view.height
+            width = (height * aspectRatio).roundToInt()
+        } else {
+            width = view.width
+            height = (width / aspectRatio).roundToInt()
         }
+    }
+
+    private fun setLimit() {
         availableX = max(0f, (width * (scaleFactor - 1) - view.width + width) / 2)
         availableY = max(0f, (height * (scaleFactor - 1) - view.height + height) / 2)
     }
@@ -82,7 +81,7 @@ class VideoGestureDetector(private val view: View) {
             if (scaleFactor == maxScaleFactor && detector.scaleFactor > 1)
                 return true
 
-            setSize()
+            setLimit()
             val distanceX = view.x * (1 - detector.scaleFactor)
             val distanceY = view.y * (1 - detector.scaleFactor)
             move(distanceX, distanceY)
@@ -99,6 +98,12 @@ class VideoGestureDetector(private val view: View) {
         ): Boolean {
             move(distanceX, distanceY)
             return scaleFactor > 1f // allow single click handling if the image is not scaled
+        }
+
+        override fun onDown(e: MotionEvent?): Boolean {
+            setSize()
+            setLimit()
+            return super.onDown(e)
         }
     }
 }
