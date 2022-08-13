@@ -15,8 +15,8 @@ class VideoGestureDetector(private val view: View) {
     private var aspectRatio = ASPECT_RATIO
     private var width = 0
     private var height = 0
-    private var availableX = 0f
-    private var availableY = 0f
+    private var maxX = 0f
+    private var maxY = 0f
 
     private val gestureDetector = GestureDetector(
         context,
@@ -54,20 +54,20 @@ class VideoGestureDetector(private val view: View) {
     }
 
     private fun setLimit() {
-        availableX = max(0f, (width * (scaleFactor - 1) - view.width + width) / 2)
-        availableY = max(0f, (height * (scaleFactor - 1) - view.height + height) / 2)
+        maxX = max(0f, (width * (scaleFactor - 1) - view.width + width) / 2)
+        maxY = max(0f, (height * (scaleFactor - 1) - view.height + height) / 2)
     }
 
     private fun move(distanceX: Float, distanceY: Float) {
-        if (abs(view.x - distanceX) < availableX)
+        if (abs(view.x - distanceX) < maxX)
             view.x -= distanceX
         else
-            view.x = availableX * sign(view.x)
+            view.x = maxX * sign(view.x)
 
-        if (abs(view.y - distanceY) < availableY)
+        if (abs(view.y - distanceY) < maxY)
             view.y -= distanceY
         else
-            view.y = availableY * sign(view.y)
+            view.y = maxY * sign(view.y)
     }
 
     private inner class VideoScaleDetectorListener :
