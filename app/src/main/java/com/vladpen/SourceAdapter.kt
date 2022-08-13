@@ -40,6 +40,7 @@ class SourceAdapter(private val dataSet: List<SourceDataModel>) :
         private fun initStream(id: Int) {
             with(binding) {
                 tvItemName.text = StreamData.getById(id)?.name
+                tvItemName.setTextColor(context.getColor(R.color.text))
                 tvItemName.setOnClickListener {
                     navigate(
                         Intent(context, VideoActivity::class.java)
@@ -57,8 +58,8 @@ class SourceAdapter(private val dataSet: List<SourceDataModel>) :
 
         private fun initGroup(id: Int) {
             with(binding) {
-                tvItemName.setTextColor(context.getColor(R.color.group_link))
                 tvItemName.text = GroupData.getById(id)?.name
+                tvItemName.setTextColor(context.getColor(R.color.group_link))
                 tvItemName.setOnClickListener {
                     navigate(Intent(context, GroupActivity::class.java)
                         .putExtra("groupId", id))
