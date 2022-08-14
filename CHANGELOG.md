@@ -1,3 +1,10 @@
+## 1.3.3 - 2022-08-14
+
+- Groups zooming
+- Copying device logs to the clipboard
+- Components update
+- Optimization and bug fixes
+
 ## 1.3.2.1 - 2022-07-14
 
 - Network connection alert visibility fix

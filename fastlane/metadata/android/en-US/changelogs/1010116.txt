@@ -1,0 +1,4 @@
+- Groups zooming
+- Copying device logs to the clipboard
+- Components update
+- Optimization and bug fixes
