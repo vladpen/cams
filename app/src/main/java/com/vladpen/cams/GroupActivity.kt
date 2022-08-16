@@ -23,7 +23,6 @@ class GroupActivity : AppCompatActivity() {
 
     private var groupId: Int = -1
     private lateinit var group: GroupDataModel
-    private val cells = listOf(R.id.llCell1, R.id.llCell2, R.id.llCell3, R.id.llCell4)
     private var hideBars = false
 
     private lateinit var gestureDetector: VideoGestureDetector
@@ -67,7 +66,7 @@ class GroupActivity : AppCompatActivity() {
                     throw Exception("invalid group ID")
 
                 val fragment = VideoFragment.newInstance(id)
-                val frame = findViewById<FrameLayout>(cells[i])
+                val frame = getFrame(i)
                 supportFragmentManager.beginTransaction().add(frame.id, fragment).commit()
                 frame.setOnClickListener {
                     videoScreen(i)
@@ -131,7 +130,7 @@ class GroupActivity : AppCompatActivity() {
             }
         }
         for (i in group.streams.indices) {
-            val frame = findViewById<FrameLayout>(cells[i])
+            val frame = getFrame(i)
             frame.layoutParams.height = frameHeight
             frame.layoutParams.width = (frameHeight * ASPECT_RATIO).toInt()
         }
@@ -153,7 +152,7 @@ class GroupActivity : AppCompatActivity() {
                 gestureInProgress -= 1
 
             for ((i, fragment) in fragments.withIndex()) {
-                if (findViewById<FrameLayout>(cells[i]).getGlobalVisibleRect(Rect()))
+                if (getFrame(i).getGlobalVisibleRect(Rect()))
                     fragment.play()
                 else
                     fragment.stop()
@@ -166,8 +165,7 @@ class GroupActivity : AppCompatActivity() {
         if (gestureInProgress > 0)
             return
 
-        val frame = findViewById<FrameLayout>(cells[i])
-        Effects.dimmer(frame)
+        Effects.dimmer(getFrame(i))
 
         val id = group.streams[i]
         startActivity(
@@ -182,6 +180,12 @@ class GroupActivity : AppCompatActivity() {
         if (hideBars) {
             Effects.delayedFadeOut(arrayOf(binding.toolbar.root))
         }
+    }
+
+    private fun getFrame(i: Int): FrameLayout {
+        return findViewById(
+            resources.getIdentifier("llCell${i + 1}", "id", packageName)
+        )
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
