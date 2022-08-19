@@ -26,6 +26,7 @@ class VideoFragment : Fragment() {
 
     private var streamId: Int = -1
     private lateinit var stream: StreamDataModel
+    private var isBuffered = false
 
     companion object {
         /**
@@ -76,7 +77,6 @@ class VideoFragment : Fragment() {
 
             media.apply {
                 setHWDecoderEnabled(false, false)
-                addOption(":network-caching=300")
                 mediaPlayer.media = this
             }.release()
 
@@ -96,8 +96,10 @@ class VideoFragment : Fragment() {
         start()
 
         mediaPlayer.setEventListener {
-            if (it.type == MediaPlayer.Event.Buffering && it.buffering == 100f)
+            if (it.type == MediaPlayer.Event.Buffering && it.buffering == 100f) {
                 binding.pbLoading.visibility = View.GONE
+                isBuffered = true
+            }
         }
     }
 
@@ -127,9 +129,11 @@ class VideoFragment : Fragment() {
         NetworkState(isLocal).observe(this) { isConnected ->
             if (isConnected) {
                 binding.tvAlert.visibility = View.GONE
-                mediaPlayer.stop()
-                mediaPlayer.play()
-                mediaPlayer.volume = 0
+                if (isBuffered) {
+                    mediaPlayer.stop()
+                    mediaPlayer.play()
+                    mediaPlayer.volume = 0
+                }
             } else {
                 binding.tvAlert.visibility = View.VISIBLE
                 binding.tvAlert.text =

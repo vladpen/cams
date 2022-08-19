@@ -29,6 +29,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     private var streamId: Int = -1 // -1 means "no stream"
     private var remotePath: String = "" // relative SFTP path
     private val seekStep: Long = 10000 // milliseconds
+    private var isBuffered = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -213,7 +214,6 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
 
             media.apply {
                 setHWDecoderEnabled(false, false)
-                addOption(":network-caching=300")
                 mediaPlayer.media = this
             }.release()
 
@@ -269,6 +269,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
             if (mediaPlayer.audioTracksCount > 0)
                 binding.videoBar.btnMute.visibility = View.VISIBLE
             initBars()
+            isBuffered = true
         } else if (ev.type == MediaPlayer.Event.EndReached && remotePath != "") {
             next()
         }
@@ -299,9 +300,11 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         NetworkState(isLocal).observe(this) { isConnected ->
             if (isConnected) {
                 binding.tvAlert.visibility = View.GONE
-                mediaPlayer.stop()
-                mediaPlayer.play()
-                setMute(StreamData.getMute())
+                if (isBuffered) {
+                    mediaPlayer.stop()
+                    mediaPlayer.play()
+                    setMute(StreamData.getMute())
+                }
             } else {
                 binding.tvAlert.visibility = View.VISIBLE
                 binding.tvAlert.text =
