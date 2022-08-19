@@ -30,13 +30,13 @@
                 android:orientation="horizontal">
 
                 <FrameLayout
-                    android:id="@+id/llCell1"
+                    android:id="@+id/flCell1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
                 </FrameLayout>
                 <FrameLayout
-                    android:id="@+id/llCell2"
+                    android:id="@+id/flCell2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -50,13 +50,13 @@
                 android:orientation="horizontal">
 
                 <FrameLayout
-                    android:id="@+id/llCell3"
+                    android:id="@+id/flCell3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
                 </FrameLayout>
                 <FrameLayout
-                    android:id="@+id/llCell4"
+                    android:id="@+id/flCell4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">

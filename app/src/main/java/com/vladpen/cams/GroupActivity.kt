@@ -184,7 +184,7 @@ class GroupActivity : AppCompatActivity() {
 
     private fun getFrame(i: Int): FrameLayout {
         return findViewById(
-            resources.getIdentifier("llCell${i + 1}", "id", packageName)
+            resources.getIdentifier("flCell${i + 1}", "id", packageName)
         )
     }
 
