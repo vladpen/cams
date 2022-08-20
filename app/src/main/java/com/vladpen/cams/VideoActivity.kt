@@ -204,7 +204,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         }
     }
 
-    private fun play() {
+    private fun start() {
         try {
             val media =
                 if (remotePath == "")
@@ -213,7 +213,6 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
                     Media(libVlc, FileData.getTmpFile(remotePath).absolutePath)
 
             media.apply {
-                setHWDecoderEnabled(false, false)
                 mediaPlayer.media = this
             }.release()
 
@@ -229,7 +228,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         remotePath = FileData(stream.sftp).getNext(remotePath, fwd)
         if (remotePath != "") {
             binding.videoBar.btnPlay.setBackgroundResource(R.drawable.ic_baseline_pause_24)
-            play()
+            start()
         } else { // The most recent file was played, let's show live video
             videoScreen()
         }
@@ -248,7 +247,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     override fun onStart() {
         super.onStart()
         mediaPlayer.attachViews(videoLayout, null, false, false)
-        play()
+        start()
     }
 
     override fun onStop() {
