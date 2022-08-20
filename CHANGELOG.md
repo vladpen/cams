@@ -1,3 +1,7 @@
+## 1.3.3.1 - 2022-08-20
+
+- Fast connections
+
 ## 1.3.3 - 2022-08-14
 
 - Groups zooming
