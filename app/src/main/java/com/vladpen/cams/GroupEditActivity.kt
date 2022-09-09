@@ -15,7 +15,6 @@ import com.vladpen.*
 import com.vladpen.cams.databinding.ActivityEditGroupBinding
 
 private const val STREAMS_MIN = 2
-private const val STREAMS_MAX = 4
 
 class GroupEditActivity : AppCompatActivity() {
     private val binding by lazy { ActivityEditGroupBinding.inflate(layoutInflater) }
@@ -53,9 +52,9 @@ class GroupEditActivity : AppCompatActivity() {
                 delete()
             }
         }
-        if (group != null && (
-                selectedStreams.count() >= STREAMS_MAX ||
-                selectedStreams.count() >= StreamData.getAll().count()))
+        if (StreamData.getAll().count() <= 4)
+            binding.tvWarning.visibility = View.GONE
+        if (selectedStreams.count() >= StreamData.getAll().count())
             binding.tvAddStream.visibility = View.GONE
         binding.tvAddStream.setOnClickListener {
             showPopupMenu(it)
@@ -103,7 +102,7 @@ class GroupEditActivity : AppCompatActivity() {
             popup.menu.findItem(streamId).isVisible = false
             addStreamToView(streamId)
 
-            if (!popup.menu.hasVisibleItems() || selectedStreams.count() > STREAMS_MAX - 1)
+            if (!popup.menu.hasVisibleItems())
                 binding.tvAddStream.visibility = View.GONE
 
             true
@@ -152,12 +151,8 @@ class GroupEditActivity : AppCompatActivity() {
         }
         if (!ok)
             return ok
-        if (selectedStreams.count() < STREAMS_MIN || selectedStreams.count() > STREAMS_MAX) {
-            binding.tvStreamsError.text = getString(
-                R.string.err_group_streams_count,
-                STREAMS_MIN,
-                STREAMS_MAX
-            )
+        if (selectedStreams.count() < STREAMS_MIN) {
+            binding.tvStreamsError.text = getString(R.string.err_group_streams_count, STREAMS_MIN)
             ok = false
         } else {
             binding.tvStreamsError.text = ""

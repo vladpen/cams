@@ -74,9 +74,19 @@
                 android:textStyle="bold"
                 android:textColor="@color/group_link" />
 
+            <TextView
+                android:id="@+id/tvWarning"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:gravity="center"
+                android:text="@string/group_warning"
+                android:textStyle="italic" />
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp">
 
                 <Button
                     android:id="@+id/btnSave"

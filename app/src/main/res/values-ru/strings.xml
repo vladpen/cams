@@ -33,7 +33,7 @@
     <string name="group_cams">Камеры *</string>
     <string name="group_delete">Удалить группу?</string>
     <string name="err_group_exists">Такая группа уже существует</string>
-    <string name="err_group_streams_count">От %1$d до %2$d строк</string>
+    <string name="err_group_streams_count">Не менее %1$d камер</string>
     <string name="export_settings">Экспорт настроек</string>
     <string name="import_settings">Импорт настроек</string>
     <string name="export_password">Пароль (не менее %1$d символов):</string>
@@ -57,4 +57,5 @@
     <string name="line_count">Число строк:</string>
     <string name="log_cons_label">Логировать подключения к камерам</string>
     <string name="log_cons_hint">(Не рекомендуется по соображениям безопасности. Действует до закрытия приложения.)</string>
+    <string name="group_warning">Внимание! Большое количество камер может существенно снизить производительность устройства!</string>
 </resources>

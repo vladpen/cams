@@ -19,7 +19,6 @@ import kotlin.math.sqrt
 
 
 private const val ASPECT_RATIO = 16f / 9f
-private const val STREAMS_MAX = 4
 
 class GroupActivity : AppCompatActivity() {
     private val binding by lazy { ActivityGroupBinding.inflate(layoutInflater) }
@@ -64,8 +63,6 @@ class GroupActivity : AppCompatActivity() {
     private fun initFragments() {
         try { // prevents exception if group file is corrupted
             for ((i, id) in group.streams.withIndex()) {
-                if (i > STREAMS_MAX - 1)
-                    break
                 if (id > StreamData.getAll().count())
                     throw Exception("invalid group ID")
 
