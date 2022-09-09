@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/clGroupBox"
+        android:id="@+id/clScreenBox"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -14,55 +14,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <RelativeLayout
+            android:id="@+id/rlGroupBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent">
+        </RelativeLayout>
 
-            <LinearLayout
-                android:id="@+id/llRow1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <FrameLayout
-                    android:id="@+id/flCell1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                </FrameLayout>
-                <FrameLayout
-                    android:id="@+id/flCell2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                </FrameLayout>
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/llRow2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="horizontal">
-
-                <FrameLayout
-                    android:id="@+id/flCell3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                </FrameLayout>
-                <FrameLayout
-                    android:id="@+id/flCell4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                </FrameLayout>
-            </LinearLayout>
-        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <include android:id="@+id/toolbar" layout="@layout/toolbar" />

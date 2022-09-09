@@ -9,11 +9,14 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
-import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.vladpen.*
 import com.vladpen.cams.databinding.ActivityGroupBinding
+import kotlin.math.ceil
+import kotlin.math.sqrt
+
 
 private const val ASPECT_RATIO = 16f / 9f
 private const val STREAMS_MAX = 4
@@ -29,6 +32,7 @@ class GroupActivity : AppCompatActivity() {
     private var gestureInProgress = 0
     private var aspectRatio = 1f
     private var fragments = arrayListOf<VideoFragment>()
+    private var frames = arrayListOf<FrameLayout>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +40,7 @@ class GroupActivity : AppCompatActivity() {
         initActivity()
         if (savedInstanceState == null)
             initFragments()
+        resizeGrid()
     }
 
     private fun initActivity() {
@@ -49,8 +54,7 @@ class GroupActivity : AppCompatActivity() {
 
         binding.toolbar.tvToolbarLabel.text = group.name
 
-        resizeGrid()
-        gestureDetector = VideoGestureDetector(binding.clGroupBox)
+        gestureDetector = VideoGestureDetector(binding.clScreenBox)
         gestureDetector.reset(aspectRatio)
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -65,8 +69,12 @@ class GroupActivity : AppCompatActivity() {
                 if (id > StreamData.getAll().count())
                     throw Exception("invalid group ID")
 
+                val frame = FrameLayout(this)
+                frame.id = FrameLayout.generateViewId()
+                binding.rlGroupBox.addView(frame)
+                frames.add(frame)
+
                 val fragment = VideoFragment.newInstance(id)
-                val frame = getFrame(i)
                 supportFragmentManager.beginTransaction().add(frame.id, fragment).commit()
                 frame.setOnClickListener {
                     videoScreen(i)
@@ -100,39 +108,39 @@ class GroupActivity : AppCompatActivity() {
         val screenWidth = resources.displayMetrics.widthPixels
         val screenHeight = resources.displayMetrics.heightPixels - statusBarHeight
         val screenAspectRatio = screenWidth.toFloat() / screenHeight.toFloat()
-
         val frameHeight: Int
-        if (screenHeight > screenWidth) {
-            binding.llRow1.orientation = LinearLayout.VERTICAL
-            binding.llRow2.orientation = LinearLayout.VERTICAL
 
-            aspectRatio = ASPECT_RATIO / group.streams.count()
-            if (screenAspectRatio > aspectRatio) {
-                frameHeight = screenHeight / group.streams.count()
-                hideBars = true
-            } else {
-                frameHeight = (screenWidth / ASPECT_RATIO).toInt()
-            }
-        } else {
-            binding.llRow1.orientation = LinearLayout.HORIZONTAL
-            binding.llRow2.orientation = LinearLayout.HORIZONTAL
+        val cellPow = if (screenHeight > screenWidth)
+            frames.count() / 4.0
+        else
+            frames.count().toDouble()
+        val columnCount = ceil(sqrt(cellPow)).toInt()
+        val rowCount = ceil(frames.count() / columnCount.toDouble()).toInt()
 
-            aspectRatio = if (group.streams.count() == 2)
-                ASPECT_RATIO * 2
-            else
-                ASPECT_RATIO
+        aspectRatio = (ASPECT_RATIO * columnCount / rowCount)
 
-            if (screenAspectRatio > aspectRatio) {
-                frameHeight = screenHeight / 2
-                hideBars = true
-            } else {
-                frameHeight = (screenWidth / (ASPECT_RATIO * 2)).toInt()
-            }
+        if (screenAspectRatio > aspectRatio) { // vertical margins
+            frameHeight = screenHeight / rowCount
+            hideBars = true
+        } else { // horizontal margins
+            frameHeight = ((screenWidth / columnCount) / ASPECT_RATIO).toInt()
         }
-        for (i in group.streams.indices) {
-            val frame = getFrame(i)
+        for ((i, frame) in frames.withIndex()) {
             frame.layoutParams.height = frameHeight
             frame.layoutParams.width = (frameHeight * ASPECT_RATIO).toInt()
+            if (i == 0)
+                continue
+
+            val params = frame.layoutParams as RelativeLayout.LayoutParams
+            params.removeRule(RelativeLayout.BELOW)
+            params.removeRule(RelativeLayout.RIGHT_OF)
+
+            if (i % columnCount != 0) // except first cell in each row
+                params.addRule(RelativeLayout.RIGHT_OF, frames[i - 1].id)
+            if (i >= columnCount) // except first row
+                params.addRule(RelativeLayout.BELOW, frames[i - columnCount].id)
+            if (i == frames.count() - 1) // last cell (ignored by layout if row cells > 1)
+                params.addRule(RelativeLayout.CENTER_HORIZONTAL)
         }
         initBars()
     }
@@ -152,7 +160,7 @@ class GroupActivity : AppCompatActivity() {
                 gestureInProgress -= 1
 
             for ((i, fragment) in fragments.withIndex()) {
-                if (getFrame(i).getGlobalVisibleRect(Rect()))
+                if (frames[i].getGlobalVisibleRect(Rect()))
                     fragment.play()
                 else
                     fragment.stop()
@@ -165,7 +173,7 @@ class GroupActivity : AppCompatActivity() {
         if (gestureInProgress > 0)
             return
 
-        Effects.dimmer(getFrame(i))
+        Effects.dimmer(frames[i])
 
         val id = group.streams[i]
         startActivity(
@@ -180,12 +188,6 @@ class GroupActivity : AppCompatActivity() {
         if (hideBars) {
             Effects.delayedFadeOut(arrayOf(binding.toolbar.root))
         }
-    }
-
-    private fun getFrame(i: Int): FrameLayout {
-        return findViewById(
-            resources.getIdentifier("flCell${i + 1}", "id", packageName)
-        )
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
