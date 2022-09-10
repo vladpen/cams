@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.vladpen.*
 import com.vladpen.cams.databinding.ActivityGroupBinding
 import kotlin.math.ceil
+import kotlin.math.max
 import kotlin.math.sqrt
 
 
@@ -107,11 +108,11 @@ class GroupActivity : AppCompatActivity() {
         val screenAspectRatio = screenWidth.toFloat() / screenHeight.toFloat()
         val frameHeight: Int
 
-        val cellPow = if (screenHeight > screenWidth)
-            frames.count() / 4.0
+        val cellQty = if (screenHeight > screenWidth)
+            max(4, frames.count() - 5 / frames.count()) / 4.0 // 1 column for up to 5 cells
         else
             frames.count().toDouble()
-        val columnCount = ceil(sqrt(cellPow)).toInt()
+        val columnCount = ceil(sqrt(cellQty)).toInt()
         val rowCount = ceil(frames.count() / columnCount.toDouble()).toInt()
 
         aspectRatio = (ASPECT_RATIO * columnCount / rowCount)
