@@ -55,7 +55,6 @@ class GroupActivity : AppCompatActivity() {
         binding.toolbar.tvToolbarLabel.text = group.name
 
         gestureDetector = VideoGestureDetector(binding.clScreenBox)
-        gestureDetector.reset(aspectRatio)
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         GroupData.currentGroupId = groupId  // save for back navigation
@@ -140,6 +139,7 @@ class GroupActivity : AppCompatActivity() {
             if (i == frames.count() - 1) // last cell (ignored by layout if row cells > 1)
                 params.addRule(RelativeLayout.CENTER_HORIZONTAL)
         }
+        gestureDetector.reset(aspectRatio)
         initBars()
     }
 
