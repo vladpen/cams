@@ -122,22 +122,27 @@ class GroupActivity : AppCompatActivity() {
         } else { // horizontal margins
             frameHeight = ((screenWidth / columnCount) / ASPECT_RATIO).toInt()
         }
+        val frameWidth = (frameHeight * ASPECT_RATIO).toInt()
+
         for ((i, frame) in frames.withIndex()) {
             frame.layoutParams.height = frameHeight
-            frame.layoutParams.width = (frameHeight * ASPECT_RATIO).toInt()
+            frame.layoutParams.width = frameWidth
             if (i == 0)
                 continue
 
             val params = frame.layoutParams as RelativeLayout.LayoutParams
             params.removeRule(RelativeLayout.BELOW)
             params.removeRule(RelativeLayout.RIGHT_OF)
+            params.marginStart = 0
 
+            val lastCount = frames.count() - i
             if (i % columnCount != 0) // except first cell in each row
                 params.addRule(RelativeLayout.RIGHT_OF, frames[i - 1].id)
+            else if (lastCount <= columnCount) { // first cell in the last row, center horizontally
+                params.marginStart = (frameWidth * (columnCount - lastCount) / 2)
+            }
             if (i >= columnCount) // except first row
                 params.addRule(RelativeLayout.BELOW, frames[i - columnCount].id)
-            if (i == frames.count() - 1) // last cell (ignored by layout if row cells > 1)
-                params.addRule(RelativeLayout.CENTER_HORIZONTAL)
         }
         gestureDetector.reset(aspectRatio)
         initBars()
