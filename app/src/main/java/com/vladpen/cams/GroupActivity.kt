@@ -14,10 +14,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.vladpen.*
 import com.vladpen.cams.databinding.ActivityGroupBinding
-import kotlin.math.ceil
-import kotlin.math.max
-import kotlin.math.sqrt
-
+import kotlin.math.*
 
 private const val ASPECT_RATIO = 16f / 9f
 
