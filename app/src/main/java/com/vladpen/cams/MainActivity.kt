@@ -36,7 +36,7 @@ class MainActivity: AppCompatActivity() {
             MainMenu(this).showPopupMenu(it)
         }
         binding.recyclerView.adapter = SourceAdapter(sources)
-        ItemTouch.helper().attachToRecyclerView(binding.recyclerView)
+        SourceItemTouch().helper().attachToRecyclerView(binding.recyclerView)
 
         binding.toolbar.tvToolbarLabel.text = getString(R.string.main_title)
 

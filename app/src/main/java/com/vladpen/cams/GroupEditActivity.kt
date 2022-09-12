@@ -1,16 +1,16 @@
 package com.vladpen.cams
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
-import android.view.ViewGroup
 import android.widget.PopupMenu
-import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.vladpen.*
 import com.vladpen.cams.databinding.ActivityEditGroupBinding
 
@@ -41,17 +41,21 @@ class GroupEditActivity : AppCompatActivity() {
             binding.etEditName.setText(group.name)
 
             selectedStreams = group.streams.map { it } as MutableList<Int>
-            for (id in selectedStreams) {
-                if (id > StreamData.getAll().count() - 1) { // group data is invalid, drop
-                    selectedStreams.clear()
-                    break
-                }
-                addStreamToView(id)
-            }
+
             binding.tvDeleteLink.setOnClickListener {
                 delete()
             }
         }
+
+        if (resources.displayMetrics.heightPixels > resources.displayMetrics.widthPixels)
+            binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        else
+            GridLayoutManager(this,2, RecyclerView.VERTICAL,false)
+                .apply { binding.recyclerView.layoutManager = this }
+
+        binding.recyclerView.adapter = GroupAdapter(selectedStreams, this)
+        GroupItemTouch().helper().attachToRecyclerView(binding.recyclerView)
+
         if (StreamData.getAll().count() <= 4)
             binding.tvWarning.visibility = View.GONE
         if (selectedStreams.count() >= StreamData.getAll().count())
@@ -74,21 +78,6 @@ class GroupEditActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    private fun addStreamToView(streamId: Int) {
-        val row = View.inflate(this, R.layout.group_stream_item, null) as ViewGroup
-        (row.getChildAt(0) as TextView).text = StreamData.getAll()[streamId].name
-        binding.llStreams.addView(row)
-
-        row.setOnTouchListener(object : OnSwipeListener() {
-            override fun onSwipe() {
-                binding.llStreams.removeView(row)
-                selectedStreams.remove(streamId)
-                binding.tvAddStream.visibility = View.VISIBLE
-            }
-        })
-    }
-
     private fun showPopupMenu(view: View) {
         val popup = PopupMenu(this, view)
         for ((i, source) in SourceData.getAll().withIndex()) {
@@ -100,7 +89,9 @@ class GroupEditActivity : AppCompatActivity() {
             selectedStreams.add(streamId)
 
             popup.menu.findItem(streamId).isVisible = false
-            addStreamToView(streamId)
+
+            binding.recyclerView.adapter?.notifyItemInserted(selectedStreams.count() - 1)
+            binding.recyclerView.smoothScrollToPosition(selectedStreams.count() - 1)
 
             if (!popup.menu.hasVisibleItems())
                 binding.tvAddStream.visibility = View.GONE
@@ -158,6 +149,16 @@ class GroupEditActivity : AppCompatActivity() {
             binding.tvStreamsError.text = ""
         }
         return ok
+    }
+
+    fun moveItem(from: Int, to: Int) {
+        val item = selectedStreams.removeAt(from)
+        selectedStreams.add(to, item)
+    }
+
+    fun removeAt(position: Int) {
+        selectedStreams.removeAt(position)
+        binding.tvAddStream.visibility = View.VISIBLE
     }
 
     private fun delete() {

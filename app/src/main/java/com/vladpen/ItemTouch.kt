@@ -3,10 +3,19 @@ package com.vladpen
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
-object ItemTouch {
+open class ItemTouch {
+    open fun moveItem(
+        from: Int,
+        to: Int,
+        adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>?) {}
+
     fun helper(): ItemTouchHelper {
-        val itemTouchCallback = object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP
-                or ItemTouchHelper.DOWN or ItemTouchHelper.START or ItemTouchHelper.END, 0) {
+        val itemTouchCallback = object : ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP
+                    or ItemTouchHelper.DOWN
+                    or ItemTouchHelper.START
+                    or ItemTouchHelper.END,
+            0) {
 
             override fun onMove(recyclerView: RecyclerView,
                                 viewHolder: RecyclerView.ViewHolder,
@@ -15,9 +24,9 @@ object ItemTouch {
                 val from = viewHolder.adapterPosition
                 val to = target.adapterPosition
 
-                (adapter as SourceAdapter).moveItem(from, to)
+                moveItem(from, to, adapter)
+                adapter?.notifyItemMoved(from, to)
 
-                adapter.notifyItemMoved(from, to)
                 return true
             }
 
