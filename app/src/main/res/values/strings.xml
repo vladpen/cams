@@ -10,7 +10,7 @@
     <string name="sftp_url">SFTP address</string>
     <string name="sftp_url_hint">sftp://user:password@ip/folder</string>
     <string name="cam_tcp_udp">TCP/UDP</string>
-    <string name="cam_delete">Delete camera?</string>
+    <string name="cam_delete">Delete the camera?</string>
     <string name="save">Save</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>

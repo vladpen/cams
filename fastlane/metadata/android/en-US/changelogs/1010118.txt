@@ -1,0 +1,2 @@
+- Unlimited cameras in the groups
+- Cameras sorting and deleting in the group settings

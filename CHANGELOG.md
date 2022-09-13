@@ -1,3 +1,8 @@
+## 1.3.4 - 2022-09-13
+
+- Unlimited cameras in the groups
+- Cameras sorting and deleting in the group settings
+
 ## 1.3.3.1 - 2022-08-20
 
 - Fast connections

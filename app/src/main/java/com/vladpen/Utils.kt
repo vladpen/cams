@@ -148,7 +148,7 @@ object Utils {
         return IvParameterSpec(out.toByteArray())
     }
 
-    private fun getPackageInfo(): PackageInfo {
+    fun getPackageInfo(): PackageInfo {
         if (::packageInfo.isInitialized)
             return packageInfo
         return context.packageManager.getPackageInfo(

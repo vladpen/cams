@@ -1,6 +1,5 @@
 package com.vladpen
 
-import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
 import android.view.View
@@ -9,6 +8,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.RelativeLayout
 import com.vladpen.cams.MainApp.Companion.context
+import com.vladpen.cams.R
 
 object Effects {
     private var animation: Animation? = null
@@ -44,7 +44,7 @@ object Effects {
             RelativeLayout.LayoutParams.MATCH_PARENT,
             RelativeLayout.LayoutParams.MATCH_PARENT
         )
-        overlay.setBackgroundColor(Color.parseColor("#80FFFFFF"))
+        overlay.setBackgroundColor(context.getColor(R.color.overlay_foreground))
         view.addView(overlay)
     }
 

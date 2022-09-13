@@ -135,9 +135,8 @@ class GroupActivity : AppCompatActivity() {
             val lastCount = frames.count() - i
             if (i % columnCount != 0) // except first cell in each row
                 params.addRule(RelativeLayout.RIGHT_OF, frames[i - 1].id)
-            else if (lastCount <= columnCount) { // first cell in the last row, center horizontally
+            else if (lastCount <= columnCount) // first cell in the last row, center horizontally
                 params.marginStart = (frameWidth * (columnCount - lastCount) / 2)
-            }
             if (i >= columnCount) // except first row
                 params.addRule(RelativeLayout.BELOW, frames[i - columnCount].id)
         }

@@ -1,12 +1,12 @@
 package com.vladpen.cams
 
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
+import com.vladpen.Utils
 import com.vladpen.cams.databinding.ActivityAboutBinding
 import java.text.SimpleDateFormat
 import java.util.*
@@ -29,7 +29,7 @@ class AboutActivity: AppCompatActivity() {
 
         var versionName = ""
         try {
-            val info = packageManager.getPackageInfo(packageName, PackageManager.GET_META_DATA)
+            val info = Utils.getPackageInfo()
             versionName = info.versionName
         } catch (e: Exception) {
             e.printStackTrace()

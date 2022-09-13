@@ -91,8 +91,8 @@ class VideoGestureDetector(private val view: View) {
 
     private inner class VideoDetectorListener : GestureDetector.SimpleOnGestureListener() {
         override fun onScroll(
-            e1: MotionEvent?,
-            e2: MotionEvent?,
+            e1: MotionEvent,
+            e2: MotionEvent,
             distanceX: Float,
             distanceY: Float
         ): Boolean {
@@ -100,7 +100,7 @@ class VideoGestureDetector(private val view: View) {
             return scaleFactor > 1f // allow single click handling if the image is not scaled
         }
 
-        override fun onDown(e: MotionEvent?): Boolean {
+        override fun onDown(e: MotionEvent): Boolean {
             setSize()
             setLimit()
             return super.onDown(e)

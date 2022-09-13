@@ -55,7 +55,6 @@
                     android:id="@+id/tvSpeed"
                     android:layout_width="44dp"
                     android:layout_height="42dp"
-                    android:clickable="true"
                     android:focusable="true"
                     android:gravity="center"
                     android:textColor="@color/white"
