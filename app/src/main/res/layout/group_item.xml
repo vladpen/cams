@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:background="@color/background"
         android:foreground="?android:attr/selectableItemBackground"
-        android:contentDescription="@string/settings"
+        android:contentDescription="@string/delete"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
         android:src="@drawable/ic_baseline_delete_outline_24"

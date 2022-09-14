@@ -10,15 +10,15 @@ import com.vladpen.cams.MainApp.Companion.context
 import com.vladpen.cams.databinding.MainItemBinding
 
 class SourceAdapter(private val dataSet: List<SourceDataModel>) :
-    RecyclerView.Adapter<SourceAdapter.SourceHolder>() {
+    RecyclerView.Adapter<SourceAdapter.Holder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SourceHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val binding = MainItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return SourceHolder(binding)
+        return Holder(binding)
     }
 
-    override fun onBindViewHolder(holder: SourceHolder, idx: Int) {
-        val row: SourceDataModel = dataSet[idx]
+    override fun onBindViewHolder(holder: Holder, position: Int) {
+        val row: SourceDataModel = dataSet[position]
         holder.bind(row)
     }
 
@@ -28,7 +28,7 @@ class SourceAdapter(private val dataSet: List<SourceDataModel>) :
         SourceData.moveItem(from, to)
     }
 
-    inner class SourceHolder(private val binding: MainItemBinding) :
+    inner class Holder(private val binding: MainItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(row: SourceDataModel) {
             if (row.type == "stream")

@@ -16,23 +16,21 @@ class FileAdapter(
     private val dataSet: List<FileDataModel>,
     private val remotePath: String,
     private val streamId: Int,
-    private val sftpUrl: String?) :
+    private val sftpUrl: String?) : RecyclerView.Adapter<FileAdapter.Holder>() {
 
-    RecyclerView.Adapter<FileAdapter.FileHolder>() {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val binding = FileItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return FileHolder(binding)
+        return Holder(binding)
     }
 
-    override fun onBindViewHolder(holder: FileHolder, idx: Int) {
-        val row: FileDataModel = dataSet[idx]
+    override fun onBindViewHolder(holder: Holder, position: Int) {
+        val row: FileDataModel = dataSet[position]
         holder.bind(row)
     }
 
     override fun getItemCount(): Int = dataSet.count()
 
-    inner class FileHolder(private val binding: FileItemBinding) :
+    inner class Holder(private val binding: FileItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(row: FileDataModel) {
             with(binding) {

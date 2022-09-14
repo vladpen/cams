@@ -31,7 +31,7 @@
     <string name="group_add">Add group</string>
     <string name="group_name_hint">New group</string>
     <string name="group_cams">Cameras *</string>
-    <string name="group_delete">Delete group?</string>
+    <string name="group_delete">Delete the group?</string>
     <string name="err_group_exists">Group already exists</string>
     <string name="err_group_streams_count">At least %1$d cameras</string>
     <string name="export_settings">Export settings</string>
