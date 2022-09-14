@@ -157,10 +157,10 @@ class FileData(private val sftpUrl: String?) {
             val session: Session = jsch.getSession(sftpData.user, sftpData.host, sftpData.port)
             session.setPassword(password)
             session.setConfig("StrictHostKeyChecking", "no")
-            session.connect()
+            session.connect(3000)
 
             channel = session.openChannel("sftp") as ChannelSftp
-            channel?.connect()
+            channel?.connect(10000)
         } catch (e: Exception) {
             Log.e("SFTP", "Can't connect to ${sftpData.host} (${e.localizedMessage})")
         }
