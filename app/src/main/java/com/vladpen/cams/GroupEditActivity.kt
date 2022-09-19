@@ -9,7 +9,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.vladpen.*
 import com.vladpen.cams.databinding.ActivityEditGroupBinding
@@ -47,11 +46,10 @@ class GroupEditActivity : AppCompatActivity() {
             }
         }
 
-        if (resources.displayMetrics.heightPixels > resources.displayMetrics.widthPixels)
-            binding.recyclerView.layoutManager = LinearLayoutManager(this)
-        else
-            GridLayoutManager(this,2, RecyclerView.VERTICAL,false)
-                .apply { binding.recyclerView.layoutManager = this }
+        GridLayoutManager(this,
+            Utils.getColumnCount(resources.displayMetrics),
+            RecyclerView.VERTICAL,
+            false).apply { binding.recyclerView.layoutManager = this }
 
         binding.recyclerView.adapter = GroupAdapter(selectedStreams, this)
         GroupItemTouch().helper().attachToRecyclerView(binding.recyclerView)

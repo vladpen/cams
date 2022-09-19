@@ -2,6 +2,7 @@ package com.vladpen
 
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.util.DisplayMetrics
 import android.util.Log
 import com.vladpen.cams.MainApp.Companion.context
 import javax.crypto.Cipher
@@ -155,5 +156,11 @@ object Utils {
             context.packageName,
             PackageManager.GET_META_DATA
         )
+    }
+
+    fun getColumnCount(metrics: DisplayMetrics, columnSymbolCount: Int = 30): Int {
+        val textSize = 20 // sp
+        val screenSymbolsCount = metrics.widthPixels / metrics.scaledDensity / textSize * 2
+        return screenSymbolsCount.toInt() / columnSymbolCount
     }
 }
