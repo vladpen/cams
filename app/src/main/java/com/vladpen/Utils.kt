@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.util.DisplayMetrics
 import android.util.Log
 import com.vladpen.cams.MainApp.Companion.context
+import java.lang.Integer.max
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
 import javax.crypto.spec.IvParameterSpec
@@ -161,6 +162,6 @@ object Utils {
     fun getColumnCount(metrics: DisplayMetrics, columnSymbolCount: Int = 30): Int {
         val textSize = 20 // sp
         val screenSymbolsCount = metrics.widthPixels / metrics.scaledDensity / textSize * 2
-        return screenSymbolsCount.toInt() / columnSymbolCount
+        return max(1, screenSymbolsCount.toInt() / columnSymbolCount)
     }
 }
