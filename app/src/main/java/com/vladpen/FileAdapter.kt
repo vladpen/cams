@@ -36,7 +36,7 @@ class FileAdapter(
             with(binding) {
                 tvFileName.text = row.name
                 if (!row.isDir) {
-                    var s = DecimalFormat("#.00")
+                    var s = DecimalFormat("0.00")
                         .format(row.size.toDouble() / 1000000)
                     s += " " + context.getString(R.string.MB)
                     tvFileSize.text = s
