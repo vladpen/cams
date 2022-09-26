@@ -10,6 +10,16 @@
     <string name="sftp_url">Endereço SFTP</string>
     <string name="sftp_url_hint">sftp://usuário:senha@ip/pasta</string>
     <string name="cam_tcp_udp">TCP/UDP</string>
+    <string name="more">More…</string>
+    <string name="channelHi">Channel 1</string>
+    <string name="channelLow">Channel 2</string>
+    <string name="channelHiHint">101</string>
+    <string name="channelLowHint">102</string>
+    <string name="channelExplanation">
+        The channel is the last part of the address.
+        The first channel (high resolution) will be used for the single câmera viewing,
+        and the second channel (low resolution) — for the group one.
+    </string>
     <string name="cam_delete">Excluir câmera?</string>
     <string name="save">Salvar</string>
     <string name="delete">Excluir</string>
@@ -27,12 +37,14 @@
     <string name="seek_fwd">Avanço rápido</string>
     <string name="play_pause">Reproduzir/Pausar</string>
     <string name="mute">Silenciar</string>
-
     <string name="group">Group</string>
     <string name="group_add">Add group</string>
     <string name="group_name_hint">New group</string>
     <string name="group_cams">Cameras *</string>
     <string name="group_delete">Delete group?</string>
+    <string name="group_warning">
+        Attention! A large number of cameras can significantly reduce the device performance!
+    </string>
     <string name="err_group_exists">Group already exists</string>
     <string name="err_group_streams_count">At least %1$d cameras</string>
     <string name="export_settings">Export settings</string>
@@ -57,6 +69,7 @@
     <string name="logs">Device logs</string>
     <string name="line_count">Lines count:</string>
     <string name="log_cons_label">Log connections to cameras</string>
-    <string name="log_cons_hint">(Not recommended for security reasons. Valid until the application is closed.)</string>
-    <string name="group_warning">Attention! A large number of cameras can significantly reduce the device performance!</string>
+    <string name="log_cons_hint">
+        (Not recommended for security reasons. Valid until the application is closed.)
+    </string>
 </resources>

@@ -25,7 +25,7 @@ class FilesActivity: AppCompatActivity() {
         streamId = intent.getIntExtra("streamId", -1)
         stream = StreamData.getById(streamId) ?: return
 
-        sftpData = Utils.parseUrl(stream.sftp, 22)
+        sftpData = Utils.parseUrl(stream.sftp, 22, "sftp")
         if (sftpData == null) {
             videoScreen()
             return

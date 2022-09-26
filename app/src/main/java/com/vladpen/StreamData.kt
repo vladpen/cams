@@ -6,7 +6,13 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.vladpen.cams.MainApp.Companion.context
 
-data class StreamDataModel(val name: String, var url: String, val tcp: Boolean, var sftp: String?)
+data class StreamDataModel(
+    val name: String,
+    var url: String,
+    val tcp: Boolean,
+    var sftp: String?,
+    var ch1: String?,
+    var ch2: String?)
 
 object StreamData {
     private const val fileName = "streams.json"

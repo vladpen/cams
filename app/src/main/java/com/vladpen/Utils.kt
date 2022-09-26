@@ -26,7 +26,8 @@ object Utils {
     private const val transformation = "AES/CBC/PKCS7Padding"
     private lateinit var packageInfo: PackageInfo
 
-    fun parseUrl(url: String?, defaultPort: Int = 554): UrlDataModel? {
+    fun parseUrl(url: String?, defaultPort: Int = 554, defaultScheme: String = "rtsp"):
+            UrlDataModel? {
         if (url == null)
             return null
         try {
@@ -34,7 +35,7 @@ object Utils {
             val res = rex.matchEntire(url) ?: return null
             val r = res.groupValues
             return UrlDataModel(
-                r[2],
+                if (r[2] != "") r[2] else defaultScheme,
                 r[4],
                 r[6],
                 r[7],
@@ -48,21 +49,21 @@ object Utils {
     }
 
     fun isUrlLocal(url: String): Boolean {
-        val parsedUrl = parseUrl(url)
-        if (parsedUrl == null || parsedUrl.host == "")
+        val parts = parseUrl(url)
+        if (parts == null || parts.host == "")
             return false
-        if (parsedUrl.host.startsWith("192.") || parsedUrl.host.startsWith("10."))
+        if (parts.host.startsWith("192.") || parts.host.startsWith("10."))
             return true
         return false
     }
 
     fun replacePassword(url: String, replacement: String): String {
-        val parsedUrl = parseUrl(url) ?: return url
+        val parts = parseUrl(url) ?: return url
         var prefix = ""
-        if (parsedUrl.scheme != "")
-            prefix = "${parsedUrl.scheme}://"
-        if (parsedUrl.user != "")
-            prefix += parsedUrl.user
+        if (parts.scheme != "")
+            prefix = "${parts.scheme}://"
+        if (parts.user != "")
+            prefix += parts.user
 
         return ".+@".toRegex().replace(url, "$prefix:$replacement@")
     }
@@ -73,6 +74,25 @@ object Utils {
             return url
         val password = decodeString(parts.password)
         return replacePassword(url, password)
+    }
+
+    fun getFullUrl(url: String, defaultPort: Int, defaultScheme: String): String {
+        val parts = parseUrl(url, defaultPort, defaultScheme) ?: return url
+        var res = ""
+        if (parts.scheme != "")
+            res = parts.scheme + "://"
+        if (parts.user != "") {
+            res += parts.user
+            if (parts.password != "")
+                res += ":" + decodeString(parts.password)
+            res += "@"
+        }
+        if (parts.host != "")
+            res += parts.host
+        res += ":" + parts.port
+        if (parts.path != "")
+            res += "/" + trimSlashes(parts.path)
+        return res
     }
 
     fun encodeString(str: String, key: String? = null): String {
@@ -163,5 +183,9 @@ object Utils {
         val textSize = 20 // sp
         val screenSymbolsCount = metrics.widthPixels / metrics.scaledDensity / textSize * 2
         return max(1, screenSymbolsCount.toInt() / columnSymbolCount)
+    }
+
+    fun trimSlashes(str: String): String {
+        return "^/*(.+?)/*$".toRegex().replace(str, "$1")
     }
 }

@@ -73,7 +73,7 @@ class VideoFragment : Fragment() {
 
     private fun start() {
         try {
-            val media = Media(libVlc, Uri.parse(Utils.decodeUrl(stream.url)))
+            val media = Media(libVlc, Uri.parse(getUrl()))
 
             media.apply {
                 mediaPlayer.media = this
@@ -139,5 +139,14 @@ class VideoFragment : Fragment() {
                     if (isLocal) getString(R.string.no_wifi) else getString(R.string.no_internet)
             }
         }
+    }
+
+    private fun getUrl(): String {
+        val url = Utils.getFullUrl(stream.url, 554, "rtsp")
+        if (stream.ch2 != null)
+            return url + "/" + stream.ch2
+        else if (stream.ch1 != null)
+            return url + "/" + stream.ch1
+        return url
     }
 }

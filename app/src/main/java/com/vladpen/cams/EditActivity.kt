@@ -33,12 +33,19 @@ class EditActivity : AppCompatActivity() {
 
             binding.etEditName.setText(stream.name)
             binding.etEditUrl.setText(safeUrl(stream.url))
+            binding.etChannel1.setText(stream.ch1)
+            binding.etChannel2.setText(stream.ch2)
             binding.etEditSftpUrl.setText(safeUrl(stream.sftp))
             binding.scEditTcp.isChecked = !stream.tcp
 
             binding.tvDeleteLink.setOnClickListener {
                 delete()
             }
+            if (stream.ch1 == null && stream.ch1 == null)
+                binding.llMoreBox.layoutParams.height = 0
+        }
+        binding.tvMoreSwitch.setOnClickListener {
+            Effects.toggle(binding.llMoreBox)
         }
         binding.btnSave.setOnClickListener {
             save()
@@ -84,11 +91,16 @@ class EditActivity : AppCompatActivity() {
         var sftpUrl = binding.etEditSftpUrl.text.toString().trim()
         sftpUrl = getEncodedUrl(sftpUrl, oldStream?.sftp)
 
+        val ch1 = Utils.trimSlashes(binding.etChannel1.text.toString().trim())
+        val ch2 = Utils.trimSlashes(binding.etChannel2.text.toString().trim())
+
         val newStream = StreamDataModel(
             binding.etEditName.text.toString().trim(),
             streamUrl,
             !binding.scEditTcp.isChecked,
-            if (sftpUrl != "") sftpUrl else null
+            if (sftpUrl != "") sftpUrl else null,
+            if (ch1 != "") ch1 else null,
+            if (ch2 != "") ch2 else null
         )
         if (streamId < 0) {
             StreamData.add(newStream)

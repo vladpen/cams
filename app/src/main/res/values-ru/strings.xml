@@ -10,6 +10,16 @@
     <string name="sftp_url">Адрес SFTP</string>
     <string name="sftp_url_hint">sftp://логин:пароль@ip/папка</string>
     <string name="cam_tcp_udp">TCP/UDP</string>
+    <string name="more">More…</string>
+    <string name="channelHi">Channel 1</string>
+    <string name="channelLow">Channel 2</string>
+    <string name="channelHiHint">101</string>
+    <string name="channelLowHint">102</string>
+    <string name="channelExplanation">
+        Канал это последняя часть адреса.
+        Первый канал (высокого разрешения) используется при просмотре камеры на отдельном экране,
+        а второй канал (низкого разрешения) — при просмотре в составе группы.
+    </string>
     <string name="cam_delete">Удалить камеру?</string>
     <string name="save">Сохранить</string>
     <string name="delete">Удалить</string>
@@ -32,6 +42,9 @@
     <string name="group_name_hint">Новая группа</string>
     <string name="group_cams">Камеры *</string>
     <string name="group_delete">Удалить группу?</string>
+    <string name="group_warning">
+        Внимание! Большое количество камер может существенно снизить производительность устройства!
+    </string>
     <string name="err_group_exists">Такая группа уже существует</string>
     <string name="err_group_streams_count">Не менее %1$d камер</string>
     <string name="export_settings">Экспорт настроек</string>
@@ -56,6 +69,7 @@
     <string name="logs">Логи устройства</string>
     <string name="line_count">Число строк:</string>
     <string name="log_cons_label">Логировать подключения к камерам</string>
-    <string name="log_cons_hint">(Не рекомендуется по соображениям безопасности. Действует до закрытия приложения.)</string>
-    <string name="group_warning">Внимание! Большое количество камер может существенно снизить производительность устройства!</string>
+    <string name="log_cons_hint">
+        (Не рекомендуется по соображениям безопасности. Действует до закрытия приложения.)
+    </string>
 </resources>

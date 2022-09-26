@@ -208,7 +208,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         try {
             val media =
                 if (remotePath == "")
-                    Media(libVlc, Uri.parse(Utils.decodeUrl(stream.url)))
+                    Media(libVlc, Uri.parse(getUrl()))
                 else
                     Media(libVlc, FileData.getTmpFile(remotePath).absolutePath)
 
@@ -310,5 +310,14 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
                     if (isLocal) getString(R.string.no_wifi) else getString(R.string.no_internet)
             }
         }
+    }
+
+    private fun getUrl(): String {
+        val url = Utils.getFullUrl(stream.url, 554, "rtsp")
+        if (stream.ch1 != null)
+            return url + "/" + stream.ch1
+        else if (stream.ch2 != null)
+            return url + "/" + stream.ch2
+        return url
     }
 }
