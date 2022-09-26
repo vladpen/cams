@@ -32,15 +32,15 @@ object Utils {
             return null
         try {
             val rex = "((.+?)://)?((.+?)(:(.+))?@)?(.+?)(:(\\d+))?(/.*)?".toRegex()
-            val res = rex.matchEntire(url) ?: return null
-            val r = res.groupValues
+            val match = rex.matchEntire(url) ?: return null
+            val m = match.groupValues
             return UrlDataModel(
-                if (r[2] != "") r[2] else defaultScheme,
-                r[4],
-                r[6],
-                r[7],
-                r[9].toIntOrNull() ?: defaultPort,
-                if (r[10] != "" && r[10].last().toString() == "/") r[10] else r[10] + "/"
+                if (m[2] != "") m[2] else defaultScheme,
+                m[4],
+                m[6],
+                m[7],
+                m[9].toIntOrNull() ?: defaultPort,
+                if (m[10] != "" && m[10].last().toString() == "/") m[10] else m[10] + "/"
             )
         } catch (e: Exception) {
             Log.e("Utils", "Can't parse URL $url (${e.localizedMessage})")
@@ -48,24 +48,13 @@ object Utils {
         return null
     }
 
-    fun isUrlLocal(url: String): Boolean {
-        val parts = parseUrl(url)
-        if (parts == null || parts.host == "")
-            return false
-        if (parts.host.startsWith("192.") || parts.host.startsWith("10."))
-            return true
-        return false
-    }
-
     fun replacePassword(url: String, replacement: String): String {
-        val parts = parseUrl(url) ?: return url
-        var prefix = ""
-        if (parts.scheme != "")
-            prefix = "${parts.scheme}://"
-        if (parts.user != "")
-            prefix += parts.user
-
-        return ".+@".toRegex().replace(url, "$prefix:$replacement@")
+        try {
+            return "((.+?://)?.+?):.+@(.+)".toRegex().replace(url, "$1:$replacement@$3")
+        } catch (e: Exception) {
+            Log.e("Utils", "Can't replace password (${e.localizedMessage})")
+        }
+        return url
     }
 
     fun decodeUrl(url: String): String {
@@ -93,6 +82,15 @@ object Utils {
         if (parts.path != "")
             res += "/" + trimSlashes(parts.path)
         return res
+    }
+
+    fun isUrlLocal(url: String): Boolean {
+        val parts = parseUrl(url)
+        if (parts == null || parts.host == "")
+            return false
+        if (parts.host.startsWith("192.") || parts.host.startsWith("10."))
+            return true
+        return false
     }
 
     fun encodeString(str: String, key: String? = null): String {
