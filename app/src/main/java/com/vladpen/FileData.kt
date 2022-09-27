@@ -142,7 +142,7 @@ class FileData(private val sftpUrl: String?) {
     }
 
     private fun connect() { // suspend
-        val sftpData = Utils.parseUrl(sftpUrl, 22) ?: return
+        val sftpData = Utils.parseUrl(sftpUrl, 22, "sftp") ?: return
 
         val policy = StrictMode.ThreadPolicy.Builder().permitNetwork().build()
         StrictMode.setThreadPolicy(policy)

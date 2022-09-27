@@ -10,9 +10,9 @@
     <string name="sftp_url">Адрес SFTP</string>
     <string name="sftp_url_hint">sftp://логин:пароль@ip/папка</string>
     <string name="cam_tcp_udp">TCP/UDP</string>
-    <string name="more">More…</string>
-    <string name="channelHi">Channel 1</string>
-    <string name="channelLow">Channel 2</string>
+    <string name="more">Еще…</string>
+    <string name="channelHi">Канал 1</string>
+    <string name="channelLow">Канал 2</string>
     <string name="channelHiHint">101</string>
     <string name="channelLowHint">102</string>
     <string name="channelExplanation">
