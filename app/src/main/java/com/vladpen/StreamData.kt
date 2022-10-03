@@ -11,12 +11,13 @@ data class StreamDataModel(
     var url: String,
     val tcp: Boolean,
     var sftp: String?,
-    var ch1: String?,
-    var ch2: String?)
+    var ch0: String?,
+    var ch1: String?)
 
 object StreamData {
     private const val fileName = "streams.json"
     private const val muteFileName = "mute.bin"
+    private const val channelFileName = "channel.bin"
     private var streams = mutableListOf<StreamDataModel>()
     var logConnections = false
 
@@ -85,22 +86,38 @@ object StreamData {
     }
 
     fun setMute(mute: Int) {
-        try {
-            context.openFileOutput(muteFileName, Context.MODE_PRIVATE).use {
-                it.write(mute)
-            }
-        } catch (e: Exception) {
-            Log.e("Data", "Can't write the file $muteFileName (${e.localizedMessage})")
-        }
+        setOption(muteFileName, mute)
     }
 
     fun getMute(): Int {
+        return getOption(muteFileName)
+    }
+
+    fun setChannel(channel: Int) {
+        setOption(channelFileName, channel)
+    }
+
+    fun getChannel(): Int {
+        return getOption(channelFileName)
+    }
+
+    private fun setOption(fileName: String, option: Int) {
         try {
-            context.openFileInput(muteFileName).use {
+            context.openFileOutput(fileName, Context.MODE_PRIVATE).use {
+                it.write(option)
+            }
+        } catch (e: Exception) {
+            Log.e("Data", "Can't write the file $fileName (${e.localizedMessage})")
+        }
+    }
+
+    private fun getOption(fileName: String): Int {
+        try {
+            context.openFileInput(fileName).use {
                 return it.read()
             }
         } catch (e: Exception) {
-            Log.e("Data", "Can't read the file $muteFileName (${e.localizedMessage})")
+            Log.e("Data", "Can't read the file $fileName (${e.localizedMessage})")
         }
         return 0
     }

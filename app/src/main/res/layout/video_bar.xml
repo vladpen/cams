@@ -25,9 +25,7 @@
                     android:contentDescription="@string/file_prev"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:padding="10dp"
-                    android:src="@drawable/ic_baseline_keyboard_double_arrow_left_24"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    android:src="@drawable/ic_baseline_keyboard_double_arrow_left_24" />
 
                 <ImageButton
                     android:id="@+id/btnSeekBack"
@@ -37,9 +35,7 @@
                     android:contentDescription="@string/seek_back"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:padding="10dp"
-                    android:src="@drawable/ic_baseline_keyboard_arrow_left_24"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/btnPrevFile" />
+                    android:src="@drawable/ic_baseline_keyboard_arrow_left_24" />
 
                 <ImageButton
                     android:id="@+id/btnPlay"
@@ -47,9 +43,7 @@
                     android:layout_height="44dp"
                     android:background="@drawable/ic_baseline_pause_24"
                     android:contentDescription="@string/play_pause"
-                    android:padding="10dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/btnSeekBack" />
+                    android:padding="10dp" />
 
                 <TextView
                     android:id="@+id/tvSpeed"
@@ -58,9 +52,7 @@
                     android:focusable="true"
                     android:gravity="center"
                     android:textColor="@color/white"
-                    android:textSize="20sp"
-                    app:layout_constraintStart_toEndOf="@+id/btnPlay"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:textSize="20sp" />
 
                 <ImageButton
                     android:id="@+id/btnNextFile"
@@ -70,10 +62,21 @@
                     android:contentDescription="@string/file_next"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:padding="10dp"
-                    android:src="@drawable/ic_baseline_keyboard_double_arrow_right_24"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/tvSpeed" />
+                    android:src="@drawable/ic_baseline_keyboard_double_arrow_right_24" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvChannel"
+            android:layout_width="44dp"
+            android:layout_height="42dp"
+            android:focusable="true"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:background="@color/overlay_background"
+            android:textSize="20sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnMute" />
 
         <ImageButton
             android:id="@+id/btnMute"

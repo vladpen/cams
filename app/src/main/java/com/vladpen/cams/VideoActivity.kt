@@ -30,6 +30,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     private var remotePath: String = "" // relative SFTP path
     private val seekStep: Long = 10000 // milliseconds
     private var isBuffered = false
+    private var channel = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +58,8 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         initToolbar()
         if (remotePath != "")
             initVideoBar()
+        else
+            initChannel()
         initMute()
 
         gestureDetector = VideoGestureDetector(videoLayout)
@@ -204,6 +207,29 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         }
     }
 
+    private fun initChannel() {
+        if (stream.ch0 == null || stream.ch1 == null)
+            return
+
+        channel = getChannel()
+        binding.videoBar.tvChannel.text = getChannelBtn()
+        binding.videoBar.tvChannel.setOnClickListener {
+            if (channel == 0) {
+                channel = 1
+                StreamData.setChannel(channel)
+                binding.videoBar.tvChannel.text = getString(R.string.ch1_btn)
+            } else if (channel == 1) {
+                channel = 0
+                StreamData.setChannel(channel)
+                binding.videoBar.tvChannel.text = getString(R.string.ch0_btn)
+            }
+            binding.videoBar.tvChannel.visibility = View.GONE
+            binding.pbLoading.visibility = View.VISIBLE
+            mediaPlayer.stop()
+            start()
+        }
+    }
+
     private fun start() {
         try {
             val media =
@@ -267,6 +293,8 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
             binding.pbLoading.visibility = View.GONE
             if (mediaPlayer.audioTracksCount > 0)
                 binding.videoBar.btnMute.visibility = View.VISIBLE
+            if (stream.ch0 != null && stream.ch1 != null)
+                binding.videoBar.tvChannel.visibility = View.VISIBLE
             initBars()
             isBuffered = true
         } else if (ev.type == MediaPlayer.Event.EndReached && remotePath != "") {
@@ -314,10 +342,31 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
 
     private fun getUrl(): String {
         val url = Utils.getFullUrl(stream.url, 554, "rtsp")
+        if (channel == 0 && stream.ch0 != null)
+            return url + "/" + stream.ch0
+        if (channel == 1 && stream.ch1 != null)
+            return url + "/" + stream.ch1
+        if (stream.ch0 != null)
+            return url + "/" + stream.ch0
         if (stream.ch1 != null)
             return url + "/" + stream.ch1
-        else if (stream.ch2 != null)
-            return url + "/" + stream.ch2
         return url
+    }
+
+    private fun getChannel(): Int {
+        if (stream.ch0 == null && stream.ch1 == null)
+            return -1
+        val storedChannel = StreamData.getChannel()
+        return if (storedChannel == 0)
+            if (stream.ch0 != null) 0 else 1
+        else
+            if (stream.ch1 != null) 1 else 0
+    }
+
+    private fun getChannelBtn(): String {
+        return if (channel == 0)
+            getString(R.string.ch0_btn)
+        else
+            getString(R.string.ch1_btn)
     }
 }

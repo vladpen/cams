@@ -11,14 +11,17 @@
     <string name="sftp_url_hint">sftp://логин:пароль@ip/папка</string>
     <string name="cam_tcp_udp">TCP/UDP</string>
     <string name="more">Еще…</string>
-    <string name="channelHi">Канал 1</string>
-    <string name="channelLow">Канал 2</string>
-    <string name="channelHiHint">101</string>
-    <string name="channelLowHint">102</string>
+    <string name="channel0">Канал 1</string>
+    <string name="channel1">Канал 2</string>
+    <string name="channel0Hint">101</string>
+    <string name="channel1Hint">102</string>
+    <string name="ch0_btn">K1</string>
+    <string name="ch1_btn">K2</string>
     <string name="channelExplanation">
-        Канал это последняя часть адреса.
-        Первый канал (высокого разрешения) используется при просмотре камеры на отдельном экране,
-        а второй канал (низкого разрешения) — при просмотре в составе группы.
+        Канал — это последняя часть адреса.
+        Первый канал — это канал высокого разрешения, второй канал — низкого.
+        При просмотре камеры на отдельном экране каналы можно переключать в зависимости от скорости соединения.
+        При просмотре камеры в составе группы всегда используется второй канал.
     </string>
     <string name="cam_delete">Удалить камеру?</string>
     <string name="save">Сохранить</string>

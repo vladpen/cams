@@ -87,32 +87,32 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/channelHi" />
+                            android:text="@string/channel0" />
 
                         <EditText
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/etChannel1"
+                            android:id="@+id/etChannel0"
                             android:layout_marginStart="10dp"
                             android:layout_marginEnd="10dp"
                             android:inputType="text"
-                            android:hint="@string/channelHiHint"
+                            android:hint="@string/channel0Hint"
                             android:textColorHint="@color/hint"
                             android:autofillHints="" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/channelLow" />
+                            android:text="@string/channel1" />
 
                         <EditText
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
                             android:layout_marginEnd="10dp"
-                            android:id="@+id/etChannel2"
+                            android:id="@+id/etChannel1"
                             android:inputType="text"
-                            android:hint="@string/channelLowHint"
+                            android:hint="@string/channel1Hint"
                             android:autofillHints="" />
                     </LinearLayout>
                 </HorizontalScrollView>
