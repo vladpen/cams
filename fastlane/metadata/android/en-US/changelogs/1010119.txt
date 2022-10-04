@@ -1,0 +1,2 @@
+- 2 channel cameras support
+- Fixes and improvements

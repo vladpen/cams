@@ -5,6 +5,7 @@ Features:
 * View RTSP streams from any IP cameras, including H.265+.
 * Multiple video cameras on a single screen.
 * Image zoom.
+* 2 channel cameras support
 * Watching videos via SFTP protocol.
 * Maximum connection speed.
 * Extreme ease of navigation and control.

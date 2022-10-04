@@ -1,3 +1,8 @@
+## 1.3.5 - 2022-10-04
+
+- 2 channel cameras support
+- Fixes and improvements
+
 ## 1.3.4 - 2022-09-13
 
 - Unlimited cameras in the groups
