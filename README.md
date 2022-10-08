@@ -76,6 +76,10 @@ height="80">](https://github.com/vladpen/cams/tree/main/app/release)
 alt="Get it on F-Droid"
 height="80">](https://f-droid.org/packages/com.vladpen.cams/)
 
+&nbsp; [<img src="https://user-images.githubusercontent.com/3853013/194689050-e6da2f21-9aa3-4662-9b7d-7293b140f22f.svg"
+alt="Доступно в RuStore"
+height="57">](https://apps.rustore.ru/app/com.vladpen.cams)
+
  &nbsp; [<img src="https://store.nashstore.ru/assets/images/logo.svg"
 alt="Get it on NashStore"
 height="40">](https://store.nashstore.ru/store/628380ec4891a5de4cd8d26f)
