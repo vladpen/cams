@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">Cams</string>
     <string name="main_title">Cameras</string>
-    <string name="add">Add</string>
     <string name="cam_add">Add camera</string>
     <string name="cam_name">Name *</string>
     <string name="cam_name_hint">New camera</string>
@@ -37,7 +36,6 @@
     <string name="file_prev">Previous file</string>
     <string name="file_next">Next file</string>
     <string name="seek_back">Seek back</string>
-    <string name="seek_fwd">Seek forward</string>
     <string name="play_pause">Play/Pause</string>
     <string name="mute">Mute</string>
     <string name="group">Group</string>

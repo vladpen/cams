@@ -148,7 +148,7 @@ class Settings(val context: MainActivity)  {
 
     private fun restoreUrl(url: String?, password: String): String? {
         if (url == null)
-            return url
+            return null
 
         val parsedUrl = Utils.parseUrl(url)
         if (parsedUrl == null || parsedUrl.password == "")
@@ -175,7 +175,7 @@ class Settings(val context: MainActivity)  {
 
     private fun storeUrl(url: String?, password: String): String? {
         if (url == null)
-            return url
+            return null
 
         val parsedUrl = Utils.parseUrl(url)
         if (parsedUrl == null || parsedUrl.password == "")

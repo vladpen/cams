@@ -2,6 +2,7 @@ package com.vladpen
 
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.os.Build
 import android.util.DisplayMetrics
 import android.util.Log
 import com.vladpen.cams.MainApp.Companion.context
@@ -168,13 +169,16 @@ object Utils {
         return IvParameterSpec(out.toByteArray())
     }
 
+    @Suppress("DEPRECATION")
     fun getPackageInfo(): PackageInfo {
         if (::packageInfo.isInitialized)
             return packageInfo
-        return context.packageManager.getPackageInfo(
-            context.packageName,
-            PackageManager.GET_META_DATA
-        )
+        return if (
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+            context.packageManager.getPackageInfo(
+                context.packageName, PackageManager.PackageInfoFlags.of(0))
+        else
+            context.packageManager.getPackageInfo(context.packageName, 0)
     }
 
     fun getColumnCount(metrics: DisplayMetrics, columnSymbolCount: Int = 30): Int {

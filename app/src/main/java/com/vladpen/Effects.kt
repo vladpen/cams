@@ -80,9 +80,10 @@ object Effects {
     }
 
     fun cancel() {
-        if (handler != null)
+        if (handler != null) {
             handler?.removeCallbacksAndMessages(null)
             handler = null
+        }
         if (animation != null) {
             animation?.cancel()
             animation?.setAnimationListener(null)
