@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
@@ -24,7 +25,7 @@ class GroupActivity : AppCompatActivity() {
     private var groupId: Int = -1
     private lateinit var group: GroupDataModel
     private var hideBars = false
-
+    private lateinit var layoutListener: OnGlobalLayoutListener
     private lateinit var gestureDetector: VideoGestureDetector
     private var gestureInProgress = 0
     private var aspectRatio = 1f
@@ -37,7 +38,12 @@ class GroupActivity : AppCompatActivity() {
         initActivity()
         if (savedInstanceState == null)
             initFragments()
-        resizeGrid()
+
+        layoutListener = OnGlobalLayoutListener {
+            resizeGrid() // also reset gestureDetector
+            binding.root.viewTreeObserver.removeOnGlobalLayoutListener(layoutListener)
+        }
+        binding.root.viewTreeObserver.addOnGlobalLayoutListener(layoutListener)
     }
 
     private fun initActivity() {
@@ -94,30 +100,22 @@ class GroupActivity : AppCompatActivity() {
     }
 
     private fun resizeGrid() {
-        var statusBarHeight = 0
-        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
-        if (resourceId > 0)
-            statusBarHeight = resources.getDimensionPixelSize(resourceId)
-
-        val screenWidth = resources.displayMetrics.widthPixels
-        val screenHeight = resources.displayMetrics.heightPixels - statusBarHeight
-        val screenAspectRatio = screenWidth.toFloat() / screenHeight.toFloat()
-        val frameHeight: Int
-
-        val cellQty = if (screenHeight > screenWidth)
+        val cellQty = if (binding.root.height > binding.root.width)
             max(4, frames.count() - 5 / frames.count()) / 4.0 // 1 column for up to 5 cells
         else
             frames.count().toDouble()
         val columnCount = ceil(sqrt(cellQty)).toInt()
         val rowCount = ceil(frames.count() / columnCount.toDouble()).toInt()
 
-        aspectRatio = (ASPECT_RATIO * columnCount / rowCount)
+        aspectRatio = ASPECT_RATIO * columnCount / rowCount
 
-        if (screenAspectRatio > aspectRatio) { // vertical margins
-            frameHeight = screenHeight / rowCount
+        val frameHeight: Int
+        val rootAspectRatio = binding.root.width.toFloat() / binding.root.height.toFloat()
+        if (rootAspectRatio > aspectRatio) { // vertical margins
+            frameHeight = binding.root.height / rowCount
             hideBars = true
         } else { // horizontal margins
-            frameHeight = ((screenWidth / columnCount) / ASPECT_RATIO).toInt()
+            frameHeight = ((binding.root.width / columnCount) / ASPECT_RATIO).toInt()
         }
         val frameWidth = (frameHeight * ASPECT_RATIO).toInt()
 
@@ -146,7 +144,7 @@ class GroupActivity : AppCompatActivity() {
 
     override fun dispatchTouchEvent(e: MotionEvent?): Boolean {
         if (e == null)
-            return super.dispatchTouchEvent(e)
+            return super.dispatchTouchEvent(null)
 
         val res = gestureDetector.onTouchEvent(e) || e.pointerCount > 1
         if (res)
@@ -191,7 +189,6 @@ class GroupActivity : AppCompatActivity() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        resizeGrid()
-        gestureDetector.reset(aspectRatio)
+        binding.root.viewTreeObserver.addOnGlobalLayoutListener(layoutListener)
     }
 }
