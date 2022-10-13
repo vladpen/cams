@@ -14,7 +14,6 @@ import com.vladpen.cams.databinding.FragmentVideoBinding
 import org.videolan.libvlc.LibVLC
 import org.videolan.libvlc.Media
 import org.videolan.libvlc.MediaPlayer
-import org.videolan.libvlc.util.VLCVideoLayout
 import java.io.IOException
 
 class VideoFragment : Fragment() {
@@ -22,10 +21,8 @@ class VideoFragment : Fragment() {
 
     private lateinit var libVlc: LibVLC
     private lateinit var mediaPlayer: MediaPlayer
-    private lateinit var videoLayout: VLCVideoLayout
-
-    private var streamId: Int = -1
     private lateinit var stream: StreamDataModel
+    private var streamId: Int = -1
     private var isBuffered = false
 
     companion object {
@@ -59,7 +56,6 @@ class VideoFragment : Fragment() {
     }
 
     private fun initFragment() {
-        videoLayout = binding.videoLayout
         libVlc = LibVLC(requireContext(), ArrayList<String>().apply {
             if (stream.tcp)
                 add("--rtsp-tcp")
@@ -90,7 +86,7 @@ class VideoFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        mediaPlayer.attachViews(videoLayout, null, false, false)
+        mediaPlayer.attachViews(binding.videoLayout, null, false, false)
         mediaPlayer.volume = 0
         start()
 

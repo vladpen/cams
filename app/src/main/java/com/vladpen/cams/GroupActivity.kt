@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import android.view.ViewTreeObserver
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
@@ -22,15 +22,14 @@ private const val ASPECT_RATIO = 16f / 9f
 class GroupActivity : AppCompatActivity() {
     private val binding by lazy { ActivityGroupBinding.inflate(layoutInflater) }
 
-    private var groupId: Int = -1
     private lateinit var group: GroupDataModel
-    private var hideBars = false
-    private lateinit var layoutListener: OnGlobalLayoutListener
+    private lateinit var layoutListener: ViewTreeObserver.OnGlobalLayoutListener
     private lateinit var gestureDetector: VideoGestureDetector
     private var gestureInProgress = 0
-    private var aspectRatio = 1f
+    private var groupId: Int = -1
     private var fragments = arrayListOf<VideoFragment>()
     private var frames = arrayListOf<FrameLayout>()
+    private var hideBars = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +38,7 @@ class GroupActivity : AppCompatActivity() {
         if (savedInstanceState == null)
             initFragments()
 
-        layoutListener = OnGlobalLayoutListener {
+        layoutListener = ViewTreeObserver.OnGlobalLayoutListener {
             resizeGrid() // also reset gestureDetector
             binding.root.viewTreeObserver.removeOnGlobalLayoutListener(layoutListener)
         }
@@ -57,7 +56,7 @@ class GroupActivity : AppCompatActivity() {
 
         binding.toolbar.tvToolbarLabel.text = group.name
 
-        gestureDetector = VideoGestureDetector(binding.clScreenBox)
+        gestureDetector = VideoGestureDetector(binding.clScreenBox, binding.rlGroupBox)
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         GroupData.currentGroupId = groupId  // save for back navigation
@@ -107,15 +106,15 @@ class GroupActivity : AppCompatActivity() {
         val columnCount = ceil(sqrt(cellQty)).toInt()
         val rowCount = ceil(frames.count() / columnCount.toDouble()).toInt()
 
-        aspectRatio = ASPECT_RATIO * columnCount / rowCount
-
         val frameHeight: Int
         val rootAspectRatio = binding.root.width.toFloat() / binding.root.height.toFloat()
-        if (rootAspectRatio > aspectRatio) { // vertical margins
+        val videoAspectRatio = ASPECT_RATIO * columnCount / rowCount
+        if (rootAspectRatio > videoAspectRatio) { // vertical margins
             frameHeight = binding.root.height / rowCount
             hideBars = true
         } else { // horizontal margins
             frameHeight = ((binding.root.width / columnCount) / ASPECT_RATIO).toInt()
+            hideBars = false
         }
         val frameWidth = (frameHeight * ASPECT_RATIO).toInt()
 
@@ -138,7 +137,7 @@ class GroupActivity : AppCompatActivity() {
             if (i >= columnCount) // except first row
                 params.addRule(RelativeLayout.BELOW, frames[i - columnCount].id)
         }
-        gestureDetector.reset(aspectRatio)
+        gestureDetector.reset()
         initBars()
     }
 

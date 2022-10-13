@@ -7,14 +7,13 @@ import android.view.View
 import com.vladpen.cams.MainApp.Companion.context
 import kotlin.math.*
 
-private const val ASPECT_RATIO = 16f / 9f
-
-class VideoGestureDetector(private val view: View) {
+/**
+ * @param view outer (root) view
+ * @param videoView inner view
+ */
+class VideoGestureDetector(private val view: View, private val videoView: View) {
     private val maxScaleFactor = 20f
     private var scaleFactor = 1f
-    private var aspectRatio = ASPECT_RATIO
-    private var width = 0
-    private var height = 0
     private var maxX = 0f
     private var maxY = 0f
 
@@ -34,8 +33,7 @@ class VideoGestureDetector(private val view: View) {
         else gestureDetector.onTouchEvent(event)
     }
 
-    fun reset(videoAspectRatio: Float = ASPECT_RATIO) {
-        aspectRatio = videoAspectRatio
+    fun reset() {
         scaleFactor = 1f
         view.scaleX = scaleFactor
         view.scaleY = scaleFactor
@@ -43,19 +41,11 @@ class VideoGestureDetector(private val view: View) {
         view.y = 0f
     }
 
-    private fun setSize() {
-        if (view.width.toFloat() / view.height.toFloat() > aspectRatio) {
-            height = view.height
-            width = (height * aspectRatio).roundToInt()
-        } else {
-            width = view.width
-            height = (width / aspectRatio).roundToInt()
-        }
-    }
-
     private fun setLimit() {
-        maxX = max(0f, (width * (scaleFactor - 1) - view.width + width) / 2)
-        maxY = max(0f, (height * (scaleFactor - 1) - view.height + height) / 2)
+        val videoWidth = videoView.width
+        val videoHeight = videoView.height
+        maxX = max(0f, (videoWidth * (scaleFactor - 1) - view.width + videoWidth) / 2)
+        maxY = max(0f, (videoHeight * (scaleFactor - 1) - view.height + videoHeight) / 2)
     }
 
     private fun move(distanceX: Float, distanceY: Float) {
@@ -101,7 +91,6 @@ class VideoGestureDetector(private val view: View) {
         }
 
         override fun onDown(e: MotionEvent): Boolean {
-            setSize()
             setLimit()
             return super.onDown(e)
         }

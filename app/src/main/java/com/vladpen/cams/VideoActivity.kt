@@ -12,30 +12,36 @@ import com.vladpen.cams.databinding.ActivityVideoBinding
 import org.videolan.libvlc.LibVLC
 import org.videolan.libvlc.Media
 import org.videolan.libvlc.MediaPlayer
-import org.videolan.libvlc.util.VLCVideoLayout
 import java.io.IOException
+
+private const val ASPECT_RATIO = 16f / 9f
 
 class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     private val binding by lazy { ActivityVideoBinding.inflate(layoutInflater) }
 
+    private lateinit var stream: StreamDataModel
     private lateinit var libVlc: LibVLC
     private lateinit var mediaPlayer: MediaPlayer
-    private lateinit var videoLayout: VLCVideoLayout
-    private lateinit var stream: StreamDataModel
-
+    private lateinit var layoutListener: ViewTreeObserver.OnGlobalLayoutListener
     private lateinit var gestureDetector: VideoGestureDetector
     private var gestureInProgress = false
-
     private var streamId: Int = -1 // -1 means "no stream"
     private var remotePath: String = "" // relative SFTP path
     private val seekStep: Long = 10000 // milliseconds
     private var isBuffered = false
     private var channel = 0
+    private var hideBars = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         initActivity()
+
+        layoutListener = ViewTreeObserver.OnGlobalLayoutListener {
+            resizeLayout() // also reset gestureDetector
+            binding.root.viewTreeObserver.removeOnGlobalLayoutListener(layoutListener)
+        }
+        binding.root.viewTreeObserver.addOnGlobalLayoutListener(layoutListener)
     }
 
     private fun initActivity() {
@@ -43,8 +49,6 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         remotePath = intent.getStringExtra("remotePath") ?: ""
 
         stream = StreamData.getById(streamId) ?: return
-
-        videoLayout = binding.videoLayout
 
         libVlc = LibVLC(this, ArrayList<String>().apply {
             if (stream.tcp && remotePath == "")
@@ -62,8 +66,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
             initChannel()
         initMute()
 
-        gestureDetector = VideoGestureDetector(videoLayout)
-        gestureDetector.reset()
+        gestureDetector = VideoGestureDetector(binding.clScreenBox, binding.flVideoBox)
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
@@ -93,6 +96,28 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
                 .putExtra("remotePath", FileData.getParentPath(remotePath))
             startActivity(intent)
         }
+    }
+
+    private fun resizeLayout() {
+        val frameWidth: Int
+        val frameHeight: Int
+        val rootAspectRatio = binding.root.width.toFloat() / binding.root.height.toFloat()
+        if (rootAspectRatio > ASPECT_RATIO) { // vertical margins
+            frameHeight = binding.root.height
+            frameWidth = (frameHeight * ASPECT_RATIO).toInt()
+            hideBars = true
+        } else { // horizontal margins
+            frameWidth = binding.root.width
+            frameHeight = (frameWidth / ASPECT_RATIO).toInt()
+            hideBars = false
+        }
+        val params = binding.flVideoBox.layoutParams
+        params.width = frameWidth
+        params.height = frameHeight
+        binding.flVideoBox.layoutParams = params
+
+        gestureDetector.reset()
+        initBars()
     }
 
     private fun filesScreen() {
@@ -260,19 +285,18 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         }
     }
 
-    private fun initBars(isLandscape: Boolean? = null) {
-        val landscape = isLandscape ?: (binding.root.width > binding.root.height)
-
+    private fun initBars() {
         Effects.cancel()
         binding.toolbar.root.visibility = View.VISIBLE
         binding.videoBar.root.visibility = View.VISIBLE
-        if (landscape)
+        if (hideBars) {
             Effects.delayedFadeOut(arrayOf(binding.toolbar.root, binding.videoBar.root))
+        }
     }
 
     override fun onStart() {
         super.onStart()
-        mediaPlayer.attachViews(videoLayout, null, false, false)
+        mediaPlayer.attachViews(binding.videoLayout, null, false, false)
         start()
     }
 
@@ -318,8 +342,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        gestureDetector.reset()
-        initBars(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
+        binding.root.viewTreeObserver.addOnGlobalLayoutListener(layoutListener)
     }
 
     private fun observeNetworkState() {
