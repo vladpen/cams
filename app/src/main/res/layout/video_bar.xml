@@ -49,7 +49,6 @@
                     android:id="@+id/tvSpeed"
                     android:layout_width="44dp"
                     android:layout_height="42dp"
-                    android:focusable="true"
                     android:gravity="center"
                     android:textColor="@color/white"
                     android:textSize="20sp" />
@@ -68,8 +67,7 @@
         <TextView
             android:id="@+id/tvChannel"
             android:layout_width="44dp"
-            android:layout_height="42dp"
-            android:focusable="true"
+            android:layout_height="44dp"
             android:gravity="center"
             android:textColor="@color/white"
             android:background="@color/overlay_background"
@@ -80,12 +78,12 @@
 
         <ImageButton
             android:id="@+id/btnMute"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:gravity="center"
             android:background="@color/overlay_background"
             android:contentDescription="@string/mute"
             android:foreground="?android:attr/selectableItemBackground"
-            android:padding="10dp"
             android:src="@drawable/ic_baseline_volume_up_24"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
