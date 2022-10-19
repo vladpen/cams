@@ -238,6 +238,8 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
 
         channel = getChannel()
         binding.videoBar.tvChannel.text = getChannelBtn()
+        if (channel == 0)
+            binding.videoBar.tvChannel.visibility = View.VISIBLE
         binding.videoBar.tvChannel.setOnClickListener {
             if (channel == 0) {
                 channel = 1
