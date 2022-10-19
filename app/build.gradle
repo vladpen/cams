@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId 'com.vladpen.cams'
-        minSdk 23
+        minSdk 24
         targetSdk 33
         versionCode 1010119
         versionName '1.3.5'
