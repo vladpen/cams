@@ -28,6 +28,7 @@ class EditActivity : AppCompatActivity() {
             streamId = -1
             binding.toolbar.tvToolbarLabel.text = getString(R.string.cam_add)
             binding.tvDeleteLink.visibility = View.GONE
+            binding.llMoreBox.layoutParams.height = 0
         } else {
             binding.toolbar.tvToolbarLabel.text = stream.name
 
