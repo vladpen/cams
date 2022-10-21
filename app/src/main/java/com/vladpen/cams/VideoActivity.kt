@@ -233,7 +233,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     }
 
     private fun initChannel() {
-        if (stream.ch0 == null || stream.ch1 == null)
+        if (stream.url2 == null)
             return
 
         channel = getChannel()
@@ -244,11 +244,11 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
             if (channel == 0) {
                 channel = 1
                 StreamData.setChannel(channel)
-                binding.videoBar.tvChannel.text = getString(R.string.ch1_btn)
+                binding.videoBar.tvChannel.text = getString(R.string.ch2_btn)
             } else if (channel == 1) {
                 channel = 0
                 StreamData.setChannel(channel)
-                binding.videoBar.tvChannel.text = getString(R.string.ch0_btn)
+                binding.videoBar.tvChannel.text = getString(R.string.ch1_btn)
             }
             binding.videoBar.tvChannel.visibility = View.GONE
             binding.pbLoading.visibility = View.VISIBLE
@@ -319,7 +319,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
             binding.pbLoading.visibility = View.GONE
             if (mediaPlayer.audioTracksCount > 0)
                 binding.videoBar.btnMute.visibility = View.VISIBLE
-            if (stream.ch0 != null && stream.ch1 != null)
+            if (stream.url2 != null)
                 binding.videoBar.tvChannel.visibility = View.VISIBLE
             initBars()
             isBuffered = true
@@ -366,32 +366,24 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     }
 
     private fun getUrl(): String {
-        val url = Utils.getFullUrl(stream.url, 554, "rtsp")
-        if (channel == 0 && stream.ch0 != null)
-            return url + "/" + stream.ch0
-        if (channel == 1 && stream.ch1 != null)
-            return url + "/" + stream.ch1
-        if (stream.ch0 != null)
-            return url + "/" + stream.ch0
-        if (stream.ch1 != null)
-            return url + "/" + stream.ch1
-        return url
+        val url = if (channel == 1 && stream.url2 != null)
+            stream.url2!!
+        else
+            stream.url
+        return Utils.getFullUrl(url, 554, "rtsp")
     }
 
     private fun getChannel(): Int {
-        if (stream.ch0 == null && stream.ch1 == null)
+        if (stream.url2 == null)
             return -1
         val storedChannel = StreamData.getChannel()
-        return if (storedChannel == 0)
-            if (stream.ch0 != null) 0 else 1
-        else
-            if (stream.ch1 != null) 1 else 0
+        return if (storedChannel == 1 && stream.url2 != null) 1 else 0
     }
 
     private fun getChannelBtn(): String {
         return if (channel == 0)
-            getString(R.string.ch0_btn)
-        else
             getString(R.string.ch1_btn)
+        else
+            getString(R.string.ch2_btn)
     }
 }

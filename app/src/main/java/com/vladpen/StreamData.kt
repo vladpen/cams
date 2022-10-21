@@ -9,10 +9,9 @@ import com.vladpen.cams.MainApp.Companion.context
 data class StreamDataModel(
     val name: String,
     var url: String,
+    var url2: String?,
     val tcp: Boolean,
-    var sftp: String?,
-    var ch0: String?,
-    var ch1: String?)
+    var sftp: String?)
 
 object StreamData {
     private const val fileName = "streams.json"

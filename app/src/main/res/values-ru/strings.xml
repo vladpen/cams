@@ -6,22 +6,14 @@
     <string name="cam_name_hint">Новая камера</string>
     <string name="cam_url">Адрес *</string>
     <string name="cam_url_hint">rtsp://логин:пароль@ip:порт/путь</string>
+    <string name="channel_url">Channel 2</string>
+    <string name="add_channel">Add channel</string>
+    <string name="del_channel">Delete channel</string>
+    <string name="ch1_btn">K1</string>
+    <string name="ch2_btn">K2</string>
     <string name="sftp_url">Адрес SFTP</string>
     <string name="sftp_url_hint">sftp://логин:пароль@ip/папка</string>
     <string name="cam_tcp_udp">TCP/UDP</string>
-    <string name="more">Еще…</string>
-    <string name="channel0">Канал 1</string>
-    <string name="channel1">Канал 2</string>
-    <string name="channel0Hint">101</string>
-    <string name="channel1Hint">102</string>
-    <string name="ch0_btn">K1</string>
-    <string name="ch1_btn">K2</string>
-    <string name="channelExplanation">
-        Канал — это последняя часть адреса.
-        Первый канал — это канал высокого разрешения, второй канал — низкого.
-        При просмотре камеры на отдельном экране каналы можно переключать в зависимости от скорости соединения.
-        При просмотре камеры в составе группы всегда используется второй канал.
-    </string>
     <string name="cam_delete">Удалить камеру?</string>
     <string name="save">Сохранить</string>
     <string name="delete">Удалить</string>
@@ -30,6 +22,7 @@
     <string name="back">Назад</string>
     <string name="err_invalid">Неверное значение</string>
     <string name="err_cam_exists">Такая камера уже существует</string>
+    <string name="err_channels_equal">Адреса каналов совпадают</string>
     <string name="files">Архив</string>
     <string name="live">Камера</string>
     <string name="MB">МБ</string>

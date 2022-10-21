@@ -6,22 +6,14 @@
     <string name="cam_name_hint">Nova câmera</string>
     <string name="cam_url">Endereço *</string>
     <string name="cam_url_hint">rtsp://usuário:senha@ip:porta/caminho</string>
+    <string name="channel_url">Channel 2</string>
+    <string name="add_channel">Add channel</string>
+    <string name="del_channel">Delete channel</string>
+    <string name="ch1_btn">C1</string>
+    <string name="ch2_btn">C2</string>
     <string name="sftp_url">Endereço SFTP</string>
     <string name="sftp_url_hint">sftp://usuário:senha@ip/pasta</string>
     <string name="cam_tcp_udp">TCP/UDP</string>
-    <string name="more">More…</string>
-    <string name="channel0">Channel 1</string>
-    <string name="channel1">Channel 2</string>
-    <string name="channel0Hint">101</string>
-    <string name="channel1Hint">102</string>
-    <string name="ch0_btn">C1</string>
-    <string name="ch1_btn">C2</string>
-    <string name="channelExplanation">
-        The channel is the last part of the address.
-        The first channel is the high resolution channel, the second channel is the low resolution one.
-        Channels can be switched depending on the connection speed on the single câmera screen.
-        While a group viewing the second channel is always used.
-    </string>
     <string name="cam_delete">Excluir câmera?</string>
     <string name="save">Salvar</string>
     <string name="delete">Excluir</string>
@@ -30,6 +22,7 @@
     <string name="back">Voltar</string>
     <string name="err_invalid">Valor incorreto</string>
     <string name="err_cam_exists">A câmera já existe</string>
+    <string name="err_channels_equal">Channel addresses match</string>
     <string name="files">Arquivos</string>
     <string name="live">ao vivo</string>
     <string name="MB">MB</string>

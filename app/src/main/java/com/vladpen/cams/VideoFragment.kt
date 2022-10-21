@@ -138,11 +138,10 @@ class VideoFragment : Fragment() {
     }
 
     private fun getUrl(): String {
-        val url = Utils.getFullUrl(stream.url, 554, "rtsp")
-        if (stream.ch1 != null)
-            return url + "/" + stream.ch1
-        else if (stream.ch0 != null)
-            return url + "/" + stream.ch0
-        return url
+        val url = if (stream.url2 != null)
+            stream.url2!!
+        else
+            stream.url
+        return Utils.getFullUrl(url, 554, "rtsp")
     }
 }

@@ -28,25 +28,35 @@ class EditActivity : AppCompatActivity() {
             streamId = -1
             binding.toolbar.tvToolbarLabel.text = getString(R.string.cam_add)
             binding.tvDeleteLink.visibility = View.GONE
-            binding.llMoreBox.layoutParams.height = 0
+            binding.llChannelBox.layoutParams.height = 0
         } else {
             binding.toolbar.tvToolbarLabel.text = stream.name
 
             binding.etEditName.setText(stream.name)
             binding.etEditUrl.setText(safeUrl(stream.url))
-            binding.etChannel0.setText(stream.ch0)
-            binding.etChannel1.setText(stream.ch1)
+            binding.etEditChannel.setText(safeUrl(stream.url2))
             binding.etEditSftpUrl.setText(safeUrl(stream.sftp))
             binding.scEditTcp.isChecked = !stream.tcp
 
             binding.tvDeleteLink.setOnClickListener {
                 delete()
             }
-            if (stream.ch0 == null && stream.ch1 == null)
-                binding.llMoreBox.layoutParams.height = 0
+            if (stream.url2 == null)
+                binding.llChannelBox.layoutParams.height = 0
+            else
+                binding.tvAddChannel.visibility = View.GONE
         }
-        binding.tvMoreSwitch.setOnClickListener {
-            Effects.toggle(binding.llMoreBox)
+        binding.tvAddChannel.setOnClickListener {
+            binding.tvAddChannel.visibility = View.GONE
+            binding.tvDelChannel.visibility = View.VISIBLE
+            binding.etEditChannel.setText(binding.etEditUrl.text.toString().trim())
+            Effects.toggle(binding.llChannelBox)
+        }
+        binding.tvDelChannel.setOnClickListener {
+            binding.tvDelChannel.visibility = View.GONE
+            binding.tvAddChannel.visibility = View.VISIBLE
+            binding.etEditChannel.setText("")
+            Effects.toggle(binding.llChannelBox)
         }
         binding.btnSave.setOnClickListener {
             save()
@@ -81,27 +91,29 @@ class EditActivity : AppCompatActivity() {
     }
 
     private fun save() {
-        if (!validate())
-            return
-
         val oldStream = StreamData.getById(streamId)
 
         var streamUrl = binding.etEditUrl.text.toString().trim()
         streamUrl = getEncodedUrl(streamUrl, oldStream?.url)
 
+        var channelUrl = binding.etEditChannel.text.toString().trim()
+        val oldChannelUrl = if (oldStream?.url2 != null) oldStream.url2
+            else if (oldStream?.url != null) oldStream.url
+            else streamUrl
+        channelUrl = getEncodedUrl(channelUrl, oldChannelUrl)
+
         var sftpUrl = binding.etEditSftpUrl.text.toString().trim()
         sftpUrl = getEncodedUrl(sftpUrl, oldStream?.sftp)
 
-        val ch0 = Utils.trimSlashes(binding.etChannel0.text.toString().trim())
-        val ch1 = Utils.trimSlashes(binding.etChannel1.text.toString().trim())
+        if (!validate(streamUrl, channelUrl))
+            return
 
         val newStream = StreamDataModel(
             binding.etEditName.text.toString().trim(),
             streamUrl,
+            if (channelUrl != "") channelUrl else null,
             !binding.scEditTcp.isChecked,
-            if (sftpUrl != "") sftpUrl else null,
-            if (ch0 != "") ch0 else null,
-            if (ch1 != "") ch1 else null
+            if (sftpUrl != "") sftpUrl else null
         )
         if (streamId < 0) {
             StreamData.add(newStream)
@@ -111,7 +123,7 @@ class EditActivity : AppCompatActivity() {
         back()
     }
 
-    private fun validate(): Boolean {
+    private fun validate(streamUrl: String, channelUrl: String): Boolean {
         val name = binding.etEditName.text.toString().trim()
         val url = binding.etEditUrl.text.toString().trim()
         var ok = true
@@ -136,6 +148,10 @@ class EditActivity : AppCompatActivity() {
                 binding.etEditUrl.error = getString(R.string.err_cam_exists)
                 ok = false
             }
+        }
+        if (channelUrl != "" && channelUrl == streamUrl) {
+            binding.etEditChannel.error = getString(R.string.err_channels_equal)
+            ok = false
         }
         return ok
     }

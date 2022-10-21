@@ -46,12 +46,12 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/tvMoreSwitch"
+                    android:id="@+id/tvAddChannel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
-                    android:text="@string/more"
+                    android:text="@string/add_channel"
                     android:textColor="@color/accent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -67,65 +67,45 @@
                 android:gravity="center" />
 
             <LinearLayout
-                android:id="@+id/llMoreBox"
+                android:id="@+id/llChannelBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:gravity="center"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp">
+                android:gravity="center">
 
-                <HorizontalScrollView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp">
 
-                    <LinearLayout
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:text="@string/channel_url"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/channel0" />
+                    <TextView
+                        android:id="@+id/tvDelChannel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:text="@string/del_channel"
+                        android:textColor="@color/accent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-                        <EditText
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/etChannel0"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginEnd="10dp"
-                            android:inputType="text"
-                            android:hint="@string/channel0Hint"
-                            android:textColorHint="@color/hint"
-                            android:autofillHints="" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/channel1" />
-
-                        <EditText
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginEnd="10dp"
-                            android:id="@+id/etChannel1"
-                            android:inputType="text"
-                            android:hint="@string/channel1Hint"
-                            android:autofillHints="" />
-                    </LinearLayout>
-                </HorizontalScrollView>
-
-                <TextView
-                    android:layout_width="wrap_content"
+                <EditText
+                    android:id="@+id/etEditChannel"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/channelExplanation"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="14dp"
-                    android:gravity="center"
-                    android:textSize="11sp"
-                    android:textStyle="italic" />
+                    android:inputType="textUri"
+                    android:hint="@string/cam_url_hint"
+                    android:autofillHints=""
+                    android:gravity="center" />
             </LinearLayout>
 
             <TextView
