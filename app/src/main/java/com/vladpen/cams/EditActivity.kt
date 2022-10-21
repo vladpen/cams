@@ -24,6 +24,8 @@ class EditActivity : AppCompatActivity() {
         streamId = intent.getIntExtra("streamId", -1)
 
         val stream = StreamData.getById(streamId)
+        binding.toolbar.tvToolbarLink.text = getString(R.string.save)
+        binding.toolbar.tvToolbarLink.setTextColor(getColor(R.color.files_link))
         if (stream == null) {
             streamId = -1
             binding.toolbar.tvToolbarLabel.text = getString(R.string.cam_add)
@@ -36,7 +38,8 @@ class EditActivity : AppCompatActivity() {
             binding.etEditUrl.setText(safeUrl(stream.url))
             binding.etEditChannel.setText(safeUrl(stream.url2))
             binding.etEditSftpUrl.setText(safeUrl(stream.sftp))
-            binding.scEditTcp.isChecked = !stream.tcp
+            binding.rbEditTcp.isChecked = stream.tcp
+            binding.rbEditUdp.isChecked = !stream.tcp
 
             binding.tvDeleteLink.setOnClickListener {
                 delete()
@@ -59,6 +62,9 @@ class EditActivity : AppCompatActivity() {
             Effects.toggle(binding.llChannelBox)
         }
         binding.btnSave.setOnClickListener {
+            save()
+        }
+        binding.toolbar.tvToolbarLink.setOnClickListener {
             save()
         }
         binding.toolbar.btnBack.setOnClickListener {
@@ -112,7 +118,7 @@ class EditActivity : AppCompatActivity() {
             binding.etEditName.text.toString().trim(),
             streamUrl,
             if (channelUrl != "") channelUrl else null,
-            !binding.scEditTcp.isChecked,
+            binding.rbEditTcp.isChecked,
             if (sftpUrl != "") sftpUrl else null
         )
         if (streamId < 0) {

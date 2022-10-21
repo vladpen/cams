@@ -52,7 +52,7 @@
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
                     android:text="@string/add_channel"
-                    android:textColor="@color/accent"
+                    android:textColor="@color/files_link"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -93,7 +93,7 @@
                         android:paddingStart="10dp"
                         android:paddingEnd="10dp"
                         android:text="@string/del_channel"
-                        android:textColor="@color/accent"
+                        android:textColor="@color/error"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -123,12 +123,27 @@
                 android:autofillHints=""
                 android:gravity="center" />
 
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/scEditTcp"
+            <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/cam_tcp_udp" />
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:text="@string/cam_protocol" />
+                <RadioButton android:id="@+id/rbEditTcp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:text="@string/cam_tcp" />
+                <RadioButton android:id="@+id/rbEditUdp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cam_udp" />
+            </RadioGroup>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

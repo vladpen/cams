@@ -13,7 +13,9 @@
     <string name="ch2_btn">C2</string>
     <string name="sftp_url">Endereço SFTP</string>
     <string name="sftp_url_hint">sftp://usuário:senha@ip/pasta</string>
-    <string name="cam_tcp_udp">TCP/UDP</string>
+    <string name="cam_protocol">Protocol</string>
+    <string name="cam_tcp">TCP</string>
+    <string name="cam_udp">UDP</string>
     <string name="cam_delete">Excluir câmera?</string>
     <string name="save">Salvar</string>
     <string name="delete">Excluir</string>

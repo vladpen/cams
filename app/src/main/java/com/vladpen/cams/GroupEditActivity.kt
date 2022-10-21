@@ -30,6 +30,8 @@ class GroupEditActivity : AppCompatActivity() {
         groupId = intent.getIntExtra("groupId", -1)
 
         val group = GroupData.getById(groupId)
+        binding.toolbar.tvToolbarLink.text = getString(R.string.save)
+        binding.toolbar.tvToolbarLink.setTextColor(getColor(R.color.files_link))
         if (group == null) {
             groupId = -1
             binding.toolbar.tvToolbarLabel.text = getString(R.string.group_add)
@@ -62,6 +64,9 @@ class GroupEditActivity : AppCompatActivity() {
             showPopupMenu(it)
         }
         binding.btnSave.setOnClickListener {
+            save()
+        }
+        binding.toolbar.tvToolbarLink.setOnClickListener {
             save()
         }
         binding.toolbar.btnBack.setOnClickListener {
