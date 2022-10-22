@@ -12,6 +12,8 @@ import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import com.vladpen.Utils.decodeString
+import com.vladpen.Utils.decodeUrl
 import com.vladpen.cams.MainActivity
 import com.vladpen.cams.R
 import java.io.FileOutputStream
@@ -36,9 +38,9 @@ class Settings(val context: MainActivity)  {
             setOnShowListener {
                 getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                     val userPassword = input.text.toString().trim()
-                    if (userPassword.length < MIN_PASSWORD_LEN) {
+                    if (userPassword != "" && userPassword.length < MIN_PASSWORD_LEN) {
                         input.error = context.getString(R.string.err_invalid)
-                    } else if (inputConfirm.text.toString().trim() != userPassword) {
+                    } else if (userPassword != inputConfirm.text.toString().trim()) {
                         inputConfirm.error = context.getString(R.string.err_invalid)
                     } else {
                         password = userPassword
@@ -89,6 +91,7 @@ class Settings(val context: MainActivity)  {
                             val fileContent = inputStream?.bufferedReader().use {
                                 it?.readText()?.trim()?.lines()
                             }
+                            inputStream?.close()
                             if (fileContent != null)
                                 decodeSettings(fileContent)
                             else
@@ -107,7 +110,7 @@ class Settings(val context: MainActivity)  {
             setOnShowListener {
                 getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                     val password = input.text.toString().trim()
-                    if (password.length < MIN_PASSWORD_LEN) {
+                    if (password != "" && password.length < MIN_PASSWORD_LEN) {
                         input.error = context.getString(R.string.err_invalid)
                     } else {
                         try {
@@ -124,18 +127,23 @@ class Settings(val context: MainActivity)  {
     }
 
     private fun restoreSettings(content: List<String>, password: String) {
-        val streams = StreamData.fromJson(content[0])
-        for (stream in streams) {
-            stream.url = restoreUrl(stream.url, password)!!
-            stream.sftp = restoreUrl(stream.sftp, password)
+        val rows: List<String>
+        if (password != "") {
+            rows = decodeString(content[0], password).split("\n")
+            if (rows[0] == content[0]) {
+               throw Exception("invalid password")
+            }
+        } else {
+            rows = content
         }
+        decodeStreams(StreamData.fromJson(rows[0]))
         StreamData.save()
-        if (content.count() > 1) {
-            GroupData.fromJson(content[1])
+        if (rows.count() > 1) {
+            GroupData.fromJson(rows[1])
             GroupData.save()
         }
-        if (content.count() > 2) {
-            SourceData.fromJson(content[2])
+        if (rows.count() > 2) {
+            SourceData.fromJson(rows[2])
             SourceData.save()
         } else {
             SourceData.createSources()
@@ -146,44 +154,26 @@ class Settings(val context: MainActivity)  {
         context.startActivity(intent)
     }
 
-    private fun restoreUrl(url: String?, password: String): String? {
-        if (url == null)
-            return null
-
-        val parsedUrl = Utils.parseUrl(url)
-        if (parsedUrl == null || parsedUrl.password == "")
-            return url
-
-        val decodedPassword = Utils.decodeString(parsedUrl.password, password)
-        if (decodedPassword == parsedUrl.password)
-            throw Exception("invalid password")
-        val encodedPassword = Utils.encodeString(decodedPassword)
-        return Utils.replacePassword(url, encodedPassword)
-    }
-
     private fun encodeSettings(): String {
-        val reEncodedStreams = StreamData.getAll().map { it.copy() }
-        for (stream in reEncodedStreams) {
-            stream.url = storeUrl(stream.url, password)!!
-            stream.sftp = storeUrl(stream.sftp, password)
-        }
-        val streams = StreamData.toJson(reEncodedStreams)
+        val decodedStreams = decodeStreams(StreamData.getAll().map { it.copy() })
+        val streams = StreamData.toJson(decodedStreams)
         val groups = GroupData.toJson(GroupData.getAll())
         val sources = SourceData.toJson(SourceData.getAll())
-        return "$streams\n$groups\n$sources"
+        val out = "$streams\n$groups\n$sources"
+        if (password == "")
+            return out
+        return Utils.encodeString(out, password)
     }
 
-    private fun storeUrl(url: String?, password: String): String? {
-        if (url == null)
-            return null
-
-        val parsedUrl = Utils.parseUrl(url)
-        if (parsedUrl == null || parsedUrl.password == "")
-            return url
-
-        val decodedPassword = Utils.decodeString(parsedUrl.password)
-        val encodedPassword = Utils.encodeString(decodedPassword, password)
-        return Utils.replacePassword(url, encodedPassword)
+    private fun decodeStreams(streams: List<StreamDataModel>): List<StreamDataModel> {
+        for (stream in streams) {
+            stream.url = decodeUrl(stream.url)
+            if (stream.url2 != null)
+                stream.url2 = decodeUrl(stream.url2!!)
+            if (stream.sftp != null)
+                stream.sftp = decodeUrl(stream.sftp!!)
+        }
+        return streams
     }
 
     private fun getEditText(): EditText {

@@ -117,7 +117,7 @@ object Utils {
             return String(cipher.doFinal(encoded))
 
         } catch (e: java.lang.Exception) {
-            Log.e("Utils", "Can't decrypt password (${e.localizedMessage})")
+            Log.e("Utils", "Can't decrypt string (${e.localizedMessage})")
         }
         return str
     }
@@ -187,7 +187,7 @@ object Utils {
         return max(1, screenSymbolsCount.toInt() / columnSymbolCount)
     }
 
-    fun trimSlashes(str: String): String {
+    private fun trimSlashes(str: String): String {
         return "^/*(.+?)/*$".toRegex().replace(str, "$1")
     }
 }

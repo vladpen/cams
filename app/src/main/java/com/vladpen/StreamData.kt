@@ -79,7 +79,7 @@ object StreamData {
             val listType = object : TypeToken<List<StreamDataModel>>() { }.type
             streams = Gson().fromJson<List<StreamDataModel>>(json, listType).toMutableList()
         } catch (e: Exception) {
-            Log.e("StreamData", "Can't parse (${e.localizedMessage})")
+            Log.e("StreamData", "Can't parse json (${e.localizedMessage})")
         }
         return streams
     }
