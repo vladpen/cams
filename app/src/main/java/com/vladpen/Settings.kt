@@ -105,7 +105,7 @@ class Settings(val context: MainActivity)  {
     }
 
     private fun decodeSettings(content: List<String>) {
-        if (content.count() > 1) { // not encrypted
+        if (content[0].startsWith("[{")) { // not encrypted
             try {
                 restoreSettings(content, "")
                 return
@@ -118,7 +118,7 @@ class Settings(val context: MainActivity)  {
             setOnShowListener {
                 getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                     val password = input.text.toString().trim()
-                    if (password != "" && password.length < MIN_PASSWORD_LEN) {
+                    if (password.length < MIN_PASSWORD_LEN) {
                         input.error = context.getString(R.string.err_invalid)
                     } else {
                         try {
