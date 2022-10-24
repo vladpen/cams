@@ -105,6 +105,14 @@ class Settings(val context: MainActivity)  {
     }
 
     private fun decodeSettings(content: List<String>) {
+        if (content.count() > 1) { // not encrypted
+            try {
+                restoreSettings(content, "")
+                return
+            } catch (e: Exception) {
+                Log.e("Settings", "Can't restore (${e.localizedMessage})")
+            }
+        }
         val dialog = getDialog(getImportDialogContent())
         dialog.apply {
             setOnShowListener {
@@ -136,7 +144,7 @@ class Settings(val context: MainActivity)  {
         } else {
             rows = content
         }
-        decodeStreams(StreamData.fromJson(rows[0]))
+        StreamData.fromJson(rows[0])
         StreamData.save()
         if (rows.count() > 1) {
             GroupData.fromJson(rows[1])
