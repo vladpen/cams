@@ -19,6 +19,7 @@ object StreamData {
     private const val channelFileName = "channel.bin"
     private var streams = mutableListOf<StreamDataModel>()
     var logConnections = false
+    var copyStreamId = -1
 
     fun getAll(): MutableList<StreamDataModel> {
         if (streams.isEmpty()) {

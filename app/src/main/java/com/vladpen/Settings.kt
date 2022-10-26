@@ -14,6 +14,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import com.vladpen.Utils.decodeString
 import com.vladpen.Utils.decodeUrl
+import com.vladpen.Utils.encodeString
+import com.vladpen.Utils.encodeUrl
 import com.vladpen.cams.MainActivity
 import com.vladpen.cams.R
 import java.io.FileOutputStream
@@ -145,6 +147,7 @@ class Settings(val context: MainActivity)  {
             rows = content
         }
         StreamData.fromJson(rows[0])
+        encodeStreams()
         StreamData.save()
         if (rows.count() > 1) {
             GroupData.fromJson(rows[1])
@@ -162,6 +165,17 @@ class Settings(val context: MainActivity)  {
         context.startActivity(intent)
     }
 
+    private fun encodeStreams() {
+        val streams = StreamData.getAll()
+        for (stream in streams) {
+            stream.url = encodeUrl(stream.url)
+            if (stream.url2 != null)
+                stream.url2 = encodeUrl(stream.url2!!)
+            if (stream.sftp != null)
+                stream.sftp = encodeUrl(stream.sftp!!)
+        }
+    }
+
     private fun encodeSettings(): String {
         val decodedStreams = decodeStreams(StreamData.getAll().map { it.copy() })
         val streams = StreamData.toJson(decodedStreams)
@@ -170,7 +184,7 @@ class Settings(val context: MainActivity)  {
         val out = "$streams\n$groups\n$sources"
         if (password == "")
             return out
-        return Utils.encodeString(out, password)
+        return encodeString(out, password)
     }
 
     private fun decodeStreams(streams: List<StreamDataModel>): List<StreamDataModel> {

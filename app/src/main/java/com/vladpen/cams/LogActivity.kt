@@ -11,6 +11,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.vladpen.Effects
 import com.vladpen.LogAdapter
 import com.vladpen.StreamData
 import com.vladpen.cams.databinding.ActivityLogBinding
@@ -118,5 +119,6 @@ class LogActivity: AppCompatActivity() {
         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clipData = ClipData.newPlainText(label, textToCopy)
         clipboardManager.setPrimaryClip(clipData)
+        Effects.fadeOut(arrayOf(binding.toolbar.tvToolbarLink))
     }
 }

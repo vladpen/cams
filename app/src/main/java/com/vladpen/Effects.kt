@@ -23,7 +23,7 @@ object Effects {
         }, delay)
     }
 
-    private fun fadeOut(views: Array<View>, duration: Long = 500) {
+    fun fadeOut(views: Array<View>, duration: Long = 500) {
         animation = AnimationUtils.loadAnimation(context, android.R.anim.fade_out)
         animation?.duration = duration
         animation?.setAnimationListener(object : Animation.AnimationListener {

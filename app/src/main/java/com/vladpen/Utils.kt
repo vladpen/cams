@@ -66,6 +66,14 @@ object Utils {
         return replacePassword(url, password)
     }
 
+    fun encodeUrl(url: String): String {
+        val parts = parseUrl(url) ?: return url
+        if (parts.password == "")
+            return url
+        val password = encodeString(parts.password)
+        return replacePassword(url, password)
+    }
+
     fun getFullUrl(url: String, defaultPort: Int, defaultScheme: String): String {
         val parts = parseUrl(url, defaultPort, defaultScheme) ?: return url
         var res = ""
