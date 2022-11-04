@@ -1,0 +1,7 @@
+- Android 13 "Tiramisu" support (API level 33)
+- Kernel update
+- Components update
+- Improved interface
+- Fixes
+
+Attention! The method of file encryption during export of settings has been changed, as well as channels settings, re-saving is required.

@@ -1,3 +1,13 @@
+## 2.0 - 2022-11-04
+
+- Android 13 "Tiramisu" support (API level 33)
+- Kernel update
+- Components update
+- Improved interface
+- Fixes
+
+Attention! The method of file encryption during export of settings has been changed, as well as channels settings, re-saving is required.
+
 ## 1.3.5 - 2022-10-04
 
 - 2 channel cameras support
