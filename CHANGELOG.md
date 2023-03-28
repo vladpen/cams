@@ -1,3 +1,6 @@
+## 2.0.1 - 2023-03-28
+Components update
+
 ## 2.0 - 2022-11-04
 
 - Android 13 "Tiramisu" support (API level 33)

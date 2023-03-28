@@ -317,7 +317,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     override fun onEvent(ev: MediaPlayer.Event) {
         if (ev.type == MediaPlayer.Event.Buffering && ev.buffering == 100f) {
             binding.pbLoading.visibility = View.GONE
-            if (mediaPlayer.audioTracksCount > 0)
+            if (mediaPlayer.audioTracksCount > 0)  // use (media.tracks.size > 1) for 4.X versions
                 binding.videoBar.btnMute.visibility = View.VISIBLE
             if (stream.url2 != null)
                 binding.videoBar.tvChannel.visibility = View.VISIBLE
