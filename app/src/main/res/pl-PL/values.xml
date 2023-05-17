@@ -1,0 +1,74 @@
+<resources>
+    <string name="app_name">Cams</string>
+    <string name="main_title">Kamery</string>
+    <string name="cam_add">Dodaj kamerę</string>
+    <string name="cam_name">Nazwa *</string>
+    <string name="cam_name_hint">Nowa kamera</string>
+    <string name="cam_url">Adres *</string>
+    <string name="cam_url_hint">rtsp://user:password@ip:port/path</string>
+    <string name="channel_url">Kanał 2</string>
+    <string name="add_channel">Dodaj kanał</string>
+    <string name="del_channel">Usuń kanał</string>
+    <string name="ch1_btn">C1</string>
+    <string name="ch2_btn">C2</string>
+    <string name="sftp_url">SFTP adres</string>
+    <string name="sftp_url_hint">sftp://user:password@ip/folder</string>
+    <string name="cam_protocol">Protokół</string>
+    <string name="cam_tcp">TCP</string>
+    <string name="cam_udp">UDP</string>
+    <string name="cam_delete">Usunąć kamerę?</string>
+    <string name="save">Zapisz</string>
+    <string name="delete">Usuń</string>
+    <string name="cancel">Anuluj</string>
+    <string name="settings">Ustawienia</string>
+    <string name="back">Wstecz</string>
+    <string name="err_invalid">Niewłaściwa wartość</string>
+    <string name="err_cam_exists">Kamera już istnieje</string>
+    <string name="err_channels_equal">Adresy kanałów pasują</string>
+    <string name="files">Pliki</string>
+    <string name="live">Na żywo</string>
+    <string name="MB">MB</string>
+    <string name="file_prev">Poprzedni plik</string>
+    <string name="file_next">Następny plik</string>
+    <string name="seek_back">Przewiń do tyłu</string>
+    <string name="play_pause">Odtwórz/Pauza</string>
+    <string name="mute">Wycisz</string>
+    <string name="group">Grupa</string>
+    <string name="group_add">Dodaj grupę</string>
+    <string name="group_name_hint">Nowa grupa</string>
+    <string name="group_cams">Kamery *</string>
+    <string name="group_delete">Usunąć grupę?</string>
+    <string name="group_warning">
+        Uwaga! Duża liczba kamer może znacząco obniżyć wydajność urządzenia!
+    </string>
+    <string name="err_group_exists">Grupa już istnieje</string>
+    <string name="err_group_streams_count">Co najmniej %1$d kamer</string>
+    <string name="export_settings">Eksportuj ustawienia</string>
+    <string name="import_settings">Importuj ustawienia</string>
+    <string name="export_password">
+        Hasło do zaszyfrowania pliku (co najmniej %1$d znaków lub pozostaw puste):
+    </string>
+    <string name="export_password_confirm">Potwierdź hasło:</string>
+    <string name="import_password">Hasło określone podczas eksportu:</string>
+    <string name="btn_continue">Kontynuować</string>
+    <string name="about">Informacje</string>
+    <string name="about_text">
+        <![CDATA[
+            <h1>Cams, version %1$s</h1><br/>
+            Copyright &copy; %2$s vladpen under MIT license<br/><br/>
+            <a href="https://github.com/vladpen/cams">Home page</a><br/><br/>
+            <a href="https://github.com/vladpen/cams/issues">
+                Raporty o błędach i narzędzie do śledzenia problemów</a>
+        ]]>
+    </string>
+    <string name="copy">Kopiuj</string>
+    <string name="paste">Wklej</string>
+    <string name="no_wifi">Brak Wi-Fi</string>
+    <string name="no_internet">Brak Internetu</string>
+    <string name="logs">Logi urządzenia</string>
+    <string name="line_count">Liczba linii:</string>
+    <string name="log_cons_label">Rejestruj połączenia z kamerami</string>
+    <string name="log_cons_hint">
+       (Niezalecane ze względów bezpieczeństwa. Obowiązuje do zamknięcia aplikacji.)
+    </string>
+</resources>
