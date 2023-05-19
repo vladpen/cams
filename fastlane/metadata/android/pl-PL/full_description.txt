@@ -1,0 +1,12 @@
+Prosta aplikacja mobilna na Androida do odtwarzania strumieni RTSP z kamer IP
+
+Cechy:
+
+* Przeglądaj strumienie RTSP z dowolnych kamer IP, w tym H.265+.
+* Wiele kamer wideo na jednym ekranie.
+* Powiększenie obrazu.
+* Obsługa kamer 2-kanałowych
+* Oglądanie filmów za pośrednictwem protokołu SFTP.
+* Maksymalna prędkość połączenia.
+* Ekstremalna łatwość nawigacji i kontroli.
+* Możliwość przełączania protokołu TCP/UDP. Ta opcja jest ważna podczas oglądania kamer przez Internet, gdzie protokół UDP może nie być obsługiwany lub działać nieprawidłowo.
