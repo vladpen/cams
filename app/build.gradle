@@ -10,8 +10,8 @@ android {
         applicationId 'com.vladpen.cams'
         minSdk 24
         targetSdk 33
-        versionCode 1010121
-        versionName '2.0.1'
+        versionCode 1010122
+        versionName '2.0.2'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     buildTypes {
@@ -21,11 +21,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     buildFeatures {
         viewBinding true
@@ -40,16 +37,16 @@ android {
             enable true
             reset()
             include 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
-            universalApk true
+            universalApk false
         }
     }
     namespace 'com.vladpen.cams'
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'com.google.android.material:material:1.9.0'
 
     implementation 'org.videolan.android:libvlc-all:3.5.1'
     implementation 'com.google.code.gson:gson:2.10.1'

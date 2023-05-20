@@ -32,7 +32,7 @@ object Utils {
         if (url == null)
             return null
         try {
-            val rex = "((.+?)://)?((.+?)(:(.+))?@)?(.+?)(:(\\d+))?(/.*)?".toRegex()
+            val rex = "((.+)?://)?((.+?)(:(.+))?@)?(.+?)(:(\\d+))?(/.*)?".toRegex()
             val match = rex.matchEntire(url) ?: return null
             val m = match.groupValues
             return UrlDataModel(

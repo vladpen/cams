@@ -8,27 +8,6 @@
   "variantName": "release",
   "elements": [
     {
-      "type": "UNIVERSAL",
-      "filters": [],
-      "attributes": [],
-      "versionCode": 1010121,
-      "versionName": "2.0.1",
-      "outputFile": "app-universal-release.apk"
-    },
-    {
-      "type": "ONE_OF_MANY",
-      "filters": [
-        {
-          "filterType": "ABI",
-          "value": "armeabi-v7a"
-        }
-      ],
-      "attributes": [],
-      "versionCode": 1010121,
-      "versionName": "2.0.1",
-      "outputFile": "app-armeabi-v7a-release.apk"
-    },
-    {
       "type": "ONE_OF_MANY",
       "filters": [
         {
@@ -37,22 +16,9 @@
         }
       ],
       "attributes": [],
-      "versionCode": 1010121,
-      "versionName": "2.0.1",
+      "versionCode": 1010122,
+      "versionName": "2.0.2",
       "outputFile": "app-x86_64-release.apk"
-    },
-    {
-      "type": "ONE_OF_MANY",
-      "filters": [
-        {
-          "filterType": "ABI",
-          "value": "arm64-v8a"
-        }
-      ],
-      "attributes": [],
-      "versionCode": 1010121,
-      "versionName": "2.0.1",
-      "outputFile": "app-arm64-v8a-release.apk"
     },
     {
       "type": "ONE_OF_MANY",
@@ -63,9 +29,35 @@
         }
       ],
       "attributes": [],
-      "versionCode": 1010121,
-      "versionName": "2.0.1",
+      "versionCode": 1010122,
+      "versionName": "2.0.2",
       "outputFile": "app-x86-release.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "arm64-v8a"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 1010122,
+      "versionName": "2.0.2",
+      "outputFile": "app-arm64-v8a-release.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "armeabi-v7a"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 1010122,
+      "versionName": "2.0.2",
+      "outputFile": "app-armeabi-v7a-release.apk"
     }
   ],
   "elementType": "File"

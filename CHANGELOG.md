@@ -1,3 +1,8 @@
+## 2.0.2 - 2023-05-20
+- Components update
+- Adaptive app icon
+- Polish localization
+
 ## 2.0.1 - 2023-03-28
 Components update
 
