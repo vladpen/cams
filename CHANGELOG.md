@@ -1,3 +1,7 @@
+## 2.0.3 - 2023-07-03
+
+Network observer fix
+
 ## 2.0.2 - 2023-05-20
 - Components update
 - Adaptive app icon
