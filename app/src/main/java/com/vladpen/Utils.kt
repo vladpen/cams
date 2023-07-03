@@ -32,7 +32,7 @@ object Utils {
         if (url == null)
             return null
         try {
-            val rex = "((.+)?://)?((.+?)(:(.+))?@)?(.+?)(:(\\d+))?(/.*)?".toRegex()
+            val rex = "((.+)://)?((.+?)(:(.+))?@)?(.+?)(:(\\d+))?(/.*)?".toRegex()
             val match = rex.matchEntire(url) ?: return null
             val m = match.groupValues
             return UrlDataModel(
@@ -91,15 +91,6 @@ object Utils {
         if (parts.path != "")
             res += "/" + trimSlashes(parts.path)
         return res
-    }
-
-    fun isUrlLocal(url: String): Boolean {
-        val parts = parseUrl(url)
-        if (parts == null || parts.host == "")
-            return false
-        if (parts.host.startsWith("192.") || parts.host.startsWith("10."))
-            return true
-        return false
     }
 
     fun encodeString(str: String, key: String? = null): String {

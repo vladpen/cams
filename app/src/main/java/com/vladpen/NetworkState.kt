@@ -8,7 +8,7 @@ import android.net.NetworkRequest
 import androidx.lifecycle.LiveData
 import com.vladpen.cams.MainApp.Companion.context
 
-class NetworkState(private val isLocal: Boolean): LiveData<Boolean>() {
+class NetworkState(): LiveData<Boolean>() {
     private val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
@@ -18,16 +18,9 @@ class NetworkState(private val isLocal: Boolean): LiveData<Boolean>() {
             networkCapabilities: NetworkCapabilities
         ) {
             super.onCapabilitiesChanged(network, networkCapabilities)
-
-            var res = false
-            if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                res = true
-            } else if (!isLocal &&
-                networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
-            ) {
-                res = true
-            }
-            postValue(res)
+            postValue(
+                networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+            )
         }
     }
 

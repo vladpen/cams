@@ -47,16 +47,4 @@
 
     <include android:id="@+id/toolbar" layout="@layout/toolbar" />
 
-    <TextView
-        android:id="@+id/tvAlert"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/overlay_background"
-        android:gravity="center"
-        android:visibility="gone"
-        android:textColor="@color/text"
-        android:textSize="20sp"
-        android:padding="8dp"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

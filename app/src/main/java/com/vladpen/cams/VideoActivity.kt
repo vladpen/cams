@@ -348,20 +348,14 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     }
 
     private fun observeNetworkState() {
-        val isLocal = Utils.isUrlLocal(stream.url)
-        NetworkState(isLocal).observe(this) { isConnected ->
-            if (isConnected) {
-                binding.tvAlert.visibility = View.GONE
-                if (isBuffered) {
-                    mediaPlayer.stop()
-                    mediaPlayer.play()
-                    setMute(StreamData.getMute())
-                }
-            } else {
-                binding.tvAlert.visibility = View.VISIBLE
-                binding.tvAlert.text =
-                    if (isLocal) getString(R.string.no_wifi) else getString(R.string.no_internet)
+        var lastConnected = true
+        NetworkState().observe(this) { isConnected ->
+            if (isConnected && !lastConnected && isBuffered) {
+                mediaPlayer.stop()
+                mediaPlayer.play()
+                setMute(StreamData.getMute())
             }
+            lastConnected = isConnected
         }
     }
 

@@ -63,8 +63,6 @@
     </string>
     <string name="copy">Copy</string>
     <string name="paste">Paste</string>
-    <string name="no_wifi">No Wi-Fi</string>
-    <string name="no_internet">No Internet</string>
     <string name="logs">Device logs</string>
     <string name="line_count">Lines count:</string>
     <string name="log_cons_label">Log connections to cameras</string>

@@ -63,8 +63,6 @@
     </string>
     <string name="copy">Kopiuj</string>
     <string name="paste">Wklej</string>
-    <string name="no_wifi">Brak Wi-Fi</string>
-    <string name="no_internet">Brak Internetu</string>
     <string name="logs">Logi urządzenia</string>
     <string name="line_count">Liczba linii:</string>
     <string name="log_cons_label">Rejestruj połączenia z kamerami</string>
