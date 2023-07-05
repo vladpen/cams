@@ -6,7 +6,6 @@ import android.os.Build
 import android.util.DisplayMetrics
 import android.util.Log
 import com.vladpen.cams.MainApp.Companion.context
-import java.lang.Integer.max
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
 import javax.crypto.spec.IvParameterSpec
@@ -109,11 +108,9 @@ object Utils {
     fun decodeString(str: String, key: String? = null): String {
         if (str == "") return str
         try {
-            val encoded = str.decodeHex()
-
             val cipher = Cipher.getInstance(transformation)
             cipher.init(Cipher.DECRYPT_MODE, getKey(key), getIv(key))
-            return String(cipher.doFinal(encoded))
+            return String(cipher.doFinal(str.decodeHex()))
 
         } catch (e: java.lang.Exception) {
             Log.e("Utils", "Can't decrypt string (${e.localizedMessage})")
@@ -168,7 +165,6 @@ object Utils {
         return IvParameterSpec(out.toByteArray())
     }
 
-    @Suppress("DEPRECATION")
     fun getPackageInfo(): PackageInfo {
         if (::packageInfo.isInitialized)
             return packageInfo
@@ -180,10 +176,8 @@ object Utils {
             context.packageManager.getPackageInfo(context.packageName, 0)
     }
 
-    fun getColumnCount(metrics: DisplayMetrics, columnSymbolCount: Int = 30): Int {
-        val textSize = 20 // sp
-        val screenSymbolsCount = metrics.widthPixels / metrics.scaledDensity / textSize * 2
-        return max(1, screenSymbolsCount.toInt() / columnSymbolCount)
+    fun getColumnCount(metrics: DisplayMetrics): Int {
+        return if (metrics.widthPixels > metrics.heightPixels) 2 else 1
     }
 
     private fun trimSlashes(str: String): String {

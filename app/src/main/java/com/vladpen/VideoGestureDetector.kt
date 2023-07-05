@@ -81,7 +81,7 @@ class VideoGestureDetector(private val view: View, private val videoView: View) 
 
     private inner class VideoDetectorListener : GestureDetector.SimpleOnGestureListener() {
         override fun onScroll(
-            e1: MotionEvent,
+            e1: MotionEvent?,
             e2: MotionEvent,
             distanceX: Float,
             distanceY: Float

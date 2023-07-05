@@ -4,12 +4,12 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId 'com.vladpen.cams'
         minSdk 24
-        targetSdk 33
+        targetSdk 34
         versionCode 1010123
         versionName '2.0.3'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
