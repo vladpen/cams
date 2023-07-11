@@ -55,6 +55,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
                 add("--rtsp-tcp")
             if (!StreamData.logConnections)
                 add("--verbose=-1")
+            add("--image-duration=1.0") // for "events" slideshow
         })
         mediaPlayer = MediaPlayer(libVlc)
         mediaPlayer.setEventListener(this)
@@ -187,8 +188,14 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         }
         binding.videoBar.btnSeekBack.setOnClickListener {
             dropRate() // prevent lost keyframe
-            // we can't use the "position" here (file size changes during playback)
-            mediaPlayer.time -= seekStep
+            if (mediaPlayer.time > seekStep) {
+                // we can't use the "position" here (file size changes during playback)
+                mediaPlayer.time -= seekStep
+            } else {
+                // rewind to the beginning
+                mediaPlayer.stop()
+                start()
+            }
             initBars()
         }
         binding.videoBar.btnNextFile.setOnClickListener {
