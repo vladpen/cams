@@ -87,7 +87,7 @@ object Utils {
         if (parts.host != "")
             res += parts.host
         res += ":" + parts.port
-        if (parts.path != "")
+        if (parts.path != "" && parts.path != "/")
             res += "/" + trimSlashes(parts.path)
         return res
     }
