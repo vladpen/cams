@@ -9,8 +9,10 @@
     <string name="channel_url">Kanał 2</string>
     <string name="add_channel">Dodaj kanał</string>
     <string name="del_channel">Usuń kanał</string>
-    <string name="ch1_btn">C1</string>
-    <string name="ch2_btn">C2</string>
+    <string name="ch1_btn">K1</string>
+    <string name="ch2_btn">K2</string>
+    <string name="add_sftp">Dodaj SFTP</string>
+    <string name="sftp_alert">Alert me about new SFTP files</string>
     <string name="sftp_url">SFTP adres</string>
     <string name="sftp_url_hint">sftp://user:password@ip/folder</string>
     <string name="cam_protocol">Protokół</string>
@@ -26,14 +28,12 @@
     <string name="err_cam_exists">Kamera już istnieje</string>
     <string name="err_channels_equal">Adresy kanałów pasują</string>
     <string name="files">Pliki</string>
-    <string name="live">Na żywo</string>
     <string name="MB">MB</string>
     <string name="file_prev">Poprzedni plik</string>
     <string name="file_next">Następny plik</string>
     <string name="seek_back">Przewiń do tyłu</string>
     <string name="play_pause">Odtwórz/Pauza</string>
     <string name="mute">Wycisz</string>
-    <string name="group">Grupa</string>
     <string name="group_add">Dodaj grupę</string>
     <string name="group_name_hint">Nowa grupa</string>
     <string name="group_cams">Kamery *</string>

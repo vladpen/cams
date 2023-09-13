@@ -28,11 +28,9 @@ class EditActivity : AppCompatActivity() {
     private fun initActivity() {
         streamId = intent.getIntExtra("streamId", -1)
         val stream = StreamData.getById(streamId)
-        binding.toolbar.tvToolbarLink.text = getString(R.string.save)
-        binding.toolbar.tvToolbarLink.setTextColor(getColor(R.color.files_link))
         if (stream == null) {
             streamId = -1
-            binding.toolbar.tvToolbarLabel.text = getString(R.string.cam_add)
+            binding.toolbar.tvLabel.text = getString(R.string.cam_add)
             binding.tvDeleteLink.visibility = View.GONE
             binding.tvCopyLink.visibility = View.GONE
             if (StreamData.copyStreamId >= 0) {
@@ -42,9 +40,10 @@ class EditActivity : AppCompatActivity() {
                 }
             }
             binding.llChannelBox.layoutParams.height = 0
+            binding.llSftpBox.layoutParams.height = 0
             binding.rbEditTcp.isChecked = true
         } else {
-            binding.toolbar.tvToolbarLabel.text = stream.name
+            binding.toolbar.tvLabel.text = stream.name
 
             binding.etEditName.setText(stream.name)
             binding.etEditUrl.setText(safeUrl(stream.url))
@@ -52,6 +51,7 @@ class EditActivity : AppCompatActivity() {
             binding.etEditSftpUrl.setText(safeUrl(stream.sftp))
             binding.rbEditTcp.isChecked = stream.tcp
             binding.rbEditUdp.isChecked = !stream.tcp
+            binding.cbAlert.isChecked = stream.alert == true
 
             binding.tvDeleteLink.setOnClickListener {
                 delete()
@@ -61,13 +61,21 @@ class EditActivity : AppCompatActivity() {
             binding.tvCopyLink.setOnClickListener {
                 copy()
             }
-            if (stream.url2 == null)
+            if (stream.url2 == null) {
                 binding.llChannelBox.layoutParams.height = 0
-            else
+            } else {
                 binding.tvAddChannel.visibility = View.GONE
+            }
+            if (stream.sftp == null) {
+                binding.llSftpBox.layoutParams.height = 0
+            } else {
+                binding.tvSftpLabel.visibility = View.VISIBLE
+                binding.llSftpBox.visibility = View.VISIBLE
+                binding.tvAddSftp.visibility = View.GONE
+            }
         }
         binding.tvAddChannel.setOnClickListener {
-            binding.tvAddChannel.visibility = View.GONE
+            Effects.fadeOut(arrayOf(binding.tvAddChannel))
             binding.tvDelChannel.visibility = View.VISIBLE
             binding.etEditChannel.setText(binding.etEditUrl.text.toString().trim())
             Effects.toggle(binding.llChannelBox)
@@ -78,16 +86,18 @@ class EditActivity : AppCompatActivity() {
             binding.etEditChannel.setText("")
             Effects.toggle(binding.llChannelBox)
         }
-        binding.btnSave.setOnClickListener {
-            save()
+        binding.tvAddSftp.setOnClickListener {
+            showSftp()
         }
-        binding.toolbar.tvToolbarLink.setOnClickListener {
+        binding.btnSave.setOnClickListener {
             save()
         }
         binding.toolbar.btnBack.setOnClickListener {
             back()
         }
         this.onBackPressedDispatcher.addCallback(callback)
+
+        Alert.init(this, binding.toolbar.btnAlert)
     }
 
     private fun safeUrl(url: String?): String {
@@ -139,13 +149,15 @@ class EditActivity : AppCompatActivity() {
             streamUrl,
             if (channelUrl != "") channelUrl else null,
             binding.rbEditTcp.isChecked,
-            if (sftpUrl != "") sftpUrl else null
+            if (sftpUrl != "") sftpUrl else null,
+            if (binding.cbAlert.isChecked && sftpUrl != "") true else null
         )
         if (streamId < 0)
             StreamData.add(newStream)
         else
             StreamData.update(streamId, newStream)
 
+        Alert.checkAvailability()
         back()
     }
 
@@ -186,6 +198,7 @@ class EditActivity : AppCompatActivity() {
             .setMessage(R.string.cam_delete)
             .setPositiveButton(R.string.delete) { _, _ ->
                 StreamData.delete(streamId)
+                Alert.checkAvailability()
                 back()
             }
             .setNegativeButton(R.string.cancel) { dialog, _ ->
@@ -208,6 +221,15 @@ class EditActivity : AppCompatActivity() {
         binding.etEditSftpUrl.setText(safeUrl(stream.sftp), TextView.BufferType.EDITABLE)
         binding.rbEditTcp.isChecked = stream.tcp
         binding.rbEditUdp.isChecked = !stream.tcp
+        binding.cbAlert.isChecked = stream.alert == true
+        if (stream.sftp !=null)
+            showSftp()
+    }
+
+    private fun showSftp() {
+        binding.tvSftpLabel.visibility = View.VISIBLE
+        Effects.fadeOut(arrayOf(binding.tvAddSftp))
+        Effects.toggle(binding.llSftpBox)
     }
 
     private fun back() {

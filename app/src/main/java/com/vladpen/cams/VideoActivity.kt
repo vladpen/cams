@@ -26,7 +26,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     private lateinit var gestureDetector: VideoGestureDetector
     private var gestureInProgress = false
     private var streamId: Int = -1 // -1 means "no stream"
-    private var remotePath: String = "" // relative SFTP path
+    private var remotePath: String? = null // relative SFTP path
     private val seekStep: Long = 10000 // milliseconds
     private var isBuffered = false
     private var channel = 0
@@ -46,22 +46,22 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
 
     private fun initActivity() {
         streamId = intent.getIntExtra("streamId", -1)
-        remotePath = intent.getStringExtra("remotePath") ?: ""
+        remotePath = intent.getStringExtra("remotePath")
 
         stream = StreamData.getById(streamId) ?: return
 
         libVlc = LibVLC(this, ArrayList<String>().apply {
-            if (stream.tcp && remotePath == "")
+            if (stream.tcp && remotePath == null)
                 add("--rtsp-tcp")
             if (!StreamData.logConnections)
                 add("--verbose=-1")
-            add("--image-duration=1.0") // for "events" slideshow
+            add("--image-duration=1") // for "events" slideshow
         })
         mediaPlayer = MediaPlayer(libVlc)
         mediaPlayer.setEventListener(this)
 
         initToolbar()
-        if (remotePath != "")
+        if (remotePath != null)
             initVideoBar()
         else
             initChannel()
@@ -73,8 +73,10 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
 
         this.onBackPressedDispatcher.addCallback(callback)
 
-        if (remotePath == "")
+        if (remotePath == null)
             observeNetworkState()
+
+        Alert.init(this, binding.toolbar.btnAlert)
     }
 
     private val callback = object : OnBackPressedCallback(true) {
@@ -84,7 +86,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     }
 
     private fun back() {
-        if (remotePath == "") {
+        if (remotePath == null) {
             if (GroupData.currentGroupId > -1) {
                 groupScreen()
             } else {
@@ -94,7 +96,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         } else {
             val intent = Intent(this, FilesActivity::class.java)
                 .putExtra("streamId", streamId)
-                .putExtra("remotePath", FileData.getParentPath(remotePath))
+                .putExtra("remotePath", FileData.getParentPath(remotePath!!))
             startActivity(intent)
         }
     }
@@ -134,13 +136,15 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     }
 
     private fun videoScreen() {
-        finish()
-        intent.putExtra("streamId", streamId).putExtra("remotePath", "")
+        val intent = Intent(this, VideoActivity::class.java)
+            .putExtra("streamId", streamId)
+        // finish()
+        // intent.putExtra("streamId", streamId)
         startActivity(intent)
     }
 
     private fun initToolbar() {
-        binding.toolbar.tvToolbarLabel.text = stream.name
+        binding.toolbar.tvLabel.text = stream.name
         binding.toolbar.btnBack.setOnClickListener {
             back()
         }
@@ -148,27 +152,18 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         if (stream.sftp == null)
             return
 
-        if (remotePath == "") {
-            binding.toolbar.tvToolbarLink.text = getString(R.string.files)
-            binding.toolbar.tvToolbarLink.setTextColor(getColor(R.color.files_link))
-        } else {
-            if (GroupData.currentGroupId > -1) {
-                binding.toolbar.tvToolbarLink.text = getString(R.string.group)
-                binding.toolbar.tvToolbarLink.setTextColor(getColor(R.color.group_link))
-            } else {
-                binding.toolbar.tvToolbarLink.text = getString(R.string.live)
-                binding.toolbar.tvToolbarLink.setTextColor(getColor(R.color.live_link))
-            }
+        if (remotePath != null) {
+            binding.toolbar.btnLink.setImageResource(R.drawable.ic_outline_videocam_24)
+            binding.toolbar.btnLink.contentDescription = getString(R.string.back)
         }
-        binding.toolbar.tvToolbarLink.setOnClickListener {
-            if (remotePath == "") {
+        binding.toolbar.btnLink.visibility = View.VISIBLE
+        binding.toolbar.btnLink.setOnClickListener {
+            if (remotePath == null)
                 filesScreen()
-            } else {
-                if (GroupData.currentGroupId > -1)
-                    groupScreen()
-                else
-                    videoScreen()
-            }
+            else if (GroupData.currentGroupId > -1)
+                groupScreen()
+            else
+                videoScreen()
         }
     }
 
@@ -202,15 +197,17 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
             next()
         }
         binding.videoBar.tvSpeed.setOnClickListener {
-            if (mediaPlayer.rate < 2f) {
-                mediaPlayer.rate = 4f
-                "4x".also { binding.videoBar.tvSpeed.text = it }
-            } else {
-                dropRate()
-            }
-            initBars()
+            if (remotePath == null) {
+                if (mediaPlayer.rate < 2f) {
+                    mediaPlayer.rate = 4f
+                    "4x".also { binding.videoBar.tvSpeed.text = it }
+                } else {
+                    dropRate()
+                }
+                initBars()
+            } // no implements for the slideshow
         }
-        "1x".also { binding.videoBar.tvSpeed.text = it } // makes linter happy
+        "1x".also { binding.videoBar.tvSpeed.text = it } // "also" makes linter happy
         binding.videoBar.llVideoCtrl.visibility = View.VISIBLE
     }
 
@@ -235,7 +232,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
             binding.videoBar.btnMute.setImageResource(R.drawable.ic_baseline_volume_off_24)
         } else {
             mediaPlayer.volume = 100
-            binding.videoBar.btnMute.setImageResource(R.drawable.ic_baseline_volume_up_24)
+            binding.videoBar.btnMute.setImageResource(R.drawable.ic_baseline_volume_on_24)
         }
     }
 
@@ -267,10 +264,10 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     private fun start() {
         try {
             val media =
-                if (remotePath == "")
+                if (remotePath == null)
                     Media(libVlc, Uri.parse(getUrl()))
                 else
-                    Media(libVlc, FileData.getTmpFile(remotePath).absolutePath)
+                    Media(libVlc, FileData.getTmpFile(remotePath!!).absolutePath)
 
             media.apply {
                 mediaPlayer.media = this
@@ -285,11 +282,11 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     }
 
     private fun next(fwd: Boolean = true) {
-        remotePath = FileData(stream.sftp).getNext(remotePath, fwd)
+        remotePath = FileData(stream.sftp).getNext(remotePath!!, fwd)
         if (remotePath != "") {
             binding.videoBar.btnPlay.setBackgroundResource(R.drawable.ic_baseline_pause_24)
             start()
-        } else { // The most recent file was played, let's show live video
+        } else { // Last file was played, let's show live video
             videoScreen()
         }
     }
@@ -330,7 +327,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
                 binding.videoBar.tvChannel.visibility = View.VISIBLE
             initBars()
             isBuffered = true
-        } else if (ev.type == MediaPlayer.Event.EndReached && remotePath != "") {
+        } else if (ev.type == MediaPlayer.Event.EndReached && remotePath != null) {
             next()
         }
     }

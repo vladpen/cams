@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.vladpen.Utils.getOption
+import com.vladpen.Utils.saveOption
 import com.vladpen.cams.MainApp.Companion.context
 
 data class StreamDataModel(
@@ -11,7 +13,8 @@ data class StreamDataModel(
     var url: String,
     var url2: String?,
     val tcp: Boolean,
-    var sftp: String?)
+    var sftp: String?,
+    val alert: Boolean?)
 
 object StreamData {
     private const val fileName = "streams.json"
@@ -22,22 +25,25 @@ object StreamData {
     var copyStreamId = -1
 
     fun getAll(): MutableList<StreamDataModel> {
-        if (streams.isEmpty()) {
-            try {
-                context.openFileInput(fileName).use { inputStream ->
-                    val json = inputStream.bufferedReader().use {
-                        it.readText()
-                    }
-                    fromJson(json)
+        if (streams.isNotEmpty())
+            return streams
+
+        return try {
+            context.openFileInput(fileName).use { inputStream ->
+                val json = inputStream.bufferedReader().use {
+                    it.readText()
                 }
-            } catch (e: Exception) {
-                Log.e("Data", "Can't read data file $fileName (${e.localizedMessage})")
+                fromJson(json)
             }
+        } catch (e: Exception) {
+            streams
         }
-        return streams
     }
 
     fun getById(streamId: Int): StreamDataModel? {
+        if (streams.isEmpty()) {
+            this.getAll()
+        }
         if (streamId < 0 || streamId >= streams.count())
             return null
         return streams[streamId]
@@ -86,7 +92,7 @@ object StreamData {
     }
 
     fun setMute(mute: Int) {
-        setOption(muteFileName, mute)
+        saveOption(muteFileName, mute)
     }
 
     fun getMute(): Int {
@@ -94,31 +100,10 @@ object StreamData {
     }
 
     fun setChannel(channel: Int) {
-        setOption(channelFileName, channel)
+        saveOption(channelFileName, channel)
     }
 
     fun getChannel(): Int {
         return getOption(channelFileName)
-    }
-
-    private fun setOption(fileName: String, option: Int) {
-        try {
-            context.openFileOutput(fileName, Context.MODE_PRIVATE).use {
-                it.write(option)
-            }
-        } catch (e: Exception) {
-            Log.e("Data", "Can't write the file $fileName (${e.localizedMessage})")
-        }
-    }
-
-    private fun getOption(fileName: String): Int {
-        try {
-            context.openFileInput(fileName).use {
-                return it.read()
-            }
-        } catch (e: Exception) {
-            Log.e("Data", "Can't read the file $fileName (${e.localizedMessage})")
-        }
-        return 0
     }
 }

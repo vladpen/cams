@@ -2,6 +2,7 @@ package com.vladpen.cams
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,31 +32,28 @@ class FilesActivity: AppCompatActivity() {
             return
         }
         remotePath = intent.getStringExtra("remotePath") ?: sftpData!!.path
+        remotePath = Utils.addTrailingSlash(remotePath)
 
         binding.toolbar.btnBack.setOnClickListener {
             back()
         }
         this.onBackPressedDispatcher.addCallback(callback)
-        binding.toolbar.tvToolbarLabel.text = stream.name
+        binding.toolbar.tvLabel.text = stream.name
 
-        if (GroupData.currentGroupId > -1) {
-            binding.toolbar.tvToolbarLink.text = getString(R.string.group)
-            binding.toolbar.tvToolbarLink.setTextColor(getColor(R.color.group_link))
-            binding.toolbar.tvToolbarLink.setOnClickListener {
+        binding.toolbar.btnLink.setImageResource(R.drawable.ic_outline_videocam_24)
+        binding.toolbar.btnLink.contentDescription = getString(R.string.back)
+        binding.toolbar.btnLink.visibility = View.VISIBLE
+        binding.toolbar.btnLink.setOnClickListener {
+            if (GroupData.currentGroupId > -1)
                 groupScreen()
-            }
-        } else {
-            binding.toolbar.tvToolbarLink.text = getString(R.string.live)
-            binding.toolbar.tvToolbarLink.setTextColor(getColor(R.color.live_link))
-            binding.toolbar.tvToolbarLink.setOnClickListener {
+            else
                 videoScreen()
-            }
         }
-
         val files = FileData(stream.sftp).getAll(remotePath)
-
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = FileAdapter(files, remotePath, streamId, stream.sftp)
+
+        Alert.init(this, binding.toolbar.btnAlert)
     }
 
     private val callback = object : OnBackPressedCallback(true) {
@@ -65,7 +63,8 @@ class FilesActivity: AppCompatActivity() {
     }
 
     private fun back() {
-        if (sftpData == null || remotePath == sftpData?.path) {
+        val path = Utils.addTrailingSlash(sftpData?.path)
+        if (sftpData == null || remotePath == path || remotePath == "/") {
             videoScreen()
         } else {
             val intent = Intent(this, FilesActivity::class.java)

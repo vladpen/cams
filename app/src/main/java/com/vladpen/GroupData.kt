@@ -14,19 +14,19 @@ object GroupData {
     var currentGroupId = -1
 
     fun getAll(): MutableList<GroupDataModel> {
-        if (groups.isEmpty()) {
-            try {
-                context.openFileInput(fileName).use { inputStream ->
-                    val json = inputStream.bufferedReader().use {
-                        it.readText()
-                    }
-                    fromJson(json)
+        if (groups.isNotEmpty())
+            return groups
+
+        return try {
+            context.openFileInput(fileName).use { inputStream ->
+                val json = inputStream.bufferedReader().use {
+                    it.readText()
                 }
-            } catch (e: Exception) {
-                Log.e("Data", "Can't read data file $fileName (${e.localizedMessage})")
+                fromJson(json)
             }
+        } catch (e: Exception) {
+            groups
         }
-        return groups
     }
 
     fun getById(groupId: Int): GroupDataModel? {

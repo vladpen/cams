@@ -98,6 +98,7 @@ class Settings(val context: MainActivity)  {
                                 decodeSettings(fileContent)
                             else
                                 Log.e("Settings", "Invalid file content")
+                            Alert.checkAvailability()
                         }
                     }
             } catch (e: Exception) {

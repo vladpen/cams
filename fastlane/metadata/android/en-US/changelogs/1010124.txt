@@ -1,0 +1,4 @@
+- Motion detection support
+- Android 14 "Upside Down Cake" support (API level 34)
+- Components update
+- Fixes and improvements

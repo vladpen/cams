@@ -6,6 +6,7 @@ import android.text.method.LinkMovementMethod
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
+import com.vladpen.Alert
 import com.vladpen.Utils
 import com.vladpen.cams.databinding.ActivityAboutBinding
 import java.text.SimpleDateFormat
@@ -21,7 +22,7 @@ class AboutActivity: AppCompatActivity() {
     }
 
     private fun initActivity() {
-        binding.toolbar.tvToolbarLabel.text = getString(R.string.about)
+        binding.toolbar.tvLabel.text = getString(R.string.about)
         binding.toolbar.btnBack.setOnClickListener {
             back()
         }
@@ -46,6 +47,7 @@ class AboutActivity: AppCompatActivity() {
         binding.tvLog.setOnClickListener {
             logScreen()
         }
+        Alert.init(this, binding.toolbar.btnAlert)
     }
 
     private fun back() {

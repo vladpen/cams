@@ -8,7 +8,7 @@ import android.net.NetworkRequest
 import androidx.lifecycle.LiveData
 import com.vladpen.cams.MainApp.Companion.context
 
-class NetworkState(): LiveData<Boolean>() {
+class NetworkState : LiveData<Boolean>() {
     private val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 

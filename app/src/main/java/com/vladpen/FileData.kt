@@ -19,7 +19,10 @@ class FileData(private val sftpUrl: String?) {
         private var channel: ChannelSftp? = null
 
         fun getParentPath(remotePath: String): String {
-            val p = remotePath.substring(0, remotePath.length - 1)
+            val p = if (remotePath.endsWith("/"))
+                remotePath.substring(0, remotePath.length - 1)
+            else
+                remotePath
             return p.substring(0, p.lastIndexOf("/") + 1)
         }
 
@@ -80,7 +83,7 @@ class FileData(private val sftpUrl: String?) {
         var size: Long = 0
         var i = 0
         try {
-            while(size == 0L && i++ < 1000) { // wait until downloading will start
+            while (size == 0L && i++ < 1000) { // wait until downloading will start
                 sleep(10)
                 size = tmpFile.length()
             }
@@ -154,12 +157,12 @@ class FileData(private val sftpUrl: String?) {
             val password = Utils.decodeString(sftpData.password)
 
             val jsch = JSch()
-            val session: Session = jsch.getSession(sftpData.user, sftpData.host, sftpData.port)
-            session.setPassword(password)
-            session.setConfig("StrictHostKeyChecking", "no")
-            session.connect(3000)
+            session = jsch.getSession(sftpData.user, sftpData.host, sftpData.port)
+            session?.setPassword(password)
+            session?.setConfig("StrictHostKeyChecking", "no")
+            session?.connect(3000)
 
-            channel = session.openChannel("sftp") as ChannelSftp
+            channel = session?.openChannel("sftp") as ChannelSftp
             channel?.connect(10000)
         } catch (e: Exception) {
             Log.e("SFTP", "Can't connect to ${sftpData.host} (${e.localizedMessage})")

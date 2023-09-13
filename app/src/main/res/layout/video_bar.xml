@@ -84,7 +84,7 @@
             android:gravity="center"
             android:background="@color/overlay_background"
             android:foreground="?android:attr/selectableItemBackground"
-            android:src="@drawable/ic_baseline_volume_up_24"
+            android:src="@drawable/ic_baseline_volume_on_24"
             android:visibility="gone"
             android:contentDescription="@string/mute"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -10,10 +10,21 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="20sp"
-        android:padding="10dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
         android:textColor="@color/text"
         android:background="?attr/selectableItemBackground"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tvItemTime"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvItemTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/hint"
+        app:layout_constraintStart_toEndOf="@id/tvItemName"
         app:layout_constraintEnd_toStartOf="@+id/btnEdit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -25,7 +36,7 @@
         android:background="@color/background"
         android:foreground="?android:attr/selectableItemBackground"
         android:contentDescription="@string/settings"
-        android:padding="10dp"
+        android:padding="12dp"
         android:src="@drawable/ic_baseline_settings_24"
         app:tint="@color/hint"
         app:layout_constraintBottom_toBottomOf="parent"

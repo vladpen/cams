@@ -4,9 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingTop="16dp"
+    android:paddingTop="6dp"
     android:paddingStart="26dp"
-    android:paddingEnd="8dp">
+    android:paddingEnd="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -16,6 +16,7 @@
             android:id="@+id/tvLogConsLabel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:paddingTop="10dp"
             android:text="@string/log_cons_label"
             android:textColor="@color/text"
             android:gravity="start"
@@ -29,16 +30,14 @@
             android:layout_height="wrap_content"
             android:text="@string/log_cons_hint"
             android:textSize="12sp"
-            android:paddingBottom="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvLogConsLabel"
             app:layout_constraintEnd_toStartOf="@+id/cbLogCons" />
 
         <CheckBox
             android:id="@+id/cbLogCons"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -55,14 +54,15 @@
             android:text="@string/line_count"
             android:textColor="@color/text"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <Spinner
             android:id="@+id/spBox"
             android:layout_width="wrap_content"
-            android:layout_height="18dp"
+            android:layout_height="48dp"
             android:layout_marginStart="16dp"
-            android:layout_gravity="end"
+            android:layout_marginEnd="8dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

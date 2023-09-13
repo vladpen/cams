@@ -6,11 +6,13 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.ArrayAdapter
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.vladpen.Alert
 import com.vladpen.Effects
 import com.vladpen.LogAdapter
 import com.vladpen.StreamData
@@ -36,21 +38,24 @@ class LogActivity: AppCompatActivity() {
     }
 
     private fun initActivity() {
-        binding.toolbar.tvToolbarLabel.text = getString(R.string.logs)
+        binding.toolbar.tvLabel.text = getString(R.string.logs)
         binding.toolbar.btnBack.setOnClickListener {
             back()
         }
         this.onBackPressedDispatcher.addCallback(callback)
 
-        binding.toolbar.tvToolbarLink.text = getString(R.string.copy)
-        binding.toolbar.tvToolbarLink.setTextColor(getColor(R.color.accent))
-        binding.toolbar.tvToolbarLink.setOnClickListener {
+        binding.toolbar.btnLink.setImageResource(R.drawable.ic_baseline_content_copy_24)
+        binding.toolbar.btnLink.contentDescription = getString(R.string.copy)
+        binding.toolbar.btnLink.visibility = View.VISIBLE
+        binding.toolbar.btnLink.setOnClickListener {
             copyToClipboard()
         }
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = LogAdapter(arrayListOf())
         settings()
+
+        Alert.init(this, binding.toolbar.btnAlert)
     }
 
     private fun initLog() {
@@ -119,6 +124,6 @@ class LogActivity: AppCompatActivity() {
         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clipData = ClipData.newPlainText(label, textToCopy)
         clipboardManager.setPrimaryClip(clipData)
-        Effects.fadeOut(arrayOf(binding.toolbar.tvToolbarLink))
+        Effects.fadeOut(arrayOf(binding.toolbar.btnLink))
     }
 }

@@ -7,7 +7,12 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.vladpen.*
+import com.vladpen.Alert
+import com.vladpen.Settings
+import com.vladpen.SourceAdapter
+import com.vladpen.SourceData
+import com.vladpen.SourceItemTouch
+import com.vladpen.Utils
 import com.vladpen.cams.databinding.ActivityMainBinding
 
 class MainActivity: AppCompatActivity() {
@@ -24,22 +29,26 @@ class MainActivity: AppCompatActivity() {
     }
 
     private fun initActivity() {
+        GridLayoutManager(
+            this,
+            Utils.getColumnCount(resources.displayMetrics),
+            RecyclerView.VERTICAL,
+            false)
+            .apply { binding.recyclerView.layoutManager = this }
+
         binding.toolbar.btnBack.setImageResource(R.drawable.ic_baseline_menu_24)
         binding.toolbar.btnBack.setOnClickListener {
             MainMenu(this).showPopupMenu(it)
         }
-        binding.toolbar.tvToolbarLabel.text = getString(R.string.main_title)
-
-        GridLayoutManager(this,
-            Utils.getColumnCount(resources.displayMetrics),
-            RecyclerView.VERTICAL,
-            false).apply { binding.recyclerView.layoutManager = this }
+        binding.toolbar.tvLabel.text = getString(R.string.main_title)
 
         binding.recyclerView.adapter = SourceAdapter(sources)
         SourceItemTouch().helper().attachToRecyclerView(binding.recyclerView)
 
         if (sources.isEmpty())
             initEmpty()
+        else
+            Alert.init(this, binding.toolbar.btnAlert)
 
         this.onBackPressedDispatcher.addCallback(callback)
     }

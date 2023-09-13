@@ -1,5 +1,6 @@
 package com.vladpen
 
+import android.content.Context
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build
@@ -40,7 +41,8 @@ object Utils {
                 m[6],
                 m[7],
                 m[9].toIntOrNull() ?: defaultPort,
-                if (m[10] != "" && m[10].last().toString() == "/") m[10] else m[10] + "/"
+                m[10]
+                // if (m[10] != "" && m[10].last().toString() == "/") m[10] else m[10] + "/"
             )
         } catch (e: Exception) {
             Log.e("Utils", "Can't parse URL $url (${e.localizedMessage})")
@@ -168,8 +170,7 @@ object Utils {
     fun getPackageInfo(): PackageInfo {
         if (::packageInfo.isInitialized)
             return packageInfo
-        return if (
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+        return if (Build.VERSION.SDK_INT >= 33) // Android 13 API 33 (T)
             context.packageManager.getPackageInfo(
                 context.packageName, PackageManager.PackageInfoFlags.of(0))
         else
@@ -182,5 +183,33 @@ object Utils {
 
     private fun trimSlashes(str: String): String {
         return "^/*(.+?)/*$".toRegex().replace(str, "$1")
+    }
+
+    fun addTrailingSlash(str: String?): String {
+        if (str == null)
+            return "/"
+        if (str.endsWith("/"))
+            return str
+        return "$str/"
+    }
+
+    fun saveOption(fileName: String, option: Int) {
+        try {
+            context.openFileOutput(fileName, Context.MODE_PRIVATE).use {
+                it.write(option)
+            }
+        } catch (e: Exception) {
+            Log.e("Data", "Can't write the file $fileName (${e.localizedMessage})")
+        }
+    }
+
+    fun getOption(fileName: String, default: Int = 0): Int {
+        return try {
+            context.openFileInput(fileName).use {
+                it.read()
+            }
+        } catch (e: Exception) {
+            return default
+        }
     }
 }

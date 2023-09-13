@@ -13,19 +13,19 @@ object SourceData {
     private var sources = mutableListOf<SourceDataModel>()
 
     fun getAll(): MutableList<SourceDataModel> {
-        if (sources.isEmpty()) {
-            try {
-                context.openFileInput(fileName).use { inputStream ->
-                    val json = inputStream.bufferedReader().use {
-                        it.readText()
-                    }
-                    fromJson(json)
-                    validate()
+        if (sources.isNotEmpty())
+            return sources
+
+        try {
+            context.openFileInput(fileName).use { inputStream ->
+                val json = inputStream.bufferedReader().use {
+                    it.readText()
                 }
-            } catch (e: Exception) {
-                Log.e("Data", "Can't read data file $fileName (${e.localizedMessage})")
-                createSources()
+                fromJson(json)
+                validate()
             }
+        } catch (e: Exception) {
+            createSources()
         }
         return sources
     }

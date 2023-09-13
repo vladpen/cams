@@ -30,19 +30,14 @@ class GroupEditActivity : AppCompatActivity() {
         groupId = intent.getIntExtra("groupId", -1)
 
         val group = GroupData.getById(groupId)
-        binding.toolbar.tvToolbarLink.text = getString(R.string.save)
-        binding.toolbar.tvToolbarLink.setTextColor(getColor(R.color.files_link))
         if (group == null) {
             groupId = -1
-            binding.toolbar.tvToolbarLabel.text = getString(R.string.group_add)
+            binding.toolbar.tvLabel.text = getString(R.string.group_add)
             binding.tvDeleteLink.visibility = View.GONE
         } else {
-            binding.toolbar.tvToolbarLabel.text = group.name
-
+            binding.toolbar.tvLabel.text = group.name
             binding.etEditName.setText(group.name)
-
             selectedStreams = group.streams.map { it } as MutableList<Int>
-
             binding.tvDeleteLink.setOnClickListener {
                 delete()
             }
@@ -66,13 +61,12 @@ class GroupEditActivity : AppCompatActivity() {
         binding.btnSave.setOnClickListener {
             save()
         }
-        binding.toolbar.tvToolbarLink.setOnClickListener {
-            save()
-        }
         binding.toolbar.btnBack.setOnClickListener {
             back()
         }
         this.onBackPressedDispatcher.addCallback(callback)
+
+        Alert.init(this, binding.toolbar.btnAlert)
     }
 
     private val callback = object : OnBackPressedCallback(true) {

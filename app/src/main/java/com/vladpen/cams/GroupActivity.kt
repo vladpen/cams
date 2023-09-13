@@ -54,12 +54,14 @@ class GroupActivity : AppCompatActivity() {
         }
         group = GroupData.getById(groupId) ?: return
 
-        binding.toolbar.tvToolbarLabel.text = group.name
+        binding.toolbar.tvLabel.text = group.name
 
         gestureDetector = VideoGestureDetector(binding.clScreenBox, binding.rlGroupBox)
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         GroupData.currentGroupId = groupId  // save for back navigation
+
+        Alert.init(this, binding.toolbar.btnAlert)
     }
 
     private fun initFragments() {

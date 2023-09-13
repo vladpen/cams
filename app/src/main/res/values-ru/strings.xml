@@ -11,6 +11,8 @@
     <string name="del_channel">Delete channel</string>
     <string name="ch1_btn">K1</string>
     <string name="ch2_btn">K2</string>
+    <string name="add_sftp">Добавить SFTP</string>
+    <string name="sftp_alert">Оповещать о новых SFTP файлах</string>
     <string name="sftp_url">Адрес SFTP</string>
     <string name="sftp_url_hint">sftp://логин:пароль@ip/папка</string>
     <string name="cam_protocol">Протокол</string>
@@ -26,14 +28,12 @@
     <string name="err_cam_exists">Такая камера уже существует</string>
     <string name="err_channels_equal">Адреса каналов совпадают</string>
     <string name="files">Архив</string>
-    <string name="live">Камера</string>
     <string name="MB">МБ</string>
     <string name="file_prev">Предыдущий файл</string>
     <string name="file_next">Следующий файл</string>
     <string name="seek_back">Перемотка назад</string>
     <string name="play_pause">Пуск/пауза</string>
     <string name="mute">Тишина</string>
-    <string name="group">Группа</string>
     <string name="group_add">Добавить группу</string>
     <string name="group_name_hint">Новая группа</string>
     <string name="group_cams">Камеры *</string>

@@ -47,6 +47,7 @@ class SourceAdapter(private val dataSet: List<SourceDataModel>) :
                             .putExtra("streamId", id)
                     )
                 }
+                tvItemTime.text = AlertWork.getLastTime(id)
                 btnEdit.setOnClickListener {
                     navigate(
                         Intent(context, EditActivity::class.java)

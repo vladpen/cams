@@ -1,3 +1,10 @@
+## 2.1 - 2023-09-13
+
+- Motion detection support
+- Android 14 "Upside Down Cake" support (API level 34)
+- Components update
+- Fixes and improvements
+
 ## 2.0.3 - 2023-07-03
 
 Network observer fix

@@ -27,6 +27,7 @@
                 android:id="@+id/etEditName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textSize="20sp"
                 android:inputType="text"
                 android:hint="@string/cam_name_hint"
                 android:autofillHints=""
@@ -41,6 +42,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/cam_url"
+                    app:drawableLeftCompat="@drawable/ic_outline_videocam_20"
+                    android:drawablePadding="6dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -53,6 +56,7 @@
                     android:paddingEnd="10dp"
                     android:text="@string/add_channel"
                     android:textColor="@color/files_link"
+                    android:background="?attr/selectableItemBackground"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -61,6 +65,7 @@
                 android:id="@+id/etEditUrl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textSize="20sp"
                 android:inputType="textUri"
                 android:hint="@string/cam_url_hint"
                 android:autofillHints=""
@@ -94,6 +99,7 @@
                         android:paddingEnd="10dp"
                         android:text="@string/del_channel"
                         android:textColor="@color/error"
+                        android:background="?attr/selectableItemBackground"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -102,48 +108,96 @@
                     android:id="@+id/etEditChannel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textSize="20sp"
                     android:inputType="textUri"
                     android:hint="@string/cam_url_hint"
                     android:autofillHints=""
                     android:gravity="center" />
             </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/sftp_url"
-                android:layout_marginTop="16dp" />
-
-            <EditText
-                android:id="@+id/etEditSftpUrl"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textUri"
-                android:hint="@string/sftp_url_hint"
-                android:autofillHints=""
-                android:gravity="center" />
-
             <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginEnd="18dp"
                     android:text="@string/cam_protocol" />
                 <RadioButton android:id="@+id/rbEditTcp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"
                     android:layout_marginEnd="16dp"
                     android:text="@string/cam_tcp" />
                 <RadioButton android:id="@+id/rbEditUdp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"
                     android:text="@string/cam_udp" />
             </RadioGroup>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvSftpLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10sp"
+                    android:text="@string/sftp_url"
+                    app:drawableLeftCompat="@drawable/ic_outline_folder_20"
+                    android:drawablePadding="6dp"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tvAddSftp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:text="@string/add_sftp"
+                    android:textColor="@color/files_link"
+                    android:background="?attr/selectableItemBackground"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:id="@+id/llSftpBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <EditText
+                    android:id="@+id/etEditSftpUrl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:inputType="textUri"
+                    android:hint="@string/sftp_url_hint"
+                    android:autofillHints=""
+                    android:gravity="center" />
+
+                <CheckBox
+                    android:id="@+id/cbAlert"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="@string/sftp_alert"
+                    android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+                    android:button="@null" />
+            </LinearLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -155,10 +209,10 @@
                     android:id="@+id/tvCopyLink"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
                     android:padding="10dp"
                     android:text="@string/copy"
                     android:textColor="@color/accent"
+                    android:background="?attr/selectableItemBackground"
                     android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -167,10 +221,10 @@
                     android:id="@+id/tvPasteLink"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
                     android:padding="10dp"
                     android:text="@string/paste"
                     android:textColor="@color/accent"
+                    android:background="?attr/selectableItemBackground"
                     android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -182,7 +236,7 @@
                     android:padding="10dp"
                     android:text="@string/save"
                     android:background="@color/buttonBackground"
-                    android:foreground="?android:attr/selectableItemBackground"
+                    android:foreground="?attr/selectableItemBackground"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -191,10 +245,10 @@
                     android:id="@+id/tvDeleteLink"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
                     android:padding="10dp"
                     android:text="@string/delete"
                     android:textColor="@color/error"
+                    android:background="?attr/selectableItemBackground"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
