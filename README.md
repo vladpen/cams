@@ -12,10 +12,11 @@
 - Поддержка двухканальных камер.
 - Просмотр видеозаписей или изображений по протоколу SFTP.
 - Возможность настройки оповещений о срабатывании детектора движения камеры.
+- Высокая скорость подключения.
+- Предельная простота навигации и управления.
+- Максимальная безопасность и конфиденциальность данных.
 - Переключение протокола TCP/UDP.
   Эта опция важна при просмотре камер через интернет, где UDP может не поддерживаться или работать плохо.
-- Максимальная скорость подключения.
-- Предельная простота навигации и управления.
 
 <img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/1_main_ru.jpg"
 alt="Main screen"
@@ -35,6 +36,9 @@ width="200">
 
 Воспроизводит большинство типов видеопотоков (не только RTSP).
 На снимке экрана выше показано изображение с реальной видеокамеры и три тестовых ролика в режиме "Группа".
+
+*ВАЖНО. Приложение ориентировано на безопасность и приватность данных, поэтому не собирает и не обрабатывает никакую информацию о пользователе.
+Данные не отправляются ни на какие сервера, включая техническую инфраструктуру Google и "облачные" хранилища производителей камер.*
 
 ## Установка
 
@@ -87,9 +91,5 @@ height="80">](https://f-droid.org/packages/com.vladpen.cams/)
 &nbsp; [<img src="https://user-images.githubusercontent.com/3853013/194689050-e6da2f21-9aa3-4662-9b7d-7293b140f22f.svg"
 alt="Доступно в RuStore"
 height="57">](https://apps.rustore.ru/app/com.vladpen.cams)
-
- &nbsp; [<img src="https://store.nashstore.ru/assets/images/logo.svg"
-alt="Get it on NashStore"
-height="40">](https://store.nashstore.ru/store/628380ec4891a5de4cd8d26f)
 
 *Copyright (c) 2022 vladpen under MIT license. Use it with absolutely no warranty.*

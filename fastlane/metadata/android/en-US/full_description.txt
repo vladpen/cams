@@ -11,3 +11,6 @@ Features:
 * Maximum connection speed.
 * Extreme ease of navigation and control.
 * Ability to switch TCP/UDP protocol. This option is important while viewing cameras over the Internet, where UDP may not be supported or may not work well.
+
+IMPORTANT NOTE. The app is focused on data security and privacy. It does not collect or process any information about the user.
+The data is not sent to any servers, including Google's technical infrastructure or camera manufacturers' cloud storage.
