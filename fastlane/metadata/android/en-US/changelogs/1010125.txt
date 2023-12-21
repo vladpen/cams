@@ -1,0 +1,2 @@
+- Playback speed bug fix
+- Components update
