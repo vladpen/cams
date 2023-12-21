@@ -197,15 +197,13 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
             next()
         }
         binding.videoBar.tvSpeed.setOnClickListener {
-            if (remotePath == null) {
-                if (mediaPlayer.rate < 2f) {
-                    mediaPlayer.rate = 4f
-                    "4x".also { binding.videoBar.tvSpeed.text = it }
-                } else {
-                    dropRate()
-                }
-                initBars()
-            } // no implements for the slideshow
+            if (mediaPlayer.rate < 2f) {
+                mediaPlayer.rate = 4f
+                "4x".also { binding.videoBar.tvSpeed.text = it }
+            } else {
+                dropRate()
+            }
+            initBars()
         }
         "1x".also { binding.videoBar.tvSpeed.text = it } // "also" makes linter happy
         binding.videoBar.llVideoCtrl.visibility = View.VISIBLE
