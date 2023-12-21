@@ -1,3 +1,8 @@
+## 2.1.1 - 2023-12-21
+
+- Playback speed bug fix
+- Components update
+
 ## 2.1 - 2023-09-13
 
 - Motion detection support

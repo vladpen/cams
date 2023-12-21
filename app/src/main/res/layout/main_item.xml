@@ -8,7 +8,8 @@
     <TextView
         android:id="@+id/tvItemName"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:gravity="center_vertical"
         android:textSize="20sp"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"

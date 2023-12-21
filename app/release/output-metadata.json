@@ -25,19 +25,6 @@
       "filters": [
         {
           "filterType": "ABI",
-          "value": "x86_64"
-        }
-      ],
-      "attributes": [],
-      "versionCode": 1010125,
-      "versionName": "2.1.1",
-      "outputFile": "app-x86_64-release.apk"
-    },
-    {
-      "type": "ONE_OF_MANY",
-      "filters": [
-        {
-          "filterType": "ABI",
           "value": "x86"
         }
       ],
@@ -45,6 +32,19 @@
       "versionCode": 1010125,
       "versionName": "2.1.1",
       "outputFile": "app-x86-release.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "x86_64"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 1010125,
+      "versionName": "2.1.1",
+      "outputFile": "app-x86_64-release.apk"
     },
     {
       "type": "ONE_OF_MANY",
