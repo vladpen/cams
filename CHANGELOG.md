@@ -1,4 +1,4 @@
-## 2.1.1 - 2023-12-21
+## 2.1.1 - 2023-12-25
 
 - Playback speed bug fix
 - Components update
