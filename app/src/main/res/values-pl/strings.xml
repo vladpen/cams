@@ -61,6 +61,9 @@
                 Raporty o błędach i narzędzie do śledzenia problemów</a>
         ]]>
     </string>
+    <string name="manual_link">
+        <![CDATA[<a href="https://github.com/vladpen/cams/">User manual</a>]]>
+    </string>
     <string name="copy">Kopiuj</string>
     <string name="paste">Wklej</string>
     <string name="logs">Logi urządzenia</string>

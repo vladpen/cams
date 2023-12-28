@@ -2,9 +2,11 @@ package com.vladpen.cams
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.vladpen.Alert
@@ -62,6 +64,10 @@ class MainActivity: AppCompatActivity() {
         binding.emptyBox.btnImport.setOnClickListener {
             MainMenu(this).import()
         }
+        binding.emptyBox.tvManualLink.text = HtmlCompat.fromHtml(
+            getString(R.string.manual_link),
+            HtmlCompat.FROM_HTML_MODE_COMPACT)
+        binding.emptyBox.tvManualLink.movementMethod = LinkMovementMethod.getInstance()
     }
 
     private val callback = object : OnBackPressedCallback(true) {

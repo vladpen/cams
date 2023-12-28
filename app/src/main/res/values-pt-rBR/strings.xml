@@ -61,6 +61,9 @@
                 Bug reports and issue tracker</a>
         ]]>
     </string>
+    <string name="manual_link">
+        <![CDATA[<a href="https://github.com/vladpen/cams/">User manual</a>]]>
+    </string>
     <string name="copy">Copy</string>
     <string name="paste">Paste</string>
     <string name="logs">Device logs</string>
