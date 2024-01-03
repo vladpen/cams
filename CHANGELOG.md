@@ -1,6 +1,7 @@
 ## 2.1.1 - 2023-12-25
 
 - Playback speed bug fix
+- Link to user manual
 - Components update
 
 ## 2.1 - 2023-09-13

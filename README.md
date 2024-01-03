@@ -42,8 +42,8 @@ width="200">
 
 ## Установка
 
-APK файл можно собрать самостоятельно, скачать с [Github](https://github.com/vladpen/cams/tree/main/app/release)
-или [F-Droid](https://f-droid.org/ru/packages/com.vladpen.cams/).
+APK файл можно собрать самостоятельно, [скачать с Github](https://github.com/vladpen/cams/raw/main/app/release/app-armeabi-v7a-release.apk),
+установить с помощью [F-Droid](https://f-droid.org/ru/packages/com.vladpen.cams/) или [RuStore](https://apps.rustore.ru/app/com.vladpen.cams).
 Поддерживается архитектура ARM-64 (используется в большинстве современных мобильных телефонов), ARM, x86-64 и x86.
 
 ## Настройка
@@ -75,7 +75,7 @@ ISAPI/Streaming/Channels/<номер канала>
 
 Опционально приложение может уведомлять о срабатывании детектора движения камер.
 Оповещение срабатывает в момент появления нового изображения с камеры в указанной папке SFTP сервера.
-Для работы этой функции требуется настроить камеры и сервер хранения полученных изображений. 
+Для работы этой функции требуется настроить камеры и сервер хранения полученных изображений.
 Подробно эти настройки описаны в параллельном проекте [Cams-PWA](https://github.com/vladpen/cams-pwa).
 
 Подробное обсуждение приложения: [habr.com/ru/post/654915](https://habr.com/ru/post/654915/)
