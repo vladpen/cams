@@ -1,3 +1,8 @@
+## 2.2 - 2024-03-01
+
+- Switching channels on group screens
+- Improved loading bar
+
 ## 2.1.1 - 2023-12-25
 
 - Playback speed bug fix
