@@ -20,6 +20,7 @@ object StreamData {
     private const val fileName = "streams.json"
     private const val muteFileName = "mute.bin"
     private const val channelFileName = "channel.bin"
+    private const val groupChannelFileName = "groupChannel.bin"
     private var streams = mutableListOf<StreamDataModel>()
     var logConnections = false
     var copyStreamId = -1
@@ -105,5 +106,13 @@ object StreamData {
 
     fun getChannel(): Int {
         return getOption(channelFileName)
+    }
+
+    fun setGroupChannel(channel: Int) {
+        saveOption(groupChannelFileName, channel)
+    }
+
+    fun getGroupChannel(): Int {
+        return getOption(groupChannelFileName, 1)
     }
 }

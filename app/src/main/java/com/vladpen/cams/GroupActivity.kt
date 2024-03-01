@@ -66,6 +66,7 @@ class GroupActivity : AppCompatActivity() {
 
     private fun initFragments() {
         try { // prevents exception if group file is corrupted
+            var isChannelsAvailable = false
             for ((i, id) in group.streams.withIndex()) {
                 if (id > StreamData.getAll().count())
                     throw Exception("invalid group ID")
@@ -81,11 +82,32 @@ class GroupActivity : AppCompatActivity() {
                     videoScreen(i)
                 }
                 fragments.add(fragment)
+
+                val stream = StreamData.getById(id)
+                isChannelsAvailable = isChannelsAvailable || stream?.url2 != null
+            }
+            if (isChannelsAvailable) {
+                initChannel()
             }
         } catch (e: Exception) {
             Log.e("Group", "Data is corrupted (${e.localizedMessage})")
             startActivity(Intent(this, GroupEditActivity::class.java)
                 .putExtra("groupId", groupId))
+        }
+    }
+
+    private fun initChannel() {
+        var channel = StreamData.getGroupChannel()
+        binding.tvChannel.text = Utils.getChannelButton(channel)
+        binding.tvChannel.visibility = View.VISIBLE
+        binding.tvChannel.setOnClickListener {
+            channel = if (channel != 1) 1 else 0
+            StreamData.setGroupChannel(channel)
+            binding.tvChannel.text = Utils.getChannelButton(channel)
+            for (fragment in fragments) {
+                fragment.stop()
+                fragment.start()
+            }
         }
     }
 
@@ -183,8 +205,9 @@ class GroupActivity : AppCompatActivity() {
     private fun initBars() {
         Effects.cancel()
         binding.toolbar.root.visibility = View.VISIBLE
+        binding.tvChannel.visibility = View.VISIBLE
         if (hideBars) {
-            Effects.delayedFadeOut(arrayOf(binding.toolbar.root))
+            Effects.delayedFadeOut(arrayOf(binding.toolbar.root, binding.tvChannel))
         }
     }
 

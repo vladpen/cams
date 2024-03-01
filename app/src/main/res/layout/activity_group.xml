@@ -26,6 +26,19 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <TextView
+        android:id="@+id/tvChannel"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:background="@color/overlay_background"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:textSize="20sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <include android:id="@+id/toolbar" layout="@layout/toolbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

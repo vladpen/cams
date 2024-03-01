@@ -7,6 +7,7 @@ import android.os.Build
 import android.util.DisplayMetrics
 import android.util.Log
 import com.vladpen.cams.MainApp.Companion.context
+import com.vladpen.cams.R
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
 import javax.crypto.spec.IvParameterSpec
@@ -211,5 +212,12 @@ object Utils {
         } catch (e: Exception) {
             return default
         }
+    }
+
+    fun getChannelButton(channel: Int): String {
+        return if (channel == 1)
+            context.getString(R.string.ch2_btn)
+        else
+            context.getString(R.string.ch1_btn)
     }
 }

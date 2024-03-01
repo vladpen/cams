@@ -67,7 +67,7 @@ class VideoFragment : Fragment() {
         observeNetworkState()
     }
 
-    private fun start() {
+    fun start() {
         try {
             val media = Media(libVlc, Uri.parse(getUrl()))
 
@@ -77,6 +77,8 @@ class VideoFragment : Fragment() {
 
             mediaPlayer.play()
             mediaPlayer.volume = 0
+
+            binding.pbLoading.visibility = View.VISIBLE
 
         } catch (e: IOException) {
             e.printStackTrace()
@@ -132,7 +134,7 @@ class VideoFragment : Fragment() {
     }
 
     private fun getUrl(): String {
-        val url = if (stream.url2 != null)
+        val url = if (stream.url2 != null && StreamData.getGroupChannel() == 1)
             stream.url2!!
         else
             stream.url
