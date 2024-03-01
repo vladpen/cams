@@ -78,8 +78,6 @@ class VideoFragment : Fragment() {
             mediaPlayer.play()
             mediaPlayer.volume = 0
 
-            binding.pbLoading.visibility = View.VISIBLE
-
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -94,8 +92,8 @@ class VideoFragment : Fragment() {
 
         mediaPlayer.setEventListener {
             if (it.type == MediaPlayer.Event.Buffering && it.buffering == 100f) {
-                binding.pbLoading.visibility = View.GONE
                 isBuffered = true
+                (activity as GroupActivity).hideLoading()
             }
         }
     }

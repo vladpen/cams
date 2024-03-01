@@ -26,6 +26,8 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <include android:id="@+id/progressBar" layout="@layout/progress_bar" />
+
     <TextView
         android:id="@+id/tvChannel"
         android:layout_width="44dp"

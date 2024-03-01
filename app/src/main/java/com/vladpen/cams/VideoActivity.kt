@@ -242,7 +242,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
             StreamData.setChannel(channel)
             binding.videoBar.tvChannel.text = Utils.getChannelButton(channel)
             binding.videoBar.tvChannel.visibility = View.GONE
-            binding.pbLoading.visibility = View.VISIBLE
+            binding.progressBar.pbLoading.visibility = View.VISIBLE
             mediaPlayer.stop()
             start()
         }
@@ -307,7 +307,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
 
     override fun onEvent(ev: MediaPlayer.Event) {
         if (ev.type == MediaPlayer.Event.Buffering && ev.buffering == 100f) {
-            binding.pbLoading.visibility = View.GONE
+            binding.progressBar.pbLoading.visibility = View.GONE
             if (mediaPlayer.audioTracksCount > 0)  // use (media.tracks.size > 1) for 4.X versions
                 binding.videoBar.btnMute.visibility = View.VISIBLE
             if (stream.url2 != null)

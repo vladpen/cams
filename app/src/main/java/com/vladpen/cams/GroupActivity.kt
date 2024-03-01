@@ -30,6 +30,7 @@ class GroupActivity : AppCompatActivity() {
     private var fragments = arrayListOf<VideoFragment>()
     private var frames = arrayListOf<FrameLayout>()
     private var hideBars = false
+    private var loadingCount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,6 +87,8 @@ class GroupActivity : AppCompatActivity() {
                 val stream = StreamData.getById(id)
                 isChannelsAvailable = isChannelsAvailable || stream?.url2 != null
             }
+            loadingCount = fragments.count()
+
             if (isChannelsAvailable) {
                 initChannel()
             }
@@ -108,7 +111,15 @@ class GroupActivity : AppCompatActivity() {
                 fragment.stop()
                 fragment.start()
             }
+            loadingCount = fragments.count()
+            binding.progressBar.pbLoading.visibility = View.VISIBLE
         }
+    }
+
+    fun hideLoading() {
+        loadingCount -= 1
+        if (loadingCount <= 0)
+            binding.progressBar.pbLoading.visibility = View.GONE
     }
 
     private val callback = object : OnBackPressedCallback(true) {
