@@ -97,4 +97,4 @@ height="80">](https://f-droid.org/packages/com.vladpen.cams/)
 alt="Доступно в RuStore"
 height="57">](https://apps.rustore.ru/app/com.vladpen.cams)
 
-*Copyright (c) 2022 vladpen under MIT license. Use it with absolutely no warranty.*
+*Copyright (c) 2022-2024 vladpen under MIT license. Use it with absolutely no warranty.*
