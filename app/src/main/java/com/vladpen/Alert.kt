@@ -14,8 +14,8 @@ import androidx.work.WorkManager
 import com.vladpen.cams.R
 
 object Alert {
-    private const val workName = "CamsAlertWork"
-    private const val enableFileName = "alert.bin"
+    private const val WORK_NAME = "CamsAlertWork"
+    private const val ENABLE_FILE_NAME = "alert.bin"
     private var isAvailable: Boolean? = null
 
     fun init(activity: Activity, button: ImageButton) {
@@ -29,7 +29,7 @@ object Alert {
             this.toggle(activity, button)
         }
 
-        if (Utils.getOption(this.enableFileName, 1) == 0) {
+        if (Utils.getOption(this.ENABLE_FILE_NAME, 1) == 0) {
             this.cancelWork(activity)
             button.setImageResource(R.drawable.ic_outline_alert_off_24)
         } else {
@@ -38,12 +38,12 @@ object Alert {
     }
 
     private fun toggle(activity: Activity, button: ImageButton) {
-        if (Utils.getOption(this.enableFileName, 1) == 1) {
-            Utils.saveOption(this.enableFileName, 0)
+        if (Utils.getOption(this.ENABLE_FILE_NAME, 1) == 1) {
+            Utils.saveOption(this.ENABLE_FILE_NAME, 0)
             button.setImageResource(R.drawable.ic_outline_alert_off_24)
             this.cancelWork(activity)
         } else {
-            Utils.saveOption(this.enableFileName, 1)
+            Utils.saveOption(this.ENABLE_FILE_NAME, 1)
             button.setImageResource(R.drawable.ic_outline_alert_on_24)
             this.enqueueWork(activity)
         }
@@ -62,11 +62,11 @@ object Alert {
         if (Build.VERSION.SDK_INT >= 31) // Android 11 API 31 (S)
             alertRequest.setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
         WorkManager.getInstance(activity).enqueueUniqueWork(
-            workName, ExistingWorkPolicy.REPLACE, alertRequest.build())
+            WORK_NAME, ExistingWorkPolicy.REPLACE, alertRequest.build())
     }
 
     private fun cancelWork(activity: Activity) {
-        WorkManager.getInstance(activity).cancelUniqueWork(workName)
+        WorkManager.getInstance(activity).cancelUniqueWork(WORK_NAME)
     }
 
     fun checkAvailability() {

@@ -9,7 +9,7 @@ import com.vladpen.cams.MainApp.Companion.context
 data class SourceDataModel(val type: String, var id: Int)
 
 object SourceData {
-    private const val fileName = "sources.json"
+    private const val FILE_NAME = "sources.json"
     private var sources = mutableListOf<SourceDataModel>()
 
     fun getAll(): MutableList<SourceDataModel> {
@@ -17,7 +17,7 @@ object SourceData {
             return sources
 
         try {
-            context.openFileInput(fileName).use { inputStream ->
+            context.openFileInput(FILE_NAME).use { inputStream ->
                 val json = inputStream.bufferedReader().use {
                     it.readText()
                 }
@@ -42,7 +42,7 @@ object SourceData {
     }
 
     fun save() {
-        context.openFileOutput(fileName, Context.MODE_PRIVATE).use {
+        context.openFileOutput(FILE_NAME, Context.MODE_PRIVATE).use {
             it.write(toJson(sources).toByteArray())
         }
     }

@@ -25,7 +25,7 @@ data class UrlDataModel(
 )
 
 object Utils {
-    private const val transformation = "AES/CBC/PKCS7Padding"
+    private const val TRANSFORMATION = "AES/CBC/PKCS7Padding"
     private lateinit var packageInfo: PackageInfo
 
     fun parseUrl(url: String?, defaultPort: Int = 554, defaultScheme: String = "rtsp"):
@@ -98,7 +98,7 @@ object Utils {
     fun encodeString(str: String, key: String? = null): String {
         if (str == "") return str
         try {
-            val cipher = Cipher.getInstance(transformation)
+            val cipher = Cipher.getInstance(TRANSFORMATION)
             cipher.init(Cipher.ENCRYPT_MODE, getKey(key), getIv(key))
             return cipher.doFinal(str.toByteArray()).toHexString()
 
@@ -111,7 +111,7 @@ object Utils {
     fun decodeString(str: String, key: String? = null): String {
         if (str == "") return str
         try {
-            val cipher = Cipher.getInstance(transformation)
+            val cipher = Cipher.getInstance(TRANSFORMATION)
             cipher.init(Cipher.DECRYPT_MODE, getKey(key), getIv(key))
             return String(cipher.doFinal(str.decodeHex()))
 

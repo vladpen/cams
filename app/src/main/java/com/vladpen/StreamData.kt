@@ -17,10 +17,10 @@ data class StreamDataModel(
     val alert: Boolean?)
 
 object StreamData {
-    private const val fileName = "streams.json"
-    private const val muteFileName = "mute.bin"
-    private const val channelFileName = "channel.bin"
-    private const val groupChannelFileName = "groupChannel.bin"
+    private const val STREAM_FILE_NAME = "streams.json"
+    private const val MUTE_FILE_NAME = "mute.bin"
+    private const val CAM_CHANNEL_FILE_NAME = "channel.bin"
+    private const val GROUP_CHANNEL_FILE_NAME = "groupChannel.bin"
     private var streams = mutableListOf<StreamDataModel>()
     var logConnections = false
     var copyStreamId = -1
@@ -30,7 +30,7 @@ object StreamData {
             return streams
 
         return try {
-            context.openFileInput(fileName).use { inputStream ->
+            context.openFileInput(STREAM_FILE_NAME).use { inputStream ->
                 val json = inputStream.bufferedReader().use {
                     it.readText()
                 }
@@ -62,7 +62,7 @@ object StreamData {
     }
 
     fun save() {
-        context.openFileOutput(fileName, Context.MODE_PRIVATE).use {
+        context.openFileOutput(STREAM_FILE_NAME, Context.MODE_PRIVATE).use {
             it.write(toJson(streams).toByteArray())
         }
     }
@@ -93,26 +93,26 @@ object StreamData {
     }
 
     fun setMute(mute: Int) {
-        saveOption(muteFileName, mute)
+        saveOption(MUTE_FILE_NAME, mute)
     }
 
     fun getMute(): Int {
-        return getOption(muteFileName)
+        return getOption(MUTE_FILE_NAME)
     }
 
     fun setChannel(channel: Int) {
-        saveOption(channelFileName, channel)
+        saveOption(CAM_CHANNEL_FILE_NAME, channel)
     }
 
     fun getChannel(): Int {
-        return getOption(channelFileName)
+        return getOption(CAM_CHANNEL_FILE_NAME)
     }
 
     fun setGroupChannel(channel: Int) {
-        saveOption(groupChannelFileName, channel)
+        saveOption(GROUP_CHANNEL_FILE_NAME, channel)
     }
 
     fun getGroupChannel(): Int {
-        return getOption(groupChannelFileName, 1)
+        return getOption(GROUP_CHANNEL_FILE_NAME, 1)
     }
 }

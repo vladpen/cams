@@ -9,7 +9,7 @@ import com.vladpen.cams.MainApp.Companion.context
 data class GroupDataModel(val name: String, var streams: MutableList<Int>)
 
 object GroupData {
-    private const val fileName = "groups.json"
+    private const val FILE_NAME = "groups.json"
     private var groups = mutableListOf<GroupDataModel>()
     var currentGroupId = -1
 
@@ -18,7 +18,7 @@ object GroupData {
             return groups
 
         return try {
-            context.openFileInput(fileName).use { inputStream ->
+            context.openFileInput(FILE_NAME).use { inputStream ->
                 val json = inputStream.bufferedReader().use {
                     it.readText()
                 }
@@ -47,7 +47,7 @@ object GroupData {
     }
 
     fun save() {
-        context.openFileOutput(fileName, Context.MODE_PRIVATE).use {
+        context.openFileOutput(FILE_NAME, Context.MODE_PRIVATE).use {
             it.write(toJson(groups).toByteArray())
         }
     }
