@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:paddingTop="2dp"
     android:indeterminate="true"
+    android:indeterminateTint="#0077FF"
     style="?android:attr/progressBarStyleHorizontal"
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintBottom_toTopOf="parent"
