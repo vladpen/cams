@@ -101,12 +101,12 @@ class GroupActivity : AppCompatActivity() {
 
     private fun initChannel() {
         var channel = StreamData.getGroupChannel()
-        binding.tvChannel.text = Utils.getChannelButton(channel)
-        binding.tvChannel.visibility = View.VISIBLE
-        binding.tvChannel.setOnClickListener {
+        binding.btnChannel.setImageResource(Utils.getChannelButton(channel))
+        binding.btnChannel.visibility = View.VISIBLE
+        binding.btnChannel.setOnClickListener {
             channel = if (channel != 1) 1 else 0
             StreamData.setGroupChannel(channel)
-            binding.tvChannel.text = Utils.getChannelButton(channel)
+            binding.btnChannel.setImageResource(Utils.getChannelButton(channel))
             for (fragment in fragments) {
                 fragment.stop()
                 fragment.start()
@@ -216,9 +216,9 @@ class GroupActivity : AppCompatActivity() {
     private fun initBars() {
         Effects.cancel()
         binding.toolbar.root.visibility = View.VISIBLE
-        binding.tvChannel.visibility = View.VISIBLE
+        binding.btnChannel.visibility = View.VISIBLE
         if (hideBars) {
-            Effects.delayedFadeOut(arrayOf(binding.toolbar.root, binding.tvChannel))
+            Effects.delayedFadeOut(arrayOf(binding.toolbar.root, binding.btnChannel))
         }
     }
 

@@ -214,10 +214,10 @@ object Utils {
         }
     }
 
-    fun getChannelButton(channel: Int): String {
+    fun getChannelButton(channel: Int): Int {
         return if (channel == 1)
-            context.getString(R.string.ch2_btn)
+            R.drawable.ic_baseline_channel_low_24
         else
-            context.getString(R.string.ch1_btn)
+            R.drawable.ic_baseline_channel_hi_24
     }
 }

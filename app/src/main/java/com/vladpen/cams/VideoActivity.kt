@@ -235,13 +235,13 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
 
     private fun initChannel() {
         var channel = StreamData.getChannel()
-        binding.videoBar.tvChannel.text = Utils.getChannelButton(channel)
-        binding.videoBar.tvChannel.visibility = View.VISIBLE
-        binding.videoBar.tvChannel.setOnClickListener {
+        binding.videoBar.btnChannel.setImageResource(Utils.getChannelButton(channel))
+        binding.videoBar.btnChannel.visibility = View.VISIBLE
+        binding.videoBar.btnChannel.setOnClickListener {
             channel = if (channel != 1) 1 else 0
             StreamData.setChannel(channel)
-            binding.videoBar.tvChannel.text = Utils.getChannelButton(channel)
-            binding.videoBar.tvChannel.visibility = View.GONE
+            binding.videoBar.btnChannel.setImageResource(Utils.getChannelButton(channel))
+            binding.videoBar.btnChannel.visibility = View.GONE
             binding.progressBar.pbLoading.visibility = View.VISIBLE
             mediaPlayer.stop()
             start()
@@ -311,7 +311,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
             if (mediaPlayer.audioTracksCount > 0)  // use (media.tracks.size > 1) for 4.X versions
                 binding.videoBar.btnMute.visibility = View.VISIBLE
             if (stream.url2 != null)
-                binding.videoBar.tvChannel.visibility = View.VISIBLE
+                binding.videoBar.btnChannel.visibility = View.VISIBLE
             initBars()
             isBuffered = true
         } else if (ev.type == MediaPlayer.Event.EndReached && remotePath != null) {

@@ -66,16 +66,15 @@
                     android:src="@drawable/ic_baseline_keyboard_double_arrow_right_24" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvChannel"
+        <ImageButton
+            android:id="@+id/btnChannel"
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:gravity="center"
-            android:textColor="@color/white"
             android:background="@color/overlay_background"
             android:foreground="?android:attr/selectableItemBackground"
-            android:textSize="20sp"
             android:visibility="gone"
+            android:contentDescription="@string/channel"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btnMute" />
 

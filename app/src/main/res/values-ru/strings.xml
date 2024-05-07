@@ -6,11 +6,10 @@
     <string name="cam_name_hint">Новая камера</string>
     <string name="cam_url">Адрес *</string>
     <string name="cam_url_hint">rtsp://логин:пароль@ip:порт/путь</string>
-    <string name="channel_url">Channel 2</string>
-    <string name="add_channel">Add channel</string>
-    <string name="del_channel">Delete channel</string>
-    <string name="ch1_btn">K1</string>
-    <string name="ch2_btn">K2</string>
+    <string name="channel_url">Канал 2</string>
+    <string name="add_channel">Добавить канал</string>
+    <string name="del_channel">Удалить канал</string>
+    <string name="channel">Канал</string>
     <string name="add_sftp">Добавить SFTP</string>
     <string name="sftp_alert">Оповещать о новых SFTP файлах</string>
     <string name="sftp_url">Адрес SFTP</string>

@@ -9,8 +9,7 @@
     <string name="channel_url">Kanał 2</string>
     <string name="add_channel">Dodaj kanał</string>
     <string name="del_channel">Usuń kanał</string>
-    <string name="ch1_btn">K1</string>
-    <string name="ch2_btn">K2</string>
+    <string name="channel">Kanał</string>
     <string name="add_sftp">Dodaj SFTP</string>
     <string name="sftp_alert">Alert me about new SFTP files</string>
     <string name="sftp_url">SFTP adres</string>
