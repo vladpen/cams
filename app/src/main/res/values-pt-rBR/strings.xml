@@ -7,6 +7,7 @@
     <string name="cam_url">Endereço *</string>
     <string name="cam_url_hint">rtsp://usuário:senha@ip:porta/caminho</string>
     <string name="channel_url">Channel 2</string>
+    <string name="channel_url_hint">rtsp://usuário:senha@ip:porta/caminho2</string>
     <string name="add_channel">Add channel</string>
     <string name="del_channel">Delete channel</string>
     <string name="channel">Channel</string>

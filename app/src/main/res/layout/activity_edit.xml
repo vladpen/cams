@@ -38,15 +38,38 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/cam_url"
-                    app:drawableLeftCompat="@drawable/ic_outline_videocam_20"
-                    android:drawablePadding="6dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_outline_videocam_24"
+                        android:contentDescription="@null"
+                        android:maxHeight="20dp"
+                        android:adjustViewBounds="true"
+                        app:tint="#bbbbbb" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:text="@string/cam_url" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:src="@drawable/ic_baseline_channel_hi_24"
+                        android:contentDescription="@null"
+                        android:maxHeight="20dp"
+                        android:adjustViewBounds="true"
+                        app:tint="#bbbbbb" />
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/tvAddChannel"
@@ -83,13 +106,38 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp">
 
-                    <TextView
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/channel_url"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_outline_videocam_24"
+                            android:contentDescription="@null"
+                            android:maxHeight="20dp"
+                            android:adjustViewBounds="true"
+                            app:tint="#bbbbbb" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:text="@string/channel_url" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:src="@drawable/ic_baseline_channel_low_24"
+                            android:contentDescription="@null"
+                            android:maxHeight="20dp"
+                            android:adjustViewBounds="true"
+                            app:tint="#bbbbbb" />
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/tvDelChannel"
@@ -110,7 +158,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
                     android:inputType="textUri"
-                    android:hint="@string/cam_url_hint"
+                    android:hint="@string/channel_url_hint"
                     android:autofillHints=""
                     android:gravity="center" />
             </LinearLayout>
@@ -119,38 +167,38 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="8dp"
                 android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="18dp"
+                    android:layout_marginEnd="16dp"
                     android:text="@string/cam_protocol" />
                 <RadioButton android:id="@+id/rbEditTcp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="14dp"
-                    android:paddingBottom="14dp"
-                    android:layout_marginEnd="16dp"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
+                    android:layout_marginEnd="12dp"
                     android:text="@string/cam_tcp" />
                 <RadioButton android:id="@+id/rbEditUdp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="14dp"
-                    android:paddingBottom="14dp"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
                     android:text="@string/cam_udp" />
             </RadioGroup>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
 
                 <TextView
                     android:id="@+id/tvSftpLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10sp"
                     android:text="@string/sftp_url"
                     app:drawableLeftCompat="@drawable/ic_outline_folder_20"
                     android:drawablePadding="6dp"
