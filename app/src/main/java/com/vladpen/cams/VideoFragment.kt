@@ -6,10 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.vladpen.NetworkState
 import com.vladpen.StreamData
 import com.vladpen.StreamDataModel
-import com.vladpen.Utils
 import com.vladpen.cams.databinding.FragmentVideoBinding
 import org.videolan.libvlc.LibVLC
 import org.videolan.libvlc.Media
@@ -22,8 +20,8 @@ class VideoFragment : Fragment() {
     private lateinit var libVlc: LibVLC
     private lateinit var mediaPlayer: MediaPlayer
     private lateinit var stream: StreamDataModel
-    private var streamId: Int = -1
-    private var isBuffered = false
+    var streamId: Int = -1
+        private set
 
     companion object {
         /**
@@ -63,13 +61,11 @@ class VideoFragment : Fragment() {
                 add("--verbose=-1")
         })
         mediaPlayer = MediaPlayer(libVlc)
-
-        observeNetworkState()
     }
 
     fun start() {
         try {
-            val media = Media(libVlc, Uri.parse(getUrl()))
+            val media = Media(libVlc, Uri.parse(StreamData.getUrl(stream)))
 
             media.apply {
                 mediaPlayer.media = this
@@ -92,8 +88,7 @@ class VideoFragment : Fragment() {
 
         mediaPlayer.setEventListener {
             if (it.type == MediaPlayer.Event.Buffering && it.buffering == 100f) {
-                isBuffered = true
-                (activity as GroupActivity).hideLoading()
+                (activity as GroupActivity).hideLoading(streamId)
             }
         }
     }
@@ -119,23 +114,12 @@ class VideoFragment : Fragment() {
         mediaPlayer.volume = 0
     }
 
-    private fun observeNetworkState() {
-        var lastConnected = true
-        NetworkState().observe(this) { isConnected ->
-            if (isConnected && !lastConnected && isBuffered) {
-                mediaPlayer.stop()
-                mediaPlayer.play()
-                mediaPlayer.volume = 0
-            }
-            lastConnected = isConnected
-        }
-    }
-
-    private fun getUrl(): String {
-        val url = if (stream.url2 != null && StreamData.getGroupChannel() == 1)
-            stream.url2!!
-        else
-            stream.url
-        return Utils.getFullUrl(url, 554, "rtsp")
+    fun watchdog(): Boolean {
+        if (mediaPlayer.isPlaying)
+            return true
+        mediaPlayer.stop()
+        mediaPlayer.play()
+        mediaPlayer.volume = 0
+        return false
     }
 }

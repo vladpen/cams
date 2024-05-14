@@ -4,6 +4,8 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.*
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +20,7 @@ private const val ASPECT_RATIO = 16f / 9f
 
 class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     private val binding by lazy { ActivityVideoBinding.inflate(layoutInflater) }
+    private val handler by lazy { Handler(Looper.getMainLooper()) }
 
     private lateinit var stream: StreamDataModel
     private lateinit var libVlc: LibVLC
@@ -28,7 +31,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     private var streamId: Int = -1 // -1 means "no stream"
     private var remotePath: String? = null // relative SFTP path
     private val seekStep: Long = 10000 // milliseconds
-    private var isBuffered = false
+    private val watchdogInterval: Long = 10000 // milliseconds
     private var hideBars = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,9 +74,6 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         this.onBackPressedDispatcher.addCallback(callback)
-
-        if (remotePath == null)
-            observeNetworkState()
 
         Alert.init(this, binding.toolbar.btnAlert)
     }
@@ -137,8 +137,6 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     private fun videoScreen() {
         val intent = Intent(this, VideoActivity::class.java)
             .putExtra("streamId", streamId)
-        // finish()
-        // intent.putExtra("streamId", streamId)
         startActivity(intent)
     }
 
@@ -252,7 +250,7 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         try {
             val media =
                 if (remotePath == null)
-                    Media(libVlc, Uri.parse(getUrl()))
+                    Media(libVlc, Uri.parse(StreamData.getUrl(stream)))
                 else
                     Media(libVlc, FileData.getTmpFile(remotePath!!).absolutePath)
 
@@ -287,16 +285,26 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         }
     }
 
+    private val runnable = object : Runnable {
+        override fun run() {
+            watchdog()
+            handler.postDelayed(this, watchdogInterval)
+        }
+    }
+
     override fun onStart() {
         super.onStart()
         mediaPlayer.attachViews(binding.videoLayout, null, false, false)
         start()
+
+        handler.postDelayed(runnable, watchdogInterval)
     }
 
     override fun onStop() {
         super.onStop()
         mediaPlayer.stop()
         mediaPlayer.detachViews()
+        handler.removeCallbacks(runnable)
     }
 
     override fun onDestroy() {
@@ -313,7 +321,6 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
             if (stream.url2 != null)
                 binding.videoBar.btnChannel.visibility = View.VISIBLE
             initBars()
-            isBuffered = true
         } else if (ev.type == MediaPlayer.Event.EndReached && remotePath != null) {
             next()
         }
@@ -338,23 +345,12 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         binding.root.viewTreeObserver.addOnGlobalLayoutListener(layoutListener)
     }
 
-    private fun observeNetworkState() {
-        var lastConnected = true
-        NetworkState().observe(this) { isConnected ->
-            if (isConnected && !lastConnected && isBuffered) {
-                mediaPlayer.stop()
-                mediaPlayer.play()
-                setMute(StreamData.getMute())
-            }
-            lastConnected = isConnected
-        }
-    }
-
-    private fun getUrl(): String {
-        val url = if (stream.url2 != null && StreamData.getChannel() == 1)
-            stream.url2!!
-        else
-            stream.url
-        return Utils.getFullUrl(url, 554, "rtsp")
+    private fun watchdog() {
+        if (remotePath != null || mediaPlayer.isPlaying)
+            return
+        mediaPlayer.stop()
+        mediaPlayer.play()
+        setMute(StreamData.getMute())
+        binding.progressBar.pbLoading.visibility = View.VISIBLE
     }
 }

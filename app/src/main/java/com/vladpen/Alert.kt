@@ -5,9 +5,7 @@ import android.os.Build
 import android.view.View
 import android.widget.ImageButton
 import androidx.core.app.NotificationManagerCompat
-import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
-import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
@@ -55,10 +53,7 @@ object Alert {
             activity.requestPermissions(
                 arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 0)
 
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-        val alertRequest = OneTimeWorkRequestBuilder<AlertWork>().setConstraints(constraints)
+        val alertRequest = OneTimeWorkRequestBuilder<AlertWork>()
         if (Build.VERSION.SDK_INT >= 31) // Android 11 API 31 (S)
             alertRequest.setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
         WorkManager.getInstance(activity).enqueueUniqueWork(

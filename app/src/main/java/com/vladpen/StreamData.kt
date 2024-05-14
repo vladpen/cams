@@ -115,4 +115,12 @@ object StreamData {
     fun getGroupChannel(): Int {
         return getOption(GROUP_CHANNEL_FILE_NAME, 1)
     }
+
+    fun getUrl(stream: StreamDataModel): String {
+        val url = if (stream.url2 != null && getChannel() == 1)
+            stream.url2!!
+        else
+            stream.url
+        return Utils.getFullUrl(url, 554, "rtsp")
+    }
 }

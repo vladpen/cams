@@ -4,6 +4,8 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Rect
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -21,6 +23,7 @@ private const val ASPECT_RATIO = 16f / 9f
 
 class GroupActivity : AppCompatActivity() {
     private val binding by lazy { ActivityGroupBinding.inflate(layoutInflater) }
+    private val handler by lazy { Handler(Looper.getMainLooper()) }
 
     private lateinit var group: GroupDataModel
     private lateinit var layoutListener: ViewTreeObserver.OnGlobalLayoutListener
@@ -30,7 +33,8 @@ class GroupActivity : AppCompatActivity() {
     private var fragments = arrayListOf<VideoFragment>()
     private var frames = arrayListOf<FrameLayout>()
     private var hideBars = false
-    private var loadingCount = 0
+    private val fragmentLoading = mutableMapOf<Int, Boolean>()
+    private val watchdogInterval: Long = 10000 // milliseconds
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,9 +90,9 @@ class GroupActivity : AppCompatActivity() {
 
                 val stream = StreamData.getById(id)
                 isChannelsAvailable = isChannelsAvailable || stream?.url2 != null
-            }
-            loadingCount = fragments.count()
 
+                fragmentLoading[id] = true
+            }
             if (isChannelsAvailable) {
                 initChannel()
             }
@@ -110,15 +114,15 @@ class GroupActivity : AppCompatActivity() {
             for (fragment in fragments) {
                 fragment.stop()
                 fragment.start()
+                fragmentLoading[fragment.streamId] = true
             }
-            loadingCount = fragments.count()
             binding.progressBar.pbLoading.visibility = View.VISIBLE
         }
     }
 
-    fun hideLoading() {
-        loadingCount -= 1
-        if (loadingCount <= 0)
+    fun hideLoading(streamId: Int) {
+        fragmentLoading.remove(streamId)
+        if (fragmentLoading.isEmpty())
             binding.progressBar.pbLoading.visibility = View.GONE
     }
 
@@ -131,6 +135,27 @@ class GroupActivity : AppCompatActivity() {
     private fun back() {
         GroupData.currentGroupId = -1
         startActivity(Intent(this, MainActivity::class.java))
+    }
+
+    override fun onStart() {
+        super.onStart()
+        handler.postDelayed(runnable, watchdogInterval)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        handler.removeCallbacks(runnable)
+    }
+
+    private val runnable = object : Runnable {
+        override fun run() {
+            for (fragment in fragments) {
+                if (fragment.watchdog())
+                    continue
+                binding.progressBar.pbLoading.visibility = View.VISIBLE
+            }
+            handler.postDelayed(this, watchdogInterval)
+        }
     }
 
     private fun resizeGrid() {
