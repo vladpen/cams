@@ -1,3 +1,9 @@
+## 2.3 - 2024-05-14
+
+- Watchdog
+- Channel icons
+- Component update
+
 ## 2.2 - 2024-03-01
 
 - Switching channels on group screens
@@ -7,13 +13,13 @@
 
 - Playback speed bug fix
 - Link to user manual
-- Components update
+- Component update
 
 ## 2.1 - 2023-09-13
 
 - Motion detection support
 - Android 14 "Upside Down Cake" support (API level 34)
-- Components update
+- Component update
 - Fixes and improvements
 
 ## 2.0.3 - 2023-07-03
@@ -21,18 +27,18 @@
 Network observer fix
 
 ## 2.0.2 - 2023-05-20
-- Components update
+- Component update
 - Adaptive app icon
 - Polish localization
 
 ## 2.0.1 - 2023-03-28
-Components update
+Component update
 
 ## 2.0 - 2022-11-04
 
 - Android 13 "Tiramisu" support (API level 33)
 - Kernel update
-- Components update
+- Component update
 - Improved interface
 - Fixes
 
@@ -56,7 +62,7 @@ Attention! The method of file encryption during export of settings has been chan
 
 - Groups zooming
 - Copying device logs to the clipboard
-- Components update
+- Component update
 - Optimization and bug fixes
 
 ## 1.3.2.1 - 2022-07-14
