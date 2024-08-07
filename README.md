@@ -43,8 +43,9 @@ width="200">
 ## Установка
 
 APK файл можно собрать самостоятельно, [скачать с Github](https://github.com/vladpen/cams/raw/main/app/release/app-armeabi-v7a-release.apk),
-установить с помощью [F-Droid](https://f-droid.org/ru/packages/com.vladpen.cams/) или [RuStore](https://apps.rustore.ru/app/com.vladpen.cams).
-Поддерживается архитектура ARM-64 (используется в большинстве современных мобильных телефонов), ARM, x86-64 и x86.
+установить с помощью [F-Droid](https://f-droid.org/ru/packages/com.vladpen.cams/)
+или [RuStore](https://www.rustore.ru/catalog/app/com.vladpen.cams).
+Поддерживается архитектура armeabi-v7a (используется в большинстве современных мобильных телефонов), arm64-v8a, x86-64 и x86.
 
 ## Настройка
 
