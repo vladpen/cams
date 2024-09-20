@@ -15,7 +15,9 @@ import android.widget.FrameLayout
 import android.widget.RelativeLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.Insets
 import com.vladpen.*
+import com.vladpen.Effects.edgeToEdge
 import com.vladpen.cams.databinding.ActivityGroupBinding
 import kotlin.math.*
 
@@ -35,10 +37,14 @@ class GroupActivity : AppCompatActivity() {
     private var hideBars = false
     private val fragmentLoading = mutableMapOf<Int, Boolean>()
     private val watchdogInterval: Long = 10000 // milliseconds
+    private var insets: Insets? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        edgeToEdge(binding.root) { innerPadding ->
+            insets = innerPadding
+        }
         initActivity()
         if (savedInstanceState == null)
             initFragments()
@@ -159,7 +165,10 @@ class GroupActivity : AppCompatActivity() {
     }
 
     private fun resizeGrid() {
-        val cellQty = if (binding.root.height > binding.root.width)
+        val rootWidth = binding.root.width - (insets?.left ?: 0) - (insets?.right ?: 0)
+        val rootHeight = binding.root.height - (insets?.top ?: 0) - (insets?.bottom ?: 0)
+
+        val cellQty = if (rootHeight > rootWidth)
             max(4, frames.count() - 5 / frames.count()) / 4.0 // 1 column for up to 5 cells
         else
             frames.count().toDouble()
@@ -167,13 +176,13 @@ class GroupActivity : AppCompatActivity() {
         val rowCount = ceil(frames.count() / columnCount.toDouble()).toInt()
 
         val frameHeight: Int
-        val rootAspectRatio = binding.root.width.toFloat() / binding.root.height.toFloat()
+        val rootAspectRatio = rootWidth.toFloat() / rootHeight.toFloat()
         val videoAspectRatio = ASPECT_RATIO * columnCount / rowCount
         if (rootAspectRatio > videoAspectRatio) { // vertical margins
-            frameHeight = binding.root.height / rowCount
+            frameHeight = rootHeight / rowCount
             hideBars = true
         } else { // horizontal margins
-            frameHeight = ((binding.root.width / columnCount) / ASPECT_RATIO).toInt()
+            frameHeight = ((rootWidth / columnCount) / ASPECT_RATIO).toInt()
             hideBars = false
         }
         val frameWidth = (frameHeight * ASPECT_RATIO).toInt()

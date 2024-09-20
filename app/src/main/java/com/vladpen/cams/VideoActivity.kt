@@ -9,7 +9,9 @@ import android.os.Looper
 import android.view.*
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.Insets
 import com.vladpen.*
+import com.vladpen.Effects.edgeToEdge
 import com.vladpen.cams.databinding.ActivityVideoBinding
 import org.videolan.libvlc.LibVLC
 import org.videolan.libvlc.Media
@@ -33,10 +35,14 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     private val seekStep: Long = 10000 // milliseconds
     private val watchdogInterval: Long = 10000 // milliseconds
     private var hideBars = false
+    private var insets: Insets? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        edgeToEdge(binding.root) { innerPadding ->
+            insets = innerPadding
+        }
         initActivity()
 
         layoutListener = ViewTreeObserver.OnGlobalLayoutListener {
@@ -101,15 +107,18 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     }
 
     private fun resizeLayout() {
+        val rootWidth = binding.root.width - (insets?.left ?: 0) - (insets?.right ?: 0)
+        val rootHeight = binding.root.height - (insets?.top ?: 0) - (insets?.bottom ?: 0)
+
         val frameWidth: Int
         val frameHeight: Int
-        val rootAspectRatio = binding.root.width.toFloat() / binding.root.height.toFloat()
+        val rootAspectRatio = rootWidth.toFloat() / rootHeight.toFloat()
         if (rootAspectRatio > ASPECT_RATIO) { // vertical margins
-            frameHeight = binding.root.height
+            frameHeight = rootHeight
             frameWidth = (frameHeight * ASPECT_RATIO).toInt()
             hideBars = true
         } else { // horizontal margins
-            frameWidth = binding.root.width
+            frameWidth = rootWidth
             frameHeight = (frameWidth / ASPECT_RATIO).toInt()
             hideBars = false
         }

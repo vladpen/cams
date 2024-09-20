@@ -9,12 +9,25 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import androidx.core.graphics.Insets
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.vladpen.cams.MainApp.Companion.context
 import com.vladpen.cams.R
 
 object Effects {
     private var animation: Animation? = null
     private var handler: Handler? = null
+
+    fun edgeToEdge(view: View, callback: ((Insets) -> Unit)? = null) {
+        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            if (callback != null)
+                callback(systemBars)
+            insets
+        }
+    }
 
     fun delayedFadeOut(views: Array<View>, delay: Long = 3000) {
         handler = Handler(Looper.getMainLooper())

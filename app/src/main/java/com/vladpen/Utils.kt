@@ -137,7 +137,7 @@ object Utils {
         var installationKey = "...secret.key..."
         try {
             val info = getPackageInfo()
-            installationKey = (info.applicationInfo.uid.toString() + info.firstInstallTime)
+            installationKey = (info.applicationInfo?.uid.toString() + info.firstInstallTime)
         } catch (e: java.lang.Exception) {
             Log.e("Utils", "Key: can't get package info (${e.localizedMessage})")
         }
@@ -156,7 +156,7 @@ object Utils {
         var installationIv = ".initial.vector."
         try {
             val info = getPackageInfo()
-            installationIv = (info.applicationInfo.uid.toString() + info.firstInstallTime)
+            installationIv = (info.applicationInfo?.uid.toString() + info.firstInstallTime)
         } catch (e: java.lang.Exception) {
             Log.e("Utils", "IV: can't get package info (${e.localizedMessage})")
         }

@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.vladpen.*
+import com.vladpen.Effects.edgeToEdge
 import com.vladpen.cams.databinding.ActivityEditGroupBinding
 
 private const val STREAMS_MIN = 2
@@ -23,6 +24,7 @@ class GroupEditActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        edgeToEdge(binding.root)
         initActivity()
     }
 

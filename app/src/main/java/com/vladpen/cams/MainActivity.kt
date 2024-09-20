@@ -10,6 +10,7 @@ import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.vladpen.Alert
+import com.vladpen.Effects.edgeToEdge
 import com.vladpen.Settings
 import com.vladpen.SourceAdapter
 import com.vladpen.SourceData
@@ -27,6 +28,7 @@ class MainActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        edgeToEdge(binding.root)
         initActivity()
     }
 

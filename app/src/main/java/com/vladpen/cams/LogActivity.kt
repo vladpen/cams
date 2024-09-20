@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vladpen.Alert
 import com.vladpen.Effects
+import com.vladpen.Effects.edgeToEdge
 import com.vladpen.LogAdapter
 import com.vladpen.StreamData
 import com.vladpen.cams.databinding.ActivityLogBinding
@@ -34,6 +35,7 @@ class LogActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        edgeToEdge(binding.root)
         initActivity()
     }
 

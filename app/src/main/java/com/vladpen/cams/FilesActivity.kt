@@ -7,6 +7,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vladpen.*
+import com.vladpen.Effects.edgeToEdge
 import com.vladpen.cams.databinding.ActivityFilesBinding
 
 class FilesActivity: AppCompatActivity() {
@@ -19,6 +20,7 @@ class FilesActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        edgeToEdge(binding.root)
         initActivity()
     }
 

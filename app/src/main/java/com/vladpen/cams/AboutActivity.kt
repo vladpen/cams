@@ -7,6 +7,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import com.vladpen.Alert
+import com.vladpen.Effects.edgeToEdge
 import com.vladpen.Utils
 import com.vladpen.cams.databinding.ActivityAboutBinding
 import java.text.SimpleDateFormat
@@ -18,6 +19,7 @@ class AboutActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        edgeToEdge(binding.root)
         initActivity()
     }
 
@@ -31,7 +33,7 @@ class AboutActivity: AppCompatActivity() {
         var versionName = ""
         try {
             val info = Utils.getPackageInfo()
-            versionName = info.versionName
+            versionName = info.versionName ?: "unknown"
         } catch (e: Exception) {
             e.printStackTrace()
         }
