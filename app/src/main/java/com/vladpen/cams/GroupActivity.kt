@@ -92,6 +92,10 @@ class GroupActivity : AppCompatActivity() {
                 frame.setOnClickListener {
                     videoScreen(i)
                 }
+                frame.setOnLongClickListener {
+                    initBars()
+                    true
+                }
                 fragments.add(fragment)
 
                 val stream = StreamData.getById(id)
@@ -250,9 +254,9 @@ class GroupActivity : AppCompatActivity() {
     private fun initBars() {
         Effects.cancel()
         binding.toolbar.root.visibility = View.VISIBLE
-        binding.btnChannel.visibility = View.VISIBLE
+        binding.llVideoBar.visibility = View.VISIBLE
         if (hideBars) {
-            Effects.delayedFadeOut(arrayOf(binding.toolbar.root, binding.btnChannel))
+            Effects.delayedFadeOut(arrayOf(binding.toolbar.root, binding.llVideoBar))
         }
     }
 
