@@ -55,6 +55,11 @@ class EditActivity : AppCompatActivity() {
             binding.rbEditUdp.isChecked = !stream.tcp
             binding.cbAlert.isChecked = stream.alert == true
 
+            val startup = SourceData.getStartup()
+            binding.cbStartup.isChecked = (
+                    startup != null && startup.type == "stream" && startup.id == streamId
+            )
+
             binding.tvDeleteLink.setOnClickListener {
                 delete()
             }
@@ -155,9 +160,11 @@ class EditActivity : AppCompatActivity() {
             if (binding.cbAlert.isChecked && sftpUrl != "") true else null
         )
         if (streamId < 0)
-            StreamData.add(newStream)
+            streamId = StreamData.add(newStream)
         else
             StreamData.update(streamId, newStream)
+
+        SourceData.setStartup(binding.cbStartup.isChecked, "stream", streamId)
 
         Alert.checkAvailability()
         back()

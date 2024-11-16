@@ -43,6 +43,8 @@
     </string>
     <string name="err_group_exists">Grupa już istnieje</string>
     <string name="err_group_streams_count">Co najmniej %1$d kamer</string>
+    <string name="stretch_images">Stretch images (for all groups)</string>
+    <string name="show_on_startup">Show on startup</string>
     <string name="export_settings">Eksportuj ustawienia</string>
     <string name="import_settings">Importuj ustawienia</string>
     <string name="export_password">

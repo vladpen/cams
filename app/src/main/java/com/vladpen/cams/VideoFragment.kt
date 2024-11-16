@@ -2,10 +2,13 @@ package com.vladpen.cams
 
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.vladpen.SourceData
 import com.vladpen.StreamData
 import com.vladpen.StreamDataModel
 import com.vladpen.cams.databinding.FragmentVideoBinding
@@ -89,6 +92,11 @@ class VideoFragment : Fragment() {
         mediaPlayer.setEventListener {
             if (it.type == MediaPlayer.Event.Buffering && it.buffering == 100f) {
                 (activity as GroupActivity).hideLoading(streamId)
+                if (SourceData.getStretch()) {
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        mediaPlayer.aspectRatio = "${binding.root.width}:${binding.root.height}"
+                    }, 1000)
+                }
             }
         }
     }

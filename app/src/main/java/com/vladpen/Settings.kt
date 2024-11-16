@@ -99,6 +99,7 @@ class Settings(val context: MainActivity)  {
                             else
                                 Log.e("Settings", "Invalid file content")
                             Alert.checkAvailability()
+                            SourceData.saveStartup(null)
                         }
                     }
             } catch (e: Exception) {

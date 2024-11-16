@@ -1,6 +1,7 @@
 package com.vladpen.cams
 
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.View
@@ -11,14 +12,21 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.vladpen.Alert
 import com.vladpen.Effects.edgeToEdge
+import com.vladpen.GroupData
 import com.vladpen.Settings
 import com.vladpen.SourceAdapter
 import com.vladpen.SourceData
 import com.vladpen.SourceItemTouch
+import com.vladpen.StreamData
 import com.vladpen.Utils
+import com.vladpen.cams.MainApp.Companion.context
 import com.vladpen.cams.databinding.ActivityMainBinding
 
 class MainActivity: AppCompatActivity() {
+    companion object {
+        private var isCreated: Boolean = false
+    }
+
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val sources by lazy { SourceData.getAll() }
 
@@ -27,6 +35,8 @@ class MainActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (redirect())
+            return
         setContentView(binding.root)
         edgeToEdge(binding.root)
         initActivity()
@@ -70,6 +80,37 @@ class MainActivity: AppCompatActivity() {
             getString(R.string.manual_link),
             HtmlCompat.FROM_HTML_MODE_COMPACT)
         binding.emptyBox.tvManualLink.movementMethod = LinkMovementMethod.getInstance()
+    }
+
+    private fun redirect(): Boolean {
+        if (isCreated)
+            return false
+        isCreated = true
+        val startup = SourceData.getStartup() ?: return false
+        if (startup.id < 0)
+            return false
+
+        val newIntent: Intent
+        when (startup.type) {
+            "stream" -> {
+                val streams = StreamData.getAll()
+                if (streams.isEmpty() || startup.id > streams.count() - 1)
+                    return false
+                newIntent = Intent(context, VideoActivity::class.java)
+                    .putExtra("streamId", startup.id)
+            }
+            "group" -> {
+                val groups = GroupData.getAll()
+                if (groups.isEmpty() || startup.id > groups.count() - 1)
+                    return false
+                newIntent = Intent(context, GroupActivity::class.java)
+                    .putExtra("groupId", startup.id)
+            }
+            else -> return false
+        }
+        newIntent.flags = FLAG_ACTIVITY_NEW_TASK
+        context.startActivity(newIntent)
+        return true
     }
 
     private val callback = object : OnBackPressedCallback(true) {

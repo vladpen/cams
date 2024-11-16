@@ -35,10 +35,12 @@ object GroupData {
         return groups[groupId]
     }
 
-    fun add(group: GroupDataModel) {
+    fun add(group: GroupDataModel): Int {
         groups.add(group)
         save()
-        SourceData.add(SourceDataModel("group", groups.count() - 1))
+        val groupId = groups.count() - 1
+        SourceData.add(SourceDataModel("group", groupId))
+        return groupId
     }
 
     fun update(groupId: Int, group: GroupDataModel) {

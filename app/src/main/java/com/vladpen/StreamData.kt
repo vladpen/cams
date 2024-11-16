@@ -50,10 +50,12 @@ object StreamData {
         return streams[streamId]
     }
 
-    fun add(stream: StreamDataModel) {
+    fun add(stream: StreamDataModel): Int {
         streams.add(stream)
         save()
-        SourceData.add(SourceDataModel("stream", streams.count() - 1))
+        val streamId = streams.count() - 1
+        SourceData.add(SourceDataModel("stream", streamId))
+        return streamId
     }
 
     fun update(streamId: Int, stream: StreamDataModel) {

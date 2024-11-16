@@ -43,6 +43,11 @@ class GroupEditActivity : AppCompatActivity() {
             binding.tvDeleteLink.setOnClickListener {
                 delete()
             }
+            val startup = SourceData.getStartup()
+            binding.cbStartup.isChecked = (
+                startup != null && startup.type == "group" && startup.id == groupId
+            )
+            binding.cbStretch.isChecked = SourceData.getStretch()
         }
 
         GridLayoutManager(this,
@@ -109,10 +114,13 @@ class GroupEditActivity : AppCompatActivity() {
             selectedStreams
         )
         if (groupId < 0) {
-            GroupData.add(newGroup)
+            groupId = GroupData.add(newGroup)
         } else {
             GroupData.update(groupId, newGroup)
         }
+        SourceData.setStartup(binding.cbStartup.isChecked, "group", groupId)
+        SourceData.setStretch(binding.cbStretch.isChecked)
+
         back()
     }
 

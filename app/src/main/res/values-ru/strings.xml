@@ -43,6 +43,8 @@
     </string>
     <string name="err_group_exists">Такая группа уже существует</string>
     <string name="err_group_streams_count">Не менее %1$d камер</string>
+    <string name="stretch_images">Растягивать кадры (для всех групп)</string>
+    <string name="show_on_startup">Показывать при запуске</string>
     <string name="export_settings">Экспорт настроек</string>
     <string name="import_settings">Импорт настроек</string>
     <string name="export_password">
