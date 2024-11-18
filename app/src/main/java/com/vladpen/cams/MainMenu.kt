@@ -1,6 +1,7 @@
 package com.vladpen.cams
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.view.View
 import android.widget.PopupMenu
 import com.vladpen.Settings
@@ -12,11 +13,16 @@ class MainMenu(val context: MainActivity) {
         val popup = PopupMenu(context, view)
         popup.menuInflater.inflate(R.menu.main_menu, popup.menu)
 
+        val isTelevision = context.packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
+
         if (StreamData.getAll().count() < 2)
             popup.menu.findItem(R.id.iGroupAdd).isVisible = false
 
-        if (StreamData.getAll().isEmpty())
+        if (StreamData.getAll().isEmpty() || isTelevision)
             popup.menu.findItem(R.id.iExport).isVisible = false
+
+        if (isTelevision)
+            popup.menu.findItem(R.id.iImport).isVisible = false
 
         popup.setOnMenuItemClickListener { item ->
             when (item!!.itemId) {

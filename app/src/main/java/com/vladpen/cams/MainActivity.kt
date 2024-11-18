@@ -2,12 +2,14 @@ package com.vladpen.cams
 
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.vladpen.Alert
@@ -73,8 +75,14 @@ class MainActivity: AppCompatActivity() {
             val intent = Intent(this, EditActivity::class.java)
             startActivity(intent)
         }
-        binding.emptyBox.btnImport.setOnClickListener {
-            MainMenu(this).import()
+
+        val isTelevision = context.packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
+        if (isTelevision) {
+            binding.emptyBox.btnImport.isVisible = false
+        } else {
+            binding.emptyBox.btnImport.setOnClickListener {
+                MainMenu(this).import()
+            }
         }
         binding.emptyBox.tvManualLink.text = HtmlCompat.fromHtml(
             getString(R.string.manual_link),
