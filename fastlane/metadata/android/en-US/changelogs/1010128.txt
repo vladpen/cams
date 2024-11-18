@@ -1,0 +1,5 @@
+- Android Television support
+- Android 15 support
+- Show selected source on startup
+- Stretch video frames in the groups
+- Long click to show app bars in the groups

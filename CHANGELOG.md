@@ -1,3 +1,11 @@
+## 2.4 - 2024-11-18
+
+- Android Television support
+- Android 15 support
+- Show selected source on startup
+- Stretch video frames in the groups
+- Long click to show app bars in the groups
+
 ## 2.3 - 2024-05-14
 
 - Watchdog
