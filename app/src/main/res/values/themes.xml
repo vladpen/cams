@@ -3,6 +3,7 @@
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowBackground">@color/background</item>
         <item name="colorAccent">@color/accent</item>
+        <item name="android:navigationBarColor">@color/transparent_background</item>
     </style>
 
 </resources>
