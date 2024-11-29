@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import com.vladpen.SourceData
 import com.vladpen.StreamData
 import com.vladpen.StreamDataModel
@@ -129,5 +130,9 @@ class VideoFragment : Fragment() {
         mediaPlayer.play()
         mediaPlayer.volume = 0
         return false
+    }
+
+    fun getFrame(): FrameLayout {
+        return binding.root.parent as FrameLayout
     }
 }

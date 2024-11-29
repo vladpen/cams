@@ -33,9 +33,8 @@ class GroupActivity : AppCompatActivity() {
     private var gestureInProgress = 0
     private var groupId: Int = -1
     private var fragments = arrayListOf<VideoFragment>()
-    private var frames = arrayListOf<FrameLayout>()
+    private val loadings = mutableMapOf<Int, Boolean>()
     private var hideBars = false
-    private val fragmentLoading = mutableMapOf<Int, Boolean>()
     private val watchdogInterval: Long = 10000 // milliseconds
     private var insets: Insets? = null
 
@@ -83,9 +82,8 @@ class GroupActivity : AppCompatActivity() {
                     throw Exception("invalid group ID")
 
                 val frame = FrameLayout(this)
-                frame.id = FrameLayout.generateViewId()
+                frame.id = id  // FrameLayout.generateViewId()
                 binding.rlGroupBox.addView(frame)
-                frames.add(frame)
 
                 val fragment = VideoFragment.newInstance(id)
                 supportFragmentManager.beginTransaction().add(frame.id, fragment).commit()
@@ -101,7 +99,7 @@ class GroupActivity : AppCompatActivity() {
                 val stream = StreamData.getById(id)
                 isChannelsAvailable = isChannelsAvailable || stream?.url2 != null
 
-                fragmentLoading[id] = true
+                loadings[id] = true
             }
             if (isChannelsAvailable) {
                 initChannel()
@@ -124,15 +122,15 @@ class GroupActivity : AppCompatActivity() {
             for (fragment in fragments) {
                 fragment.stop()
                 fragment.start()
-                fragmentLoading[fragment.streamId] = true
+                loadings[fragment.streamId] = true
             }
             binding.progressBar.pbLoading.visibility = View.VISIBLE
         }
     }
 
     fun hideLoading(streamId: Int) {
-        fragmentLoading.remove(streamId)
-        if (fragmentLoading.isEmpty())
+        loadings.remove(streamId)
+        if (loadings.isEmpty())
             binding.progressBar.pbLoading.visibility = View.GONE
     }
 
@@ -173,11 +171,11 @@ class GroupActivity : AppCompatActivity() {
         val rootHeight = binding.root.height - (insets?.top ?: 0) - (insets?.bottom ?: 0)
 
         val cellQty = if (rootHeight > rootWidth)
-            max(4, frames.count() - 5 / frames.count()) / 4.0 // 1 column for up to 5 cells
+            max(4, fragments.count() - 5 / fragments.count()) / 4.0 // 1 column for up to 5 cells
         else
-            frames.count().toDouble()
+            fragments.count().toDouble()
         val columnCount = ceil(sqrt(cellQty)).toInt()
-        val rowCount = ceil(frames.count() / columnCount.toDouble()).toInt()
+        val rowCount = ceil(fragments.count() / columnCount.toDouble()).toInt()
 
         val frameHeight: Int
         val rootAspectRatio = rootWidth.toFloat() / rootHeight.toFloat()
@@ -191,24 +189,25 @@ class GroupActivity : AppCompatActivity() {
         }
         val frameWidth = (frameHeight * ASPECT_RATIO).toInt()
 
-        for ((i, frame) in frames.withIndex()) {
-            frame.layoutParams.height = frameHeight
-            frame.layoutParams.width = frameWidth
+        for ((i, fragment) in fragments.withIndex()) {
+            val params = fragment.getFrame().layoutParams as RelativeLayout.LayoutParams
+            params.height = frameHeight
+            params.width = frameWidth
+
             if (i == 0)
                 continue
 
-            val params = frame.layoutParams as RelativeLayout.LayoutParams
             params.removeRule(RelativeLayout.BELOW)
             params.removeRule(RelativeLayout.RIGHT_OF)
             params.marginStart = 0
 
-            val lastCount = frames.count() - i
+            val lastCount = fragments.count() - i
             if (i % columnCount != 0) // except first cell in each row
-                params.addRule(RelativeLayout.RIGHT_OF, frames[i - 1].id)
+                params.addRule(RelativeLayout.RIGHT_OF, fragments[i - 1].id)
             else if (lastCount <= columnCount) // first cell in the last row, center horizontally
                 params.marginStart = (frameWidth * (columnCount - lastCount) / 2)
             if (i >= columnCount) // except first row
-                params.addRule(RelativeLayout.BELOW, frames[i - columnCount].id)
+                params.addRule(RelativeLayout.BELOW, fragments[i - columnCount].id)
         }
         gestureDetector.reset()
         initBars()
@@ -228,8 +227,8 @@ class GroupActivity : AppCompatActivity() {
             else
                 gestureInProgress -= 1
 
-            for ((i, fragment) in fragments.withIndex()) {
-                if (frames[i].getGlobalVisibleRect(Rect()))
+            for (fragment in fragments) {
+                if (fragment.getFrame().getGlobalVisibleRect(Rect()))
                     fragment.play()
                 else
                     fragment.stop()
@@ -242,7 +241,7 @@ class GroupActivity : AppCompatActivity() {
         if (gestureInProgress > 0)
             return
 
-        Effects.dimmer(frames[i])
+        Effects.dimmer(fragments[i].getFrame())
 
         val id = group.streams[i]
         startActivity(
