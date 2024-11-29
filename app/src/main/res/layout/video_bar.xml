@@ -67,18 +67,6 @@
         </LinearLayout>
 
         <ImageButton
-            android:id="@+id/btnChannel"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:gravity="center"
-            android:background="@color/overlay_background"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:visibility="gone"
-            android:contentDescription="@string/channel"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnMute" />
-
-        <ImageButton
             android:id="@+id/btnMute"
             android:layout_width="44dp"
             android:layout_height="44dp"
@@ -88,6 +76,18 @@
             android:src="@drawable/ic_baseline_volume_on_24"
             android:visibility="gone"
             android:contentDescription="@string/mute"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnChannel" />
+
+        <ImageButton
+            android:id="@+id/btnChannel"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:gravity="center"
+            android:background="@color/overlay_background"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:visibility="gone"
+            android:contentDescription="@string/channel"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
