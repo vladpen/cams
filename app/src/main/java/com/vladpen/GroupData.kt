@@ -11,7 +11,7 @@ data class GroupDataModel(val name: String, var streams: MutableList<Int>)
 object GroupData {
     private const val FILE_NAME = "groups.json"
     private var groups = mutableListOf<GroupDataModel>()
-    var currentGroupId = -1
+    var backGroupId = -1
 
     fun getAll(): MutableList<GroupDataModel> {
         if (groups.isNotEmpty())
@@ -24,7 +24,7 @@ object GroupData {
                 }
                 fromJson(json)
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             groups
         }
     }

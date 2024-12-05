@@ -2,11 +2,11 @@ package com.vladpen.cams
 
 import android.content.Intent
 import android.content.res.Configuration
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.*
+import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.Insets
@@ -14,28 +14,29 @@ import com.vladpen.*
 import com.vladpen.Effects.edgeToEdge
 import com.vladpen.cams.databinding.ActivityVideoBinding
 import org.videolan.libvlc.LibVLC
-import org.videolan.libvlc.Media
 import org.videolan.libvlc.MediaPlayer
 import java.io.IOException
 
-private const val ASPECT_RATIO = 16f / 9f
-
-class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
+class VideoActivity : AppCompatActivity(), Layout, Player {
     private val binding by lazy { ActivityVideoBinding.inflate(layoutInflater) }
     private val handler by lazy { Handler(Looper.getMainLooper()) }
 
+    override lateinit var rootView: View
+    override lateinit var layoutListener: ViewTreeObserver.OnGlobalLayoutListener
+    override var insets: Insets? = null
+    override var hideBars = false
+
+    override lateinit var libVlc: LibVLC
+    override lateinit var mediaPlayer: MediaPlayer
+    override var volume = 0
+
     private lateinit var stream: StreamDataModel
-    private lateinit var libVlc: LibVLC
-    private lateinit var mediaPlayer: MediaPlayer
-    private lateinit var layoutListener: ViewTreeObserver.OnGlobalLayoutListener
     private lateinit var gestureDetector: VideoGestureDetector
     private var gestureInProgress = false
     private var streamId: Int = -1 // -1 means "no stream"
-    private var remotePath: String? = null // relative SFTP path
+    private lateinit var remotePath: String // relative SFTP path
     private val seekStep: Long = 10000 // milliseconds
     private val watchdogInterval: Long = 10000 // milliseconds
-    private var hideBars = false
-    private var insets: Insets? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,39 +44,20 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         edgeToEdge(binding.root) { innerPadding ->
             insets = innerPadding
         }
-        initActivity()
+        streamId = intent.getIntExtra("streamId", -1)
+        stream = StreamData.getById(streamId) ?: return
+        remotePath = intent.getStringExtra("remotePath") ?: return
 
-        layoutListener = ViewTreeObserver.OnGlobalLayoutListener {
-            resizeLayout() // also reset gestureDetector
-            binding.root.viewTreeObserver.removeOnGlobalLayoutListener(layoutListener)
-        }
-        binding.root.viewTreeObserver.addOnGlobalLayoutListener(layoutListener)
+        initActivity()
+        initLayout(binding.root)
     }
 
     private fun initActivity() {
-        streamId = intent.getIntExtra("streamId", -1)
-        remotePath = intent.getStringExtra("remotePath")
-
-        stream = StreamData.getById(streamId) ?: return
-
-        libVlc = LibVLC(this, ArrayList<String>().apply {
-            if (stream.tcp && remotePath == null)
-                add("--rtsp-tcp")
-            if (!StreamData.logConnections)
-                add("--verbose=-1")
-            add("--image-duration=1") // for "events" slideshow
-        })
-        mediaPlayer = MediaPlayer(libVlc)
-        mediaPlayer.setEventListener(this)
-
         initToolbar()
-        if (remotePath != null)
-            initVideoBar()
-        else if (stream.url2 != null)
-            initChannel()
+        initVideoBar()
         initMute()
 
-        gestureDetector = VideoGestureDetector(binding.clScreenBox, binding.flVideoBox)
+        gestureDetector = VideoGestureDetector(binding.flVideoBox)
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
@@ -91,61 +73,27 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     }
 
     private fun back() {
-        if (remotePath == null) {
-            if (GroupData.currentGroupId > -1) {
-                groupScreen()
-            } else {
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-            }
-        } else {
-            val intent = Intent(this, FilesActivity::class.java)
-                .putExtra("streamId", streamId)
-                .putExtra("remotePath", FileData.getParentPath(remotePath!!))
-            startActivity(intent)
-        }
+        val intent = Intent(this, FilesActivity::class.java)
+            .putExtra("streamId", streamId)
+            .putExtra("remotePath", FileData.getParentPath(remotePath))
+        startActivity(intent)
     }
 
-    private fun resizeLayout() {
-        val rootWidth = binding.root.width - (insets?.left ?: 0) - (insets?.right ?: 0)
-        val rootHeight = binding.root.height - (insets?.top ?: 0) - (insets?.bottom ?: 0)
-
-        val frameWidth: Int
-        val frameHeight: Int
-        val rootAspectRatio = rootWidth.toFloat() / rootHeight.toFloat()
-        if (rootAspectRatio > ASPECT_RATIO) { // vertical margins
-            frameHeight = rootHeight
-            frameWidth = (frameHeight * ASPECT_RATIO).toInt()
-            hideBars = true
-        } else { // horizontal margins
-            frameWidth = rootWidth
-            frameHeight = (frameWidth / ASPECT_RATIO).toInt()
-            hideBars = false
-        }
-        val params = binding.flVideoBox.layoutParams
-        params.width = frameWidth
-        params.height = frameHeight
-        binding.flVideoBox.layoutParams = params
-
+    override fun resizeLayout() {
+        resizeVideo(binding.flVideoBox)
         gestureDetector.reset()
         initBars()
     }
 
-    private fun filesScreen() {
-        val intent = Intent(this, FilesActivity::class.java)
-            .putExtra("streamId", streamId)
-        startActivity(intent)
-    }
-
-    private fun groupScreen() {
-        val intent = Intent(this, GroupActivity::class.java)
-            .putExtra("groupId", GroupData.currentGroupId)
-        startActivity(intent)
-    }
-
-    private fun videoScreen() {
-        val intent = Intent(this, VideoActivity::class.java)
-            .putExtra("streamId", streamId)
+    private fun streamsScreen() {
+        val intent = Intent(this, StreamsActivity::class.java)
+        if (GroupData.backGroupId > -1) {
+            intent.putExtra("type", "group")
+            intent.putExtra("id", GroupData.backGroupId)
+        } else {
+            intent.putExtra("type", "stream")
+            intent.putExtra("id", streamId)
+        }
         startActivity(intent)
     }
 
@@ -154,22 +102,14 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         binding.toolbar.btnBack.setOnClickListener {
             back()
         }
-
-        if (stream.sftp == null)
+        if (stream.sftp == null) {
             return
-
-        if (remotePath != null) {
-            binding.toolbar.btnLink.setImageResource(R.drawable.ic_outline_videocam_24)
-            binding.toolbar.btnLink.contentDescription = getString(R.string.back)
         }
+        binding.toolbar.btnLink.setImageResource(R.drawable.ic_outline_videocam_24)
+        binding.toolbar.btnLink.contentDescription = getString(R.string.back)
         binding.toolbar.btnLink.visibility = View.VISIBLE
         binding.toolbar.btnLink.setOnClickListener {
-            if (remotePath == null)
-                filesScreen()
-            else if (GroupData.currentGroupId > -1)
-                groupScreen()
-            else
-                videoScreen()
+            streamsScreen()
         }
     }
 
@@ -240,34 +180,10 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
         }
     }
 
-    private fun initChannel() {
-        var channel = StreamData.getChannel()
-        binding.videoBar.btnChannel.setImageResource(Utils.getChannelButton(channel))
-        binding.videoBar.btnChannel.visibility = View.VISIBLE
-        binding.videoBar.btnChannel.setOnClickListener {
-            channel = if (channel != 1) 1 else 0
-            StreamData.setChannel(channel)
-            binding.videoBar.btnChannel.setImageResource(Utils.getChannelButton(channel))
-            binding.videoBar.btnChannel.visibility = View.GONE
-            binding.progressBar.pbLoading.visibility = View.VISIBLE
-            mediaPlayer.stop()
-            start()
-        }
-    }
-
     private fun start() {
         try {
-            val media =
-                if (remotePath == null)
-                    Media(libVlc, Uri.parse(StreamData.getUrl(stream)))
-                else
-                    Media(libVlc, FileData.getTmpFile(remotePath!!).absolutePath)
+            start(FileData.getTmpFile(remotePath).absolutePath)
 
-            media.apply {
-                mediaPlayer.media = this
-            }.release()
-
-            mediaPlayer.play()
             setMute(StreamData.getMute())
 
         } catch (e: IOException) {
@@ -276,12 +192,12 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
     }
 
     private fun next(fwd: Boolean = true) {
-        remotePath = FileData(stream.sftp).getNext(remotePath!!, fwd)
+        remotePath = FileData(stream.sftp).getNext(remotePath, fwd)
         if (remotePath != "") {
             binding.videoBar.btnPlay.setBackgroundResource(R.drawable.ic_baseline_pause_24)
             start()
         } else { // Last file was played, let's show live video
-            videoScreen()
+            streamsScreen()
         }
     }
 
@@ -303,36 +219,27 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
 
     override fun onStart() {
         super.onStart()
-        mediaPlayer.attachViews(binding.videoLayout, null, false, false)
+        initPlayer(this, binding.videoLayout, false)
         start()
-
         handler.postDelayed(runnable, watchdogInterval)
     }
 
     override fun onStop() {
         super.onStop()
-        mediaPlayer.stop()
-        mediaPlayer.detachViews()
+        release()
         handler.removeCallbacks(runnable)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        mediaPlayer.release()
-        libVlc.release()
+    override fun onBufferReady(isAudioAvailable: Boolean) {
+        super.onBufferReady(isAudioAvailable)
+        binding.progressBar.pbLoading.visibility = View.GONE
+        if (isAudioAvailable) {
+            binding.videoBar.btnMute.visibility = View.VISIBLE
+        }
     }
 
-    override fun onEvent(ev: MediaPlayer.Event) {
-        if (ev.type == MediaPlayer.Event.Buffering && ev.buffering == 100f) {
-            binding.progressBar.pbLoading.visibility = View.GONE
-            if (mediaPlayer.audioTracksCount > 0)  // use (media.tracks.size > 1) for 4.X versions
-                binding.videoBar.btnMute.visibility = View.VISIBLE
-            if (stream.url2 != null)
-                binding.videoBar.btnChannel.visibility = View.VISIBLE
-            initBars()
-        } else if (ev.type == MediaPlayer.Event.EndReached && remotePath != null) {
-            next()
-        }
+    override fun onEndReached() {
+        next()
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -351,15 +258,6 @@ class VideoActivity : AppCompatActivity(), MediaPlayer.EventListener {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        binding.root.viewTreeObserver.addOnGlobalLayoutListener(layoutListener)
-    }
-
-    private fun watchdog() {
-        if (remotePath != null || mediaPlayer.isPlaying)
-            return
-        mediaPlayer.stop()
-        mediaPlayer.play()
-        setMute(StreamData.getMute())
-        binding.progressBar.pbLoading.visibility = View.VISIBLE
+        initLayout(binding.root)
     }
 }

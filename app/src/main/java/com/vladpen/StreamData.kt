@@ -36,7 +36,7 @@ object StreamData {
                 }
                 fromJson(json)
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             streams
         }
     }
@@ -102,27 +102,22 @@ object StreamData {
         return getOption(MUTE_FILE_NAME)
     }
 
-    fun setChannel(channel: Int) {
-        saveOption(CAM_CHANNEL_FILE_NAME, channel)
+    fun setChannel(channel: Int, isGroup: Boolean) {
+        val fileName = if (isGroup) GROUP_CHANNEL_FILE_NAME else CAM_CHANNEL_FILE_NAME
+        saveOption(fileName, channel)
     }
 
-    fun getChannel(): Int {
-        return getOption(CAM_CHANNEL_FILE_NAME)
+    fun getChannel(isGroup: Boolean): Int {
+        val fileName = if (isGroup) GROUP_CHANNEL_FILE_NAME else CAM_CHANNEL_FILE_NAME
+        return getOption(fileName)
     }
 
-    fun setGroupChannel(channel: Int) {
-        saveOption(GROUP_CHANNEL_FILE_NAME, channel)
-    }
-
-    fun getGroupChannel(): Int {
-        return getOption(GROUP_CHANNEL_FILE_NAME, 1)
-    }
-
-    fun getUrl(stream: StreamDataModel): String {
-        val url = if (stream.url2 != null && getChannel() == 1)
+    fun getUrl(stream: StreamDataModel, group: Boolean): String {
+        val url = if (stream.url2 != null && getChannel(group) == 1) {
             stream.url2!!
-        else
+        } else {
             stream.url
+        }
         return Utils.getFullUrl(url, 554, "rtsp")
     }
 }

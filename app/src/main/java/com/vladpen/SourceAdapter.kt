@@ -1,7 +1,6 @@
 package com.vladpen
 
 import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -9,7 +8,10 @@ import com.vladpen.cams.*
 import com.vladpen.cams.MainApp.Companion.context
 import com.vladpen.cams.databinding.MainItemBinding
 
-class SourceAdapter(private val dataSet: List<SourceDataModel>) :
+class SourceAdapter(
+    private val dataSet: List<SourceDataModel>,
+    private val navigate: ((intent: Intent) -> Unit)
+) :
     RecyclerView.Adapter<SourceAdapter.Holder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
@@ -43,8 +45,9 @@ class SourceAdapter(private val dataSet: List<SourceDataModel>) :
                 tvItemName.setTextColor(context.getColor(R.color.text))
                 tvItemName.setOnClickListener {
                     navigate(
-                        Intent(context, VideoActivity::class.java)
-                            .putExtra("streamId", id)
+                        Intent(context, StreamsActivity::class.java)
+                            .putExtra("type", "stream")
+                            .putExtra("id", id)
                     )
                 }
                 tvItemTime.text = AlertWork.getLastTime(id)
@@ -62,19 +65,17 @@ class SourceAdapter(private val dataSet: List<SourceDataModel>) :
                 tvItemName.text = GroupData.getById(id)?.name
                 tvItemName.setTextColor(context.getColor(R.color.group_link))
                 tvItemName.setOnClickListener {
-                    navigate(Intent(context, GroupActivity::class.java)
-                        .putExtra("groupId", id))
+                    navigate(
+                        Intent(context, StreamsActivity::class.java)
+                            .putExtra("type", "group")
+                            .putExtra("id", id)
+                    )
                 }
                 btnEdit.setOnClickListener {
                     navigate(Intent(context, GroupEditActivity::class.java)
                         .putExtra("groupId", id))
                 }
             }
-        }
-
-        private fun navigate(intent: Intent) {
-            intent.flags = FLAG_ACTIVITY_NEW_TASK
-            context.startActivity(intent)
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.vladpen.cams
 
 import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
@@ -58,7 +57,7 @@ class MainActivity: AppCompatActivity() {
         }
         binding.toolbar.tvLabel.text = getString(R.string.main_title)
 
-        binding.recyclerView.adapter = SourceAdapter(sources)
+        binding.recyclerView.adapter = SourceAdapter(sources) { it: Intent -> startActivity(it) }
         SourceItemTouch().helper().attachToRecyclerView(binding.recyclerView)
 
         if (sources.isEmpty())
@@ -98,26 +97,23 @@ class MainActivity: AppCompatActivity() {
         if (startup.id < 0)
             return false
 
-        val newIntent: Intent
+        val newIntent = Intent(context, StreamsActivity::class.java).putExtra("id", startup.id)
         when (startup.type) {
             "stream" -> {
                 val streams = StreamData.getAll()
                 if (streams.isEmpty() || startup.id > streams.count() - 1)
                     return false
-                newIntent = Intent(context, VideoActivity::class.java)
-                    .putExtra("streamId", startup.id)
+                newIntent.putExtra("type", "stream")
             }
             "group" -> {
                 val groups = GroupData.getAll()
                 if (groups.isEmpty() || startup.id > groups.count() - 1)
                     return false
-                newIntent = Intent(context, GroupActivity::class.java)
-                    .putExtra("groupId", startup.id)
+                newIntent.putExtra("type", "group")
             }
             else -> return false
         }
-        newIntent.flags = FLAG_ACTIVITY_NEW_TASK
-        context.startActivity(newIntent)
+        startActivity(newIntent)
         return true
     }
 

@@ -30,7 +30,7 @@ class FilesActivity: AppCompatActivity() {
 
         sftpData = Utils.parseUrl(stream.sftp, 22, "sftp")
         if (sftpData == null) {
-            videoScreen()
+            streamsScreen()
             return
         }
         remotePath = intent.getStringExtra("remotePath") ?: sftpData!!.path
@@ -46,15 +46,13 @@ class FilesActivity: AppCompatActivity() {
         binding.toolbar.btnLink.contentDescription = getString(R.string.back)
         binding.toolbar.btnLink.visibility = View.VISIBLE
         binding.toolbar.btnLink.setOnClickListener {
-            if (GroupData.currentGroupId > -1)
-                groupScreen()
-            else
-                videoScreen()
+            streamsScreen()
         }
         val files = FileData(stream.sftp).getAll(remotePath)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
-        binding.recyclerView.adapter = FileAdapter(files, remotePath, streamId, stream.sftp)
-
+        binding.recyclerView.adapter = FileAdapter(files, remotePath, streamId, stream.sftp) {
+            it: Intent -> startActivity(it)
+        }
         Alert.init(this, binding.toolbar.btnAlert)
     }
 
@@ -67,7 +65,7 @@ class FilesActivity: AppCompatActivity() {
     private fun back() {
         val path = Utils.addTrailingSlash(sftpData?.path)
         if (sftpData == null || remotePath == path || remotePath == "/") {
-            videoScreen()
+            streamsScreen()
         } else {
             val intent = Intent(this, FilesActivity::class.java)
                 .putExtra("streamId", streamId)
@@ -76,15 +74,15 @@ class FilesActivity: AppCompatActivity() {
         }
     }
 
-    private fun videoScreen() {
-        val intent = Intent(this, VideoActivity::class.java)
-            .putExtra("streamId", streamId)
-        startActivity(intent)
-    }
-
-    private fun groupScreen() {
-        val intent = Intent(this, GroupActivity::class.java)
-            .putExtra("groupId", GroupData.currentGroupId)
+    private fun streamsScreen() {
+        val intent = Intent(this, StreamsActivity::class.java)
+        if (GroupData.backGroupId > -1) {
+            intent.putExtra("type", "group")
+            intent.putExtra("id", GroupData.backGroupId)
+        } else {
+            intent.putExtra("type", "stream")
+            intent.putExtra("id", streamId)
+        }
         startActivity(intent)
     }
 }

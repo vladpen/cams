@@ -1,7 +1,6 @@
 package com.vladpen
 
 import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -16,7 +15,9 @@ class FileAdapter(
     private val dataSet: List<FileDataModel>,
     private val remotePath: String,
     private val streamId: Int,
-    private val sftpUrl: String?) : RecyclerView.Adapter<FileAdapter.Holder>() {
+    private val sftpUrl: String?,
+    private val navigate: ((intent: Intent) -> Unit)
+) : RecyclerView.Adapter<FileAdapter.Holder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val binding = FileItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -46,27 +47,25 @@ class FileAdapter(
                     ivLabel.setBackgroundResource(R.drawable.ic_outline_folder_24)
                 }
                 clFileRow.setOnClickListener {
-                    navigate(row)
+                    onClick(row)
                 }
             }
         }
     }
 
-    private fun navigate(file: FileDataModel) {
+    private fun onClick(file: FileDataModel) {
         if (!file.isDir) {
             FileData(sftpUrl).remoteToCache(remotePath, file.name)
 
             val intent = Intent(context, VideoActivity::class.java)
-                .setFlags(FLAG_ACTIVITY_NEW_TASK)
                 .putExtra("remotePath", remotePath + file.name)
                 .putExtra("streamId", streamId)
-            context.startActivity(intent)
+            navigate(intent)
         } else {
             val intent = Intent(context, FilesActivity::class.java)
-                .setFlags(FLAG_ACTIVITY_NEW_TASK)
                 .putExtra("remotePath", remotePath + file.name + "/")
                 .putExtra("streamId", streamId)
-            context.startActivity(intent)
+            navigate(intent)
         }
     }
 }

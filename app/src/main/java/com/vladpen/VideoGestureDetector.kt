@@ -11,7 +11,8 @@ import kotlin.math.*
  * @param view outer (root) view
  * @param videoView inner view
  */
-class VideoGestureDetector(private val view: View, private val videoView: View) {
+class VideoGestureDetector(private val videoView: View) {
+    private val view = videoView.parent as View
     private val maxScaleFactor = 20f
     private var scaleFactor = 1f
     private var maxX = 0f

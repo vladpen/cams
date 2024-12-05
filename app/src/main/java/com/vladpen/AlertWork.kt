@@ -20,7 +20,7 @@ import com.jcraft.jsch.ChannelSftp
 import com.jcraft.jsch.JSch
 import com.jcraft.jsch.Session
 import com.vladpen.cams.R
-import com.vladpen.cams.VideoActivity
+import com.vladpen.cams.StreamsActivity
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -72,9 +72,10 @@ class AlertWork(context: Context, params: WorkerParameters) : CoroutineWorker(co
     }
 
     private fun createNotification(streamId: Int) : Notification {
-        val activityIntent = Intent(applicationContext, VideoActivity::class.java).apply {
+        val activityIntent = Intent(applicationContext, StreamsActivity::class.java).apply {
+            putExtra("type", "stream")
+            putExtra("id", streamId)
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra("streamId", streamId)
         }
         val activityPendingIntent = PendingIntent.getActivity(
             applicationContext,

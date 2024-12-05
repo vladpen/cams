@@ -48,7 +48,7 @@
         android:layout_height="wrap_content"
         android:padding="12dp"
         android:src="@drawable/ic_outline_alert_on_24"
-        android:contentDescription="@string/files"
+        android:contentDescription="@string/sftp_alert"
         android:background="?attr/selectableItemBackground"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"

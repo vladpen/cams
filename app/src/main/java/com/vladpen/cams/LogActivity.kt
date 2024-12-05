@@ -2,7 +2,6 @@ package com.vladpen.cams
 
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -123,7 +122,7 @@ class LogActivity: AppCompatActivity() {
     private fun copyToClipboard() {
         val textToCopy = getLog().joinToString(separator = "\n\n")
         val label = getString(R.string.logs)
-        val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
         val clipData = ClipData.newPlainText(label, textToCopy)
         clipboardManager.setPrimaryClip(clipData)
         Effects.fadeOut(arrayOf(binding.toolbar.btnLink))

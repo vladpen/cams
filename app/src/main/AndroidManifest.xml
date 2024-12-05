@@ -29,18 +29,18 @@
             android:name=".EditActivity"
             android:exported="false" />
         <activity
+            android:name=".GroupEditActivity"
+            android:exported="false" />
+        <activity
+            android:name=".StreamsActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:exported="false" />
+        <activity
             android:name=".VideoActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:exported="false" />
         <activity
             android:name=".FilesActivity"
-            android:exported="false" />
-        <activity
-            android:name=".GroupEditActivity"
-            android:exported="false" />
-        <activity
-            android:name=".GroupActivity"
-            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:exported="false" />
         <activity
             android:name=".AboutActivity"
