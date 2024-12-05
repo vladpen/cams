@@ -12,6 +12,7 @@ android {
         targetSdk 35
         versionCode 1010128
         versionName '2.4'
+        archivesBaseName = "cams"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     buildTypes {
