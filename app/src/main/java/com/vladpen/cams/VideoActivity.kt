@@ -37,6 +37,7 @@ class VideoActivity : AppCompatActivity(), Layout, Player {
     private lateinit var remotePath: String // relative SFTP path
     private val seekStep: Long = 10000 // milliseconds
     private val watchdogInterval: Long = 10000 // milliseconds
+    private var isPlaying = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,11 +115,18 @@ class VideoActivity : AppCompatActivity(), Layout, Player {
     }
 
     private fun initVideoBar() {
+        val ext = FileData.getExtension(remotePath).lowercase()
+        if (ext == "jpg" || ext == "jpeg" || ext == "png") {
+            binding.videoBar.btnSeekBack.visibility = View.GONE
+            binding.videoBar.tvSpeed.visibility = View.GONE
+        }
         binding.videoBar.btnPlay.setOnClickListener {
-            if (mediaPlayer.isPlaying) {
+            if (isPlaying) {
+                isPlaying = false
                 mediaPlayer.pause()
                 it.setBackgroundResource(R.drawable.ic_baseline_play_arrow_24)
             } else {
+                isPlaying = true
                 mediaPlayer.play()
                 it.setBackgroundResource(R.drawable.ic_baseline_pause_24)
             }
@@ -135,7 +143,7 @@ class VideoActivity : AppCompatActivity(), Layout, Player {
             } else {
                 // rewind to the beginning
                 mediaPlayer.stop()
-                start()
+                start()  // activity
             }
             initBars()
         }
@@ -182,8 +190,7 @@ class VideoActivity : AppCompatActivity(), Layout, Player {
 
     private fun start() {
         try {
-            start(FileData.getTmpFile(remotePath).absolutePath)
-
+            start(FileData.getTmpFile(remotePath).absolutePath)  // player
             setMute(StreamData.getMute())
 
         } catch (e: IOException) {
@@ -194,8 +201,7 @@ class VideoActivity : AppCompatActivity(), Layout, Player {
     private fun next(fwd: Boolean = true) {
         remotePath = FileData(stream.sftp).getNext(remotePath, fwd)
         if (remotePath != "") {
-            binding.videoBar.btnPlay.setBackgroundResource(R.drawable.ic_baseline_pause_24)
-            start()
+            start()  // activity
         } else { // Last file was played, let's show live video
             streamsScreen()
         }
@@ -212,7 +218,8 @@ class VideoActivity : AppCompatActivity(), Layout, Player {
 
     private val runnable = object : Runnable {
         override fun run() {
-            watchdog()
+            if (isPlaying)
+                watchdog()
             handler.postDelayed(this, watchdogInterval)
         }
     }
@@ -236,10 +243,13 @@ class VideoActivity : AppCompatActivity(), Layout, Player {
         if (isAudioAvailable) {
             binding.videoBar.btnMute.visibility = View.VISIBLE
         }
+        if (!isPlaying)
+            mediaPlayer.pause()
     }
 
     override fun onEndReached() {
-        next()
+        if (isPlaying)
+            next()
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {

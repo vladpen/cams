@@ -27,8 +27,11 @@ class FileData(private val sftpUrl: String?) {
         }
 
         fun getTmpFile(file: String): File {
-            val ext = file.substring(file.lastIndexOf(".") + 1)
-            return File(context.cacheDir.path + "/video." + ext)
+            return File(context.cacheDir.path + "/video." + getExtension(file))
+        }
+
+        fun getExtension(file: String): String {
+            return file.substring(file.lastIndexOf(".") + 1)
         }
     }
 
@@ -84,13 +87,13 @@ class FileData(private val sftpUrl: String?) {
         var i = 0
         try {
             while (size == 0L && i++ < 1000) { // wait until downloading will start
-                sleep(20)
+                sleep(30)
                 size = tmpFile.length()
             }
         } catch (e: IOException) {
             e.printStackTrace()
         }
-        sleep(200)
+        sleep(300)
     }
 
     fun getNext(remotePath: String, fwd: Boolean = true): String {

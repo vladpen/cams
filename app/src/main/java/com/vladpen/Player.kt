@@ -14,8 +14,8 @@ interface Player {
     var volume: Int
 
     fun initPlayer(context: Context, view: VLCVideoLayout, tcp: Boolean = true) {
-        var options = arrayListOf(
-            "--file-caching=150",
+        val options = arrayListOf(
+            "--file-caching=300",
             "--live-caching=100",
             "--network-caching=100",
             "--drop-late-frames",
