@@ -116,7 +116,7 @@ class FileData(private val sftpUrl: String?) {
                 return parentPath + newName
             }
 
-            if (path.count() < 3)
+            if (path.count() < 3)  // flat directory (no next folder)
                 return ""
 
             // Find next/prev directory
