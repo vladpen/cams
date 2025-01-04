@@ -1,3 +1,7 @@
+## 2.4.1 - 2025-01-04
+
+Refactoring, optimization, fixes and improvements
+
 ## 2.4 - 2024-11-18
 
 - Android Television support
