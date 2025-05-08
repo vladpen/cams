@@ -1,3 +1,7 @@
+## 2.4.2 - 2025-05-08
+
+Component update
+
 ## 2.4.1 - 2025-01-04
 
 Refactoring, optimization, fixes and improvements

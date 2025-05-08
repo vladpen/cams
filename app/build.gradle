@@ -10,9 +10,9 @@ android {
         applicationId 'com.vladpen.cams'
         minSdk 24
         targetSdk 35
-        versionCode 1010129
-        versionName '2.4.1'
-        archivesBaseName = "cams"
+        versionCode 1010130
+        versionName '2.4.2'
+        base.archivesName = 'cams'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     buildTypes {
@@ -29,9 +29,12 @@ android {
     buildFeatures {
         viewBinding true
     }
+    packaging {
+        resources.excludes.add('META-INF/versions/9/OSGI-INF/MANIFEST.MF')
+    }
     packagingOptions {
         jniLibs {
-            useLegacyPackaging = true
+            useLegacyPackaging true
         }
     }
     splits {
@@ -46,15 +49,15 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.15.0'
+    implementation 'androidx.core:core-ktx:1.16.0'
     implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'androidx.work:work-runtime-ktx:2.10.0'
+    implementation 'androidx.work:work-runtime-ktx:2.10.1'
     implementation 'com.google.android.material:material:1.12.0'
-    implementation "androidx.activity:activity-ktx:1.9.3"
+    implementation 'androidx.activity:activity-ktx:1.10.1'
 
-    implementation 'org.videolan.android:libvlc-all:3.5.1'
-    implementation 'com.google.code.gson:gson:2.11.0'
-    implementation 'com.github.mwiede:jsch:0.2.19'
+    implementation 'org.videolan.android:libvlc-all:3.6.2'
+    implementation 'com.google.code.gson:gson:2.13.1'
+    implementation 'com.github.mwiede:jsch:0.2.26'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
