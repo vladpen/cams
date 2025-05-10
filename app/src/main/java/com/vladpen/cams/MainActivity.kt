@@ -74,14 +74,8 @@ class MainActivity: AppCompatActivity() {
             val intent = Intent(this, EditActivity::class.java)
             startActivity(intent)
         }
-
-        val isTelevision = context.packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
-        if (isTelevision) {
-            binding.emptyBox.btnImport.isVisible = false
-        } else {
-            binding.emptyBox.btnImport.setOnClickListener {
-                MainMenu(this).import()
-            }
+        binding.emptyBox.btnImport.setOnClickListener {
+            MainMenu(this).import()
         }
         binding.emptyBox.tvManualLink.text = HtmlCompat.fromHtml(
             getString(R.string.manual_link),
