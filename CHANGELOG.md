@@ -1,3 +1,7 @@
+## 2.4.3 - 2025-06-13
+- Android 16 support
+- Export/import on Android TV (requires file manager)
+
 ## 2.4.2 - 2025-05-08
 
 Component update
