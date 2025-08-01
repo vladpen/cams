@@ -101,4 +101,10 @@ height="80">](https://f-droid.org/packages/com.vladpen.cams/)
 alt="Доступно в RuStore"
 height="57">](https://apps.rustore.ru/app/com.vladpen.cams)
 
+Если вам нравится приложение, вы можете **[поддержать проект](https://pay.cloudtips.ru/p/d5d91c40)**.
+
+<img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/donat.png"
+alt="Пожертвовать"
+height="297">
+
 *Copyright (c) 2022-2025 vladpen under MIT license. Use it with absolutely no warranty.*
