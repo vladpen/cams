@@ -1,14 +1,12 @@
 package com.vladpen.cams
 
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.vladpen.Alert

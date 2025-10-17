@@ -3,7 +3,6 @@ package com.vladpen.cams
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Rect
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -16,6 +15,7 @@ import android.widget.FrameLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.Insets
+import androidx.core.net.toUri
 import com.vladpen.*
 import com.vladpen.Effects.edgeToEdge
 import com.vladpen.cams.databinding.ActivityStreamsBinding
@@ -212,7 +212,7 @@ class StreamsActivity : AppCompatActivity(), Layout {
         for (f in fragments) {
             if (init)
                 f.initPlayer()
-            f.start(Uri.parse(StreamData.getUrl(f.stream, isGroup)))
+            f.start(StreamData.getUrl(f.stream, isGroup).toUri())
             loadings[f.streamId] = true
         }
         binding.progressBar.pbLoading.visibility = View.VISIBLE

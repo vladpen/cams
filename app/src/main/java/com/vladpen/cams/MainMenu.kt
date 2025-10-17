@@ -1,7 +1,6 @@
 package com.vladpen.cams
 
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.view.View
 import android.widget.PopupMenu
 import com.vladpen.Settings
