@@ -21,8 +21,8 @@ open class ItemTouch {
                                 viewHolder: RecyclerView.ViewHolder,
                                 target: RecyclerView.ViewHolder): Boolean {
                 val adapter = recyclerView.adapter
-                val from = viewHolder.adapterPosition
-                val to = target.adapterPosition
+                val from = viewHolder.bindingAdapterPosition
+                val to = target.bindingAdapterPosition
 
                 moveItem(from, to, adapter)
                 adapter?.notifyItemMoved(from, to)

@@ -30,8 +30,8 @@ class GroupAdapter(var dataSet: List<Int>, private val context: GroupEditActivit
             binding.tvItemName.text = StreamData.getById(dataSet[position])?.name
             binding.tvItemName.setTextColor(context.getColor(R.color.text))
             binding.btnRemove.setOnClickListener {
-                context.removeAt(adapterPosition)
-                notifyItemRemoved(adapterPosition)
+                context.removeAt(bindingAdapterPosition)
+                notifyItemRemoved(bindingAdapterPosition)
             }
         }
     }
