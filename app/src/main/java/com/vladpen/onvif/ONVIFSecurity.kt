@@ -87,7 +87,14 @@ object ONVIFSecurity {
 
     fun isValidUrl(url: String): Boolean {
         return try {
-            val uri = java.net.URI(url)
+            // Fix common URL issues
+            val fixedUrl = when {
+                url.startsWith("onvif://") -> url.replace("onvif://", "http://")
+                !url.startsWith("http://") && !url.startsWith("https://") -> "http://$url"
+                else -> url
+            }
+            
+            val uri = java.net.URI(fixedUrl)
             uri.scheme in listOf("http", "https") && uri.host != null
         } catch (e: Exception) {
             false

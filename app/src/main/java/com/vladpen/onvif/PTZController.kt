@@ -14,12 +14,22 @@ class PTZController(
     private var profileToken: String? = null
 
     suspend fun initialize(): Boolean = withContext(Dispatchers.IO) {
+        android.util.Log.d("ONVIF", "PTZController.initialize called")
         profileToken = getFirstProfile()
-        profileToken != null
+        val result = profileToken != null
+        android.util.Log.d("ONVIF", "PTZ initialization result: $result, profile token: $profileToken")
+        result
     }
 
     suspend fun continuousMove(direction: PTZDirection, speed: Float = 0.5f): Boolean = withContext(Dispatchers.IO) {
-        val token = profileToken ?: return@withContext false
+        android.util.Log.d("ONVIF", "PTZController.continuousMove called: $direction, speed: $speed")
+        val token = profileToken
+        if (token == null) {
+            android.util.Log.e("ONVIF", "No profile token available for PTZ move")
+            return@withContext false
+        }
+        
+        android.util.Log.d("ONVIF", "Using profile token: $token")
         
         val velocity = when (direction) {
             PTZDirection.UP -> mapOf("PanTilt" to mapOf("x" to 0.0, "y" to speed))
@@ -33,7 +43,10 @@ class PTZController(
             "Velocity" to velocity
         )
 
-        soapClient.sendRequest("ContinuousMove", PTZ_NAMESPACE, params) != null
+        android.util.Log.d("ONVIF", "Sending ContinuousMove SOAP request...")
+        val result = soapClient.sendRequest("ContinuousMove", PTZ_NAMESPACE, params) != null
+        android.util.Log.d("ONVIF", "ContinuousMove result: $result")
+        result
     }
 
     suspend fun stop(): Boolean = withContext(Dispatchers.IO) {

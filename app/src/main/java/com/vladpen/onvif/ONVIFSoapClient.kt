@@ -13,7 +13,7 @@ import org.w3c.dom.Element
 import java.io.ByteArrayInputStream
 
 class ONVIFSoapClient(
-    private val serviceUrl: String,
+    serviceUrl: String,
     private val credentials: ONVIFCredentials?
 ) {
     companion object {
@@ -21,21 +21,40 @@ class ONVIFSoapClient(
         private const val ONVIF_NAMESPACE = "http://www.onvif.org/ver10/device/wsdl"
     }
 
+    // Fix URL format issues
+    private val serviceUrl = when {
+        serviceUrl.startsWith("onvif://") -> serviceUrl.replace("onvif://", "http://")
+        !serviceUrl.startsWith("http://") && !serviceUrl.startsWith("https://") -> "http://$serviceUrl"
+        else -> serviceUrl
+    }
+
     fun sendRequest(method: String, namespace: String = ONVIF_NAMESPACE, parameters: Map<String, Any> = emptyMap()): ONVIFResponse? {
         return try {
+            android.util.Log.d("ONVIF", "Sending SOAP request: $method to $serviceUrl")
+            
             // Validate inputs
             val safeMethod = ONVIFSecurity.validateInput(method)
             val safeNamespace = ONVIFSecurity.validateInput(namespace)
             
             if (!ONVIFSecurity.isValidUrl(serviceUrl)) {
+                android.util.Log.e("ONVIF", "Invalid service URL: $serviceUrl")
                 return null
             }
 
             val soapEnvelope = createSoapEnvelope(safeMethod, safeNamespace, parameters)
+            android.util.Log.d("ONVIF", "SOAP envelope created, sending HTTP request")
+            
             val response = sendHttpRequest(soapEnvelope)
             
-            response?.let { parseResponse(it) }
+            if (response != null) {
+                android.util.Log.d("ONVIF", "Received SOAP response: ${response.take(200)}...")
+                parseResponse(response)
+            } else {
+                android.util.Log.e("ONVIF", "No response received from ONVIF device")
+                null
+            }
         } catch (e: Exception) {
+            android.util.Log.e("ONVIF", "SOAP request failed: ${e.message}")
             null
         }
     }
@@ -62,24 +81,25 @@ class ONVIFSoapClient(
 
     private fun createWSSecurityHeader(creds: ONVIFCredentials): String {
         val created = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US).format(Date())
-        val nonce = UUID.randomUUID().toString().replace("-", "").substring(0, 16)
-        val digest = createPasswordDigest(nonce, created, creds.password)
+        val nonceBytes = UUID.randomUUID().toString().replace("-", "").substring(0, 16).toByteArray()
+        val nonceBase64 = Base64.getEncoder().encodeToString(nonceBytes)
+        val digest = createPasswordDigest(nonceBytes, created, creds.password)
 
         return """
         <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
             <wsse:UsernameToken>
                 <wsse:Username>${creds.username}</wsse:Username>
                 <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordDigest">$digest</wsse:Password>
-                <wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">$nonce</wsse:Nonce>
+                <wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">$nonceBase64</wsse:Nonce>
                 <wsu:Created xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">$created</wsu:Created>
             </wsse:UsernameToken>
         </wsse:Security>
         """.trimIndent()
     }
 
-    private fun createPasswordDigest(nonce: String, created: String, password: String): String {
+    private fun createPasswordDigest(nonceBytes: ByteArray, created: String, password: String): String {
         val digest = MessageDigest.getInstance("SHA-1")
-        val input = (nonce + created + password).toByteArray()
+        val input = nonceBytes + created.toByteArray() + password.toByteArray()
         return Base64.getEncoder().encodeToString(digest.digest(input))
     }
 
@@ -100,11 +120,20 @@ class ONVIFSoapClient(
             }
 
             val responseCode = connection.responseCode
+            
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 connection.inputStream.use { input ->
                     input.bufferedReader().readText()
                 }
             } else {
+                // Try to read error response for debugging
+                try {
+                    connection.errorStream?.use { error ->
+                        error.bufferedReader().readText()
+                    }
+                } catch (e: Exception) {
+                    // Ignore error reading error response
+                }
                 null
             }
         } catch (e: Exception) {
