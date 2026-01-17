@@ -323,19 +323,7 @@ class StreamsActivity : AppCompatActivity(), Layout {
             android.util.Log.d("ONVIF", "Stream: ${stream?.name}, isOnvif: ${stream?.isOnvifDevice}")
             
             if (stream?.isOnvifDevice == true && stream.onvifServiceUrl != null) {
-                android.util.Log.d("ONVIF", "Setting up PTZ button")
-                binding.fabPTZ.visibility = View.VISIBLE
-                binding.fabPTZ.setOnClickListener {
-                    android.util.Log.d("ONVIF", "PTZ button clicked!")
-                    togglePTZControls()
-                }
-                
-                // Show PTZ controls if ONVIF is configured
-                if (stream.onvifServiceUrl != null && stream.onvifCredentials != null) {
-                    binding.fabPTZ.visibility = View.VISIBLE
-                } else {
-                    binding.fabPTZ.visibility = View.GONE
-                }
+                android.util.Log.d("ONVIF", "ONVIF stream detected - PTZ controls available via touch")
                 
                 // Initialize ONVIF features
                 onvifManager = ONVIFManager.getInstance()

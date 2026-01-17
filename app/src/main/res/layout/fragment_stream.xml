@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.videolan.libvlc.util.VLCVideoLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/videoLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:layout_height="match_parent">
+
+    <org.videolan.libvlc.util.VLCVideoLayout
+        android:id="@+id/videoLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.vladpen.onvif.TouchGestureOverlay
+        android:id="@+id/ptzOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true" />
+
+</FrameLayout>

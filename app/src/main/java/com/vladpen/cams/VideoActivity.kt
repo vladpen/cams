@@ -6,268 +6,125 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.*
-import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.graphics.Insets
-import com.vladpen.*
-import com.vladpen.Effects.edgeToEdge
 import com.vladpen.cams.databinding.ActivityVideoBinding
+import com.vladpen.onvif.*
+import com.vladpen.*
+import kotlinx.coroutines.*
 import org.videolan.libvlc.LibVLC
 import org.videolan.libvlc.MediaPlayer
-import java.io.IOException
 
-class VideoActivity : AppCompatActivity(), Layout, Player {
+class VideoActivity : AppCompatActivity() {
     private val binding by lazy { ActivityVideoBinding.inflate(layoutInflater) }
     private val handler by lazy { Handler(Looper.getMainLooper()) }
 
-    override lateinit var rootView: View
-    override lateinit var layoutListener: ViewTreeObserver.OnGlobalLayoutListener
-    override var insets: Insets? = null
-    override var hideBars = false
-
-    override lateinit var libVlc: LibVLC
-    override lateinit var mediaPlayer: MediaPlayer
-    override var volume = 0
+    private lateinit var libVlc: LibVLC
+    private lateinit var mediaPlayer: MediaPlayer
 
     private lateinit var stream: StreamDataModel
-    private lateinit var gestureDetector: VideoGestureDetector
-    private var gestureInProgress = false
-    private var streamId: Int = -1 // -1 means "no stream"
-    private lateinit var remotePath: String // relative SFTP path
-    private val seekStep: Long = 10000 // milliseconds
-    private val watchdogInterval: Long = 10000 // milliseconds
-    private var isPlaying = true
+    private var streamId: Int = -1
+    private lateinit var remotePath: String
+    
+    // Touch-based PTZ components
+    private lateinit var fullscreenManager: FullscreenManager
+    private var ptzGestureController: PTZGestureController? = null
+    private val ptzScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        android.util.Log.d("VIDEO_ACTIVITY", "New VideoActivity onCreate called")
         setContentView(binding.root)
-        edgeToEdge(binding.root) { innerPadding ->
-            insets = innerPadding
-        }
+        
+        // Initialize fullscreen manager
+        fullscreenManager = FullscreenManager(this)
+        fullscreenManager.enableFullscreen()
+        
         streamId = intent.getIntExtra("streamId", -1)
         stream = StreamData.getById(streamId) ?: return
         remotePath = intent.getStringExtra("remotePath") ?: return
-
-        initActivity()
-        initLayout(binding.root)
+        
+        android.util.Log.d("VIDEO_ACTIVITY", "Setting up PTZ overlay")
+        android.util.Log.d("VIDEO_ACTIVITY", "Stream has ONVIF: ${stream.onvifServiceUrl != null}")
+        setupPTZControls()
+        initPlayer()
+        initBackButton()
     }
-
-    private fun initActivity() {
-        initToolbar()
-        initVideoBar()
-        initMute()
-
-        gestureDetector = VideoGestureDetector(binding.flVideoBox)
-
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
-        this.onBackPressedDispatcher.addCallback(callback)
-
-        Alert.init(this, binding.toolbar.btnAlert)
-    }
-
-    private val callback = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            back()
-        }
-    }
-
-    private fun back() {
-        val intent = Intent(this, FilesActivity::class.java)
-            .putExtra("streamId", streamId)
-            .putExtra("remotePath", FileData.getParentPath(remotePath))
-        startActivity(intent)
-    }
-
-    override fun resizeLayout() {
-        resizeVideo(binding.flVideoBox)
-        gestureDetector.reset()
-        initBars()
-    }
-
-    private fun streamsScreen() {
-        val intent = Intent(this, StreamsActivity::class.java)
-        if (GroupData.backGroupId > -1) {
-            intent.putExtra("type", "group")
-            intent.putExtra("id", GroupData.backGroupId)
+    
+    private fun setupPTZControls() {
+        android.util.Log.d("VIDEO_ACTIVITY", "Setting up PTZ controls")
+        android.util.Log.d("VIDEO_ACTIVITY", "ONVIF URL: ${stream.onvifServiceUrl}")
+        android.util.Log.d("VIDEO_ACTIVITY", "ONVIF Credentials: ${stream.onvifCredentials != null}")
+        
+        // Always set up the overlay for touch detection, even without ONVIF
+        binding.ptzOverlay.isClickable = true
+        binding.ptzOverlay.isFocusable = true
+        android.util.Log.d("VIDEO_ACTIVITY", "PTZ overlay configured")
+        
+        // Initialize PTZ controls if ONVIF is configured
+        if (stream.onvifServiceUrl != null && stream.onvifCredentials != null) {
+            android.util.Log.d("VIDEO_ACTIVITY", "Initializing ONVIF PTZ controller")
+            ptzScope.launch {
+                try {
+                    val ptzController = PTZController(stream.onvifServiceUrl!!, stream.onvifCredentials)
+                    if (ptzController.initialize()) {
+                        ptzGestureController = PTZGestureController(ptzController, stream)
+                        binding.ptzOverlay.setGestureListener(ptzGestureController)
+                        android.util.Log.d("VIDEO_ACTIVITY", "PTZ controller initialized successfully")
+                    } else {
+                        android.util.Log.d("VIDEO_ACTIVITY", "PTZ controller initialization failed")
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.e("VIDEO_ACTIVITY", "PTZ initialization error: ${e.message}")
+                }
+            }
         } else {
-            intent.putExtra("type", "stream")
-            intent.putExtra("id", streamId)
-        }
-        startActivity(intent)
-    }
-
-    private fun initToolbar() {
-        binding.toolbar.tvLabel.text = stream.name
-        binding.toolbar.btnBack.setOnClickListener {
-            back()
-        }
-        if (stream.sftp == null) {
-            return
-        }
-        binding.toolbar.btnLink.setImageResource(R.drawable.ic_outline_videocam_24)
-        binding.toolbar.btnLink.contentDescription = getString(R.string.back)
-        binding.toolbar.btnLink.visibility = View.VISIBLE
-        binding.toolbar.btnLink.setOnClickListener {
-            streamsScreen()
+            android.util.Log.d("VIDEO_ACTIVITY", "No ONVIF configuration found")
         }
     }
 
-    private fun initVideoBar() {
-        val ext = FileData.getExtension(remotePath).lowercase()
-        if (ext == "jpg" || ext == "jpeg" || ext == "png") {
-            binding.videoBar.btnSeekBack.visibility = View.GONE
-            binding.videoBar.tvSpeed.visibility = View.GONE
-        }
-        binding.videoBar.btnPlay.setOnClickListener {
-            if (isPlaying) {
-                isPlaying = false
-                mediaPlayer.pause()
-                it.setBackgroundResource(R.drawable.ic_baseline_play_arrow_24)
-            } else {
-                isPlaying = true
-                mediaPlayer.play()
-                it.setBackgroundResource(R.drawable.ic_baseline_pause_24)
-            }
-            initBars()
-        }
-        binding.videoBar.btnPrevFile.setOnClickListener {
-            next(false)
-        }
-        binding.videoBar.btnSeekBack.setOnClickListener {
-            dropRate() // prevent lost keyframe
-            if (mediaPlayer.time > seekStep) {
-                // we can't use the "position" here (file size changes during playback)
-                mediaPlayer.time -= seekStep
-            } else {
-                // rewind to the beginning
-                mediaPlayer.stop()
-                start()  // activity
-            }
-            initBars()
-        }
-        binding.videoBar.btnNextFile.setOnClickListener {
-            next()
-        }
-        binding.videoBar.tvSpeed.setOnClickListener {
-            if (mediaPlayer.rate < 2f) {
-                mediaPlayer.rate = 4f
-                "4x".also { binding.videoBar.tvSpeed.text = it }
-            } else {
-                dropRate()
-            }
-            initBars()
-        }
-        "1x".also { binding.videoBar.tvSpeed.text = it } // "also" makes linter happy
-        binding.videoBar.llVideoCtrl.visibility = View.VISIBLE
-    }
-
-    private fun dropRate() {
-        mediaPlayer.rate = 1f
-        "1x".also { binding.videoBar.tvSpeed.text = it }
-    }
-
-    private fun initMute() {
-        binding.videoBar.btnMute.setOnClickListener {
-            var mute = StreamData.getMute()
-            mute = if (mute == 0) 1 else 0
-            setMute(mute)
-            StreamData.setMute(mute)
-            initBars()
-        }
-    }
-
-    private fun setMute(mute: Int) {
-        if (mute == 1) {
-            mediaPlayer.volume = 0
-            binding.videoBar.btnMute.setImageResource(R.drawable.ic_baseline_volume_off_24)
-        } else {
-            mediaPlayer.volume = 100
-            binding.videoBar.btnMute.setImageResource(R.drawable.ic_baseline_volume_on_24)
-        }
-    }
-
-    private fun start() {
+    private fun initPlayer() {
         try {
-            start(FileData.getTmpFile(remotePath).absolutePath)  // player
-            setMute(StreamData.getMute())
-
-        } catch (e: IOException) {
-            e.printStackTrace()
+            libVlc = LibVLC(this)
+            mediaPlayer = MediaPlayer(libVlc)
+            mediaPlayer.attachViews(binding.videoLayout, null, false, false)
+            
+            val media = org.videolan.libvlc.Media(libVlc, stream.url)
+            mediaPlayer.media = media
+            
+            mediaPlayer.play()
+            
+        } catch (e: Exception) {
+            finish()
         }
     }
-
-    private fun next(fwd: Boolean = true) {
-        remotePath = FileData(stream.sftp).getNext(remotePath, fwd)
-        if (remotePath != "") {
-            start()  // activity
-        } else { // Last file was played, let's show live video
-            streamsScreen()
-        }
-    }
-
-    private fun initBars() {
-        Effects.cancel()
-        binding.toolbar.root.visibility = View.VISIBLE
-        binding.videoBar.root.visibility = View.VISIBLE
-        if (hideBars) {
-            Effects.delayedFadeOut(arrayOf(binding.toolbar.root, binding.videoBar.root))
-        }
-    }
-
-    private val runnable = object : Runnable {
-        override fun run() {
-            if (isPlaying)
-                watchdog()
-            handler.postDelayed(this, watchdogInterval)
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        initPlayer(this, binding.videoLayout, false)
-        start()
-        handler.postDelayed(runnable, watchdogInterval)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        release()
-        handler.removeCallbacks(runnable)
-    }
-
-    override fun onBufferReady(isAudioAvailable: Boolean) {
-        super.onBufferReady(isAudioAvailable)
-        binding.progressBar.pbLoading.visibility = View.GONE
-        if (isAudioAvailable) {
-            binding.videoBar.btnMute.visibility = View.VISIBLE
-        }
-        if (!isPlaying)
-            mediaPlayer.pause()
-    }
-
-    override fun onEndReached() {
-        if (isPlaying)
-            next()
-    }
-
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        val res = gestureDetector.onTouchEvent(event)
-        if (res)
-            gestureInProgress = true
-
-        if (event.action == MotionEvent.ACTION_UP) {
-            if (!gestureInProgress)
-                initBars()
-            else
-                gestureInProgress = false
-        }
-        return res || super.onTouchEvent(event)
+    
+    private fun initBackButton() {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                finish()
+            }
+        })
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        initLayout(binding.root)
+        // Handle orientation changes if needed
+    }
+    
+    override fun onDestroy() {
+        super.onDestroy()
+        ptzGestureController?.cleanup()
+        ptzScope.cancel()
+        fullscreenManager.disableFullscreen()
+        
+        if (::mediaPlayer.isInitialized) {
+            mediaPlayer.stop()
+            mediaPlayer.detachViews()
+            mediaPlayer.release()
+        }
+        if (::libVlc.isInitialized) {
+            libVlc.release()
+        }
     }
 }

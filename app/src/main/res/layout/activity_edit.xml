@@ -118,41 +118,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:hint="ONVIF Service URL (e.g., http://192.168.1.100:8080/onvif/device_service)"
+                android:hint="ONVIF URL (e.g., onvif://username:password@192.168.1.100:80/onvif/device_service)"
                 android:inputType="textUri"
                 android:textSize="16sp"
                 android:visibility="gone"
                 android:autofillHints="" />
 
-            <LinearLayout
-                android:id="@+id/llOnvifCredentials"
-                android:layout_width="match_parent"
+            <CheckBox
+                android:id="@+id/cbInvertHorizontal"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_marginTop="8dp"
-                android:visibility="gone">
+                android:text="Invert Horizontal PTZ"
+                android:visibility="gone" />
 
-                <EditText
-                    android:id="@+id/etOnvifUsername"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
-                    android:hint="ONVIF Username"
-                    android:inputType="text"
-                    android:textSize="16sp"
-                    android:autofillHints="" />
-
-                <EditText
-                    android:id="@+id/etOnvifPassword"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="ONVIF Password"
-                    android:inputType="textPassword"
-                    android:textSize="16sp"
-                    android:autofillHints="" />
-            </LinearLayout>
+            <CheckBox
+                android:id="@+id/cbInvertVertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Invert Vertical PTZ"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tvAddOnvif"

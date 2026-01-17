@@ -1,214 +1,251 @@
-# ONVIF PTZ Control and Motion Detection Design
+# ONVIF PTZ Control Technical Design
 
 ## Architecture Overview
 
-The ONVIF integration will be implemented as a separate module that interfaces with the existing camera management system. The design follows a layered architecture to maintain separation of concerns and minimize impact on existing RTSP functionality.
+The touch-based PTZ control system uses a gesture-driven approach where users interact directly with the video surface to control camera movement. The system provides intuitive, proportional control with visual feedback.
 
 ## Component Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    UI Layer                                 │
-├─────────────────────────────────────────────────────────────┤
-│ VideoActivity │ EditActivity │ PTZControlView │ MotionIndicator │
+│                    VideoActivity                            │
+│  ┌─────────────────────────────────────────────────────────┤
+│  │              FullscreenVideoView                        │
+│  │  ┌─────────────────────────────────────────────────────┤
+│  │  │            TouchGestureOverlay                      │
+│  │  │  - Captures touch events                           │
+│  │  │  - Calculates gesture vectors                      │
+│  │  │  - Shows visual indicators                         │
+│  │  └─────────────────────────────────────────────────────┤
+│  │              PTZGestureController                       │
+│  │  - Translates gestures to PTZ commands                │
+│  │  - Manages proportional movement                       │
+│  │  - Handles position tracking                           │
+│  └─────────────────────────────────────────────────────────┤
+│                 ONVIFManager                               │
+│  - Executes PTZ commands                                   │
+│  - Manages ONVIF connections                               │
 └─────────────────────────────────────────────────────────────┘
-                              │
-┌─────────────────────────────────────────────────────────────┐
-│                 Service Layer                               │
-├─────────────────────────────────────────────────────────────┤
-│ ONVIFManager │ PTZController │ MotionEventService │ Discovery │
-└─────────────────────────────────────────────────────────────┘
-                              │
-┌─────────────────────────────────────────────────────────────┐
-│                Protocol Layer                               │
-├─────────────────────────────────────────────────────────────┤
-│    ONVIF SOAP Client    │    WS-Discovery    │   Events     │
-└─────────────────────────────────────────────────────────────┘
 ```
 
-## Core Components
+## Touch Gesture System
 
-### 1. ONVIFManager
-- **Purpose**: Central coordinator for all ONVIF operations
-- **Responsibilities**:
-  - Manage ONVIF device connections
-  - Coordinate between PTZ and motion detection services
-  - Handle authentication and session management
-  - Cache device capabilities
+### Gesture Detection
+- **Center Area**: 100dp radius around screen center for initial touch detection (not pixel-perfect)
+- **PTZ Dot**: Visual indicator that appears under user's finger
+- **Movement Threshold**: 5dp minimum movement to trigger PTZ commands
+- **Maximum Range**: Screen edges define maximum PTZ movement
 
-### 2. ONVIFDiscovery
-- **Purpose**: Network discovery of ONVIF devices
-- **Implementation**: WS-Discovery protocol over UDP multicast
-- **Key Methods**:
-  - `discoverDevices()`: Scan network for ONVIF cameras
-  - `getDeviceInfo()`: Retrieve device capabilities and services
-
-### 3. PTZController
-- **Purpose**: Handle PTZ operations
-- **Key Methods**:
-  - `continuousMove(direction, speed)`
-  - `stop()`
-  - `zoom(factor)`
-  - `gotoPreset(presetId)`
-  - `setPreset(name, position)`
-
-### 4. MotionEventService
-- **Purpose**: Handle ONVIF motion detection events
-- **Implementation**: SOAP event subscription with callback handling
-- **Key Methods**:
-  - `subscribeToMotionEvents()`
-  - `unsubscribeFromMotionEvents()`
-  - `handleMotionEvent(event)`
-
-## Data Models
-
-### ONVIFDevice
+### PTZ Dot Behavior
 ```kotlin
-data class ONVIFDevice(
-    val deviceId: String,
-    val name: String,
-    val ipAddress: String,
-    val onvifPort: Int,
-    val rtspUrl: String,
-    val capabilities: DeviceCapabilities,
-    val credentials: ONVIFCredentials?
-)
+sealed class PTZDotState {
+    object Hidden : PTZDotState()
+    data class Visible(val x: Float, val y: Float) : PTZDotState()
+    data class Dragging(val x: Float, val y: Float) : PTZDotState()
+    data class Returning(val fromX: Float, val fromY: Float, val progress: Float) : PTZDotState()
+    data class Fading(val alpha: Float) : PTZDotState()
+}
 ```
 
-### DeviceCapabilities
+### Animation System
+- **Dot Appearance**: Instant appearance under finger when touch detected
+- **Dot Following**: Real-time position updates during drag
+- **Return Animation**: Smooth slide back to center over 300ms using interpolation
+- **Fade Animation**: Alpha fade from 100% to 0% over 200ms after reaching center
+- **Re-appearance**: Instant show when center touched again
+
+### Coordinate Mapping
 ```kotlin
-data class DeviceCapabilities(
-    val supportsPTZ: Boolean,
-    val supportsMotionEvents: Boolean,
-    val ptzCapabilities: PTZCapabilities?,
-    val eventCapabilities: EventCapabilities?
-)
+// Convert touch coordinates to PTZ values
+fun touchToPTZ(touchX: Float, touchY: Float, centerX: Float, centerY: Float): PTZVector {
+    val deltaX = (touchX - centerX) / (screenWidth / 2)  // -1.0 to 1.0
+    val deltaY = (centerY - touchY) / (screenHeight / 2) // -1.0 to 1.0 (inverted)
+    return PTZVector(
+        pan = deltaX.coerceIn(-1.0f, 1.0f),
+        tilt = deltaY.coerceIn(-1.0f, 1.0f)
+    )
+}
 ```
 
-### PTZCapabilities
+### Movement Calculation
+- **Proportional Control**: Movement speed proportional to distance from center
+- **Deadzone**: 10% deadzone around center to prevent jitter
+- **Acceleration Curve**: Exponential curve for fine control near center
+- **Position Tracking**: Track cumulative movement for return-to-center
+
+## Visual Feedback System
+
+### PTZ Dot Indicator
+- **Appearance**: Semi-transparent white circle (30dp diameter) that appears under finger
+- **Following**: Dot position updates in real-time during drag gestures
+- **Return Animation**: Smooth slide back to center using cubic bezier interpolation
+- **Fade Animation**: Alpha transition from opaque to transparent over 200ms
+
+### Center Area Indicator
+- **Center Crosshair**: Subtle crosshair at screen center (only visible during active gesture)
+- **Center Zone**: Visual indication of touch-sensitive area (100dp radius)
+- **Range Boundary**: Optional outer circle showing maximum movement range
+
+### Animation States
 ```kotlin
-data class PTZCapabilities(
-    val supportsPan: Boolean,
-    val supportsTilt: Boolean,
-    val supportsZoom: Boolean,
-    val supportsPresets: Boolean,
-    val maxPresets: Int
-)
+class PTZDotAnimator {
+    fun startReturnAnimation(fromX: Float, fromY: Float, toX: Float, toY: Float) {
+        ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = 300
+            interpolator = DecelerateInterpolator()
+            addUpdateListener { animator ->
+                val progress = animator.animatedValue as Float
+                val currentX = fromX + (toX - fromX) * progress
+                val currentY = fromY + (toY - fromY) * progress
+                updateDotPosition(currentX, currentY)
+            }
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    startFadeAnimation()
+                }
+            })
+        }.start()
+    }
+    
+    fun startFadeAnimation() {
+        ValueAnimator.ofFloat(1f, 0f).apply {
+            duration = 200
+            addUpdateListener { animator ->
+                val alpha = animator.animatedValue as Float
+                updateDotAlpha(alpha)
+            }
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    hideDot()
+                }
+            })
+        }.start()
+    }
+}
 ```
 
-## Sequence Diagrams
+## PTZ Command Generation
 
-### ONVIF Device Discovery
-```
-User -> EditActivity: Tap "Discover ONVIF"
-EditActivity -> ONVIFDiscovery: discoverDevices()
-ONVIFDiscovery -> Network: WS-Discovery probe
-Network -> ONVIFDiscovery: Device responses
-ONVIFDiscovery -> ONVIFManager: getDeviceCapabilities()
-ONVIFManager -> EditActivity: List<ONVIFDevice>
-EditActivity -> User: Display discovered cameras
-```
-
-### PTZ Control Flow
-```
-User -> VideoActivity: Touch PTZ control
-VideoActivity -> PTZController: continuousMove(direction)
-PTZController -> ONVIFManager: sendPTZCommand()
-ONVIFManager -> ONVIF Device: SOAP PTZ request
-User -> VideoActivity: Release PTZ control
-VideoActivity -> PTZController: stop()
-PTZController -> ONVIF Device: SOAP stop request
+### Continuous Movement
+```kotlin
+class PTZGestureController {
+    private var basePosition = PTZPosition(0f, 0f)
+    private var currentOffset = PTZVector(0f, 0f)
+    
+    fun onGestureMove(vector: PTZVector) {
+        currentOffset = vector
+        val targetPosition = basePosition + vector
+        ptzController.continuousMove(targetPosition)
+    }
+    
+    fun onGestureEnd() {
+        basePosition += currentOffset
+        currentOffset = PTZVector(0f, 0f)
+        ptzController.stop()
+    }
+}
 ```
 
-### Motion Event Handling
+### Position Tracking
+- **Base Position**: Camera position when gesture starts
+- **Current Offset**: Current gesture displacement from base
+- **Target Position**: Base + Offset for absolute positioning
+- **Return Path**: Smooth interpolation back to center when requested
+
+## Fullscreen Video Implementation
+
+### Layout Changes
+```xml
+<!-- VideoActivity Layout -->
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="false">
+    
+    <VideoView
+        android:id="@+id/videoView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    
+    <com.vladpen.onvif.TouchGestureOverlay
+        android:id="@+id/ptzOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+        
+</FrameLayout>
 ```
-ONVIFManager -> MotionEventService: subscribeToMotionEvents()
-MotionEventService -> ONVIF Device: Subscribe to events
-ONVIF Device -> MotionEventService: Motion event callback
-MotionEventService -> VideoActivity: notifyMotionDetected()
-VideoActivity -> User: Show motion indicator
-MotionEventService -> NotificationManager: Send local notification
+
+### System UI Management
+- **Immersive Mode**: Hide status bar and navigation bar
+- **Stable Layout**: Prevent layout shifts when system UI changes
+- **Edge-to-Edge**: Video content extends to screen edges
+
+## Touch Event Processing
+
+### Event Flow
+```kotlin
+class TouchGestureOverlay : View {
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                if (isCenterTouch(event.x, event.y)) {
+                    startPTZGesture(event.x, event.y)
+                    showIndicators()
+                }
+            }
+            MotionEvent.ACTION_MOVE -> {
+                updatePTZGesture(event.x, event.y)
+                updateIndicators()
+            }
+            MotionEvent.ACTION_UP -> {
+                endPTZGesture()
+                scheduleHideIndicators()
+            }
+        }
+        return true
+    }
+}
 ```
 
-## UI Design
+### Gesture Recognition
+- **Initial Touch**: Must be within center radius to activate PTZ
+- **Movement Tracking**: Continuous position updates during drag
+- **Multi-touch**: Ignore additional fingers, use only first touch
+- **Edge Cases**: Handle touch outside screen bounds gracefully
 
-### PTZ Control Overlay
-- **Location**: Overlay on video surface in VideoActivity
-- **Controls**: 
-  - Directional pad (up, down, left, right)
-  - Zoom buttons (+, -)
-  - Preset dropdown menu
-- **Behavior**: 
-  - Show only when camera supports PTZ
-  - Auto-hide after 5 seconds of inactivity
-  - Touch and hold for continuous movement
+## Performance Considerations
 
-### Motion Detection Indicator
-- **Visual**: Red border around video frame when motion detected
-- **Duration**: 3-second fade-out animation
-- **Settings**: Toggle in camera edit screen
+### Optimization Strategies
+- **Command Throttling**: Limit PTZ commands to 10Hz to prevent overload
+- **Gesture Smoothing**: Apply low-pass filter to reduce jitter
+- **Efficient Rendering**: Use hardware acceleration for overlay graphics
+- **Memory Management**: Recycle touch event objects
 
-### Discovery Interface
-- **Location**: New button in EditActivity
-- **Flow**: 
-  1. Show progress dialog during discovery
-  2. Display list of found cameras
-  3. Allow selection to auto-populate camera settings
+### Threading Model
+- **UI Thread**: Touch event processing and visual updates
+- **Background Thread**: ONVIF command execution
+- **Render Thread**: Video surface rendering (unchanged)
 
-## Implementation Considerations
+## Error Handling
 
-### ONVIF Protocol Implementation
-- **Library**: Use existing SOAP libraries (ksoap2-android or custom implementation)
-- **Authentication**: Support WS-UsernameToken and HTTP Digest
-- **Error Handling**: Graceful degradation when ONVIF features unavailable
+### Network Issues
+- **Connection Loss**: Show warning overlay, queue commands for retry
+- **Timeout**: Provide visual feedback, allow manual retry
+- **Authentication**: Graceful fallback to non-PTZ mode
 
-### Performance Optimization
-- **Connection Pooling**: Reuse ONVIF connections for multiple operations
-- **Background Processing**: All ONVIF operations on background threads
-- **Caching**: Cache device capabilities to avoid repeated queries
+### Touch System Issues
+- **Calibration**: Auto-detect screen center, allow manual adjustment
+- **Sensitivity**: Configurable gesture sensitivity settings
+- **Accessibility**: Support for alternative input methods
 
-### Security Considerations
-- **Credential Storage**: Encrypt ONVIF credentials in SharedPreferences
-- **Network Security**: Validate SSL certificates for HTTPS ONVIF endpoints
-- **Input Validation**: Sanitize all ONVIF responses
+## Integration Points
 
-### Integration with Existing Code
-- **Minimal Changes**: Extend existing SourceData model with ONVIF properties
-- **Backward Compatibility**: Maintain existing RTSP-only functionality
-- **Optional Features**: ONVIF features are additive, not required
+### Existing Components
+- **VideoActivity**: Minimal changes, add overlay and gesture controller
+- **ONVIFManager**: No changes to PTZ command interface
+- **PTZController**: Enhanced with position tracking methods
 
-## Error Handling Strategy
-
-### Network Errors
-- **Discovery Timeout**: 10-second timeout with retry option
-- **Connection Failures**: Show user-friendly error messages
-- **Authentication Errors**: Prompt for credential re-entry
-
-### ONVIF Protocol Errors
-- **Unsupported Operations**: Gracefully disable unavailable features
-- **Malformed Responses**: Log errors and continue with available functionality
-- **Version Compatibility**: Support ONVIF Profile S baseline
-
-## Testing Strategy
-
-### Unit Tests
-- Mock ONVIF responses for PTZ operations
-- Test motion event parsing and handling
-- Validate discovery protocol implementation
-
-### Integration Tests
-- Test with real ONVIF cameras when available
-- Verify compatibility with major camera manufacturers
-- Test network discovery across different network configurations
-
-## Dependencies
-
-### New Libraries Required
-- **SOAP Client**: For ONVIF protocol communication
-- **WS-Discovery**: For network device discovery
-- **XML Parser**: For ONVIF response parsing (if not using existing)
-
-### Estimated Impact
-- **APK Size**: +200KB for ONVIF libraries
-- **Permissions**: No additional permissions required
-- **Compatibility**: Maintains existing Android API level support
+### New Components
+- **TouchGestureOverlay**: Custom view for gesture capture and visual feedback
+- **PTZGestureController**: Business logic for gesture-to-PTZ translation
+- **FullscreenManager**: System UI management for immersive experience

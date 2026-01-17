@@ -8,130 +8,134 @@ class PTZController(
 ) {
     companion object {
         private const val PTZ_NAMESPACE = "http://www.onvif.org/ver20/ptz/wsdl"
+        private const val MEDIA_NAMESPACE = "http://www.onvif.org/ver10/media/wsdl"
     }
 
-    private val soapClient = ONVIFSoapClient(serviceUrl, credentials)
     private var profileToken: String? = null
+    private var mediaServiceUrl: String? = null
+    private var ptzServiceUrl: String? = null
 
     suspend fun initialize(): Boolean = withContext(Dispatchers.IO) {
-        android.util.Log.d("ONVIF", "PTZController.initialize called")
+        // Determine service URLs based on device service URL
+        val baseUrl = serviceUrl.substringBeforeLast("/")
+        mediaServiceUrl = "$baseUrl/media_service"
+        ptzServiceUrl = "$baseUrl/ptz_service"
+        
         profileToken = getFirstProfile()
-        val result = profileToken != null
-        android.util.Log.d("ONVIF", "PTZ initialization result: $result, profile token: $profileToken")
-        result
+        profileToken != null
+    }
+
+    private suspend fun getFirstProfile(): String? {
+        val mediaUrl = mediaServiceUrl ?: return null
+        val mediaSoapClient = ONVIFSoapClient(mediaUrl, credentials)
+        
+        val response = mediaSoapClient.sendRequest("GetProfiles", MEDIA_NAMESPACE)
+        return response?.let { parseProfileTokenFromResponse(it) }
+    }
+
+    private fun parseProfileTokenFromResponse(response: ONVIFResponse): String? {
+        // Try to get profile token from the response
+        return response.getProperty("token") ?: 
+               response.getProperty("ProfileToken") ?:
+               "Profile_0" // Default fallback
     }
 
     suspend fun continuousMove(direction: PTZDirection, speed: Float = 0.5f): Boolean = withContext(Dispatchers.IO) {
-        android.util.Log.d("ONVIF", "PTZController.continuousMove called: $direction, speed: $speed")
-        val token = profileToken
-        if (token == null) {
-            android.util.Log.e("ONVIF", "No profile token available for PTZ move")
-            return@withContext false
+        android.util.Log.d("PTZ_CONTROLLER", "continuousMove called: direction=$direction, speed=$speed")
+        val token = profileToken ?: return@withContext false
+        val ptzUrl = ptzServiceUrl ?: return@withContext false
+        
+        val ptzSoapClient = ONVIFSoapClient(ptzUrl, credentials)
+        
+        val (panSpeed, tiltSpeed) = when (direction) {
+            PTZDirection.LEFT -> Pair(-speed, 0f)
+            PTZDirection.RIGHT -> Pair(speed, 0f)
+            PTZDirection.UP -> Pair(0f, speed)
+            PTZDirection.DOWN -> Pair(0f, -speed)
         }
         
-        android.util.Log.d("ONVIF", "Using profile token: $token")
-        
-        val velocity = when (direction) {
-            PTZDirection.UP -> mapOf("PanTilt" to mapOf("x" to 0.0, "y" to speed))
-            PTZDirection.DOWN -> mapOf("PanTilt" to mapOf("x" to 0.0, "y" to -speed))
-            PTZDirection.LEFT -> mapOf("PanTilt" to mapOf("x" to -speed, "y" to 0.0))
-            PTZDirection.RIGHT -> mapOf("PanTilt" to mapOf("x" to speed, "y" to 0.0))
-        }
-
-        val params = mapOf(
+        val moveParams = mapOf(
             "ProfileToken" to token,
-            "Velocity" to velocity
+            "Velocity" to """
+                <PanTilt x="$panSpeed" y="$tiltSpeed"/>
+                <Zoom x="0.0"/>
+            """.trimIndent()
         )
-
-        android.util.Log.d("ONVIF", "Sending ContinuousMove SOAP request...")
-        val result = soapClient.sendRequest("ContinuousMove", PTZ_NAMESPACE, params) != null
-        android.util.Log.d("ONVIF", "ContinuousMove result: $result")
-        result
+        
+        val response = ptzSoapClient.sendRequest("ContinuousMove", PTZ_NAMESPACE, moveParams)
+        android.util.Log.d("PTZ_CONTROLLER", "ContinuousMove response: ${response != null}")
+        return@withContext response != null
     }
 
     suspend fun stop(): Boolean = withContext(Dispatchers.IO) {
+        android.util.Log.d("PTZ_CONTROLLER", "stop() called")
         val token = profileToken ?: return@withContext false
+        val ptzUrl = ptzServiceUrl ?: return@withContext false
         
-        val params = mapOf(
-            "ProfileToken" to token,
-            "PanTilt" to true,
-            "Zoom" to true
-        )
-
-        soapClient.sendRequest("Stop", PTZ_NAMESPACE, params) != null
+        val ptzSoapClient = ONVIFSoapClient(ptzUrl, credentials)
+        val stopParams = mapOf("ProfileToken" to token)
+        
+        val response = ptzSoapClient.sendRequest("Stop", PTZ_NAMESPACE, stopParams)
+        android.util.Log.d("PTZ_CONTROLLER", "Stop response: ${response != null}")
+        return@withContext response != null
     }
 
-    suspend fun zoom(factor: Float): Boolean = withContext(Dispatchers.IO) {
+    suspend fun zoom(direction: ZoomDirection, speed: Float = 0.5f): Boolean = withContext(Dispatchers.IO) {
         val token = profileToken ?: return@withContext false
+        val ptzUrl = ptzServiceUrl ?: return@withContext false
         
-        val velocity = mapOf("Zoom" to mapOf("x" to factor))
-        val params = mapOf(
+        val ptzSoapClient = ONVIFSoapClient(ptzUrl, credentials)
+        
+        val zoomSpeed = when (direction) {
+            ZoomDirection.IN -> speed
+            ZoomDirection.OUT -> -speed
+        }
+        
+        val zoomParams = mapOf(
             "ProfileToken" to token,
-            "Velocity" to velocity
+            "Velocity" to """
+                <PanTilt x="0.0" y="0.0"/>
+                <Zoom x="$zoomSpeed"/>
+            """.trimIndent()
         )
-
-        soapClient.sendRequest("ContinuousMove", PTZ_NAMESPACE, params) != null
+        
+        val response = ptzSoapClient.sendRequest("ContinuousMove", PTZ_NAMESPACE, zoomParams)
+        return@withContext response != null
     }
 
     suspend fun gotoPreset(presetToken: String): Boolean = withContext(Dispatchers.IO) {
         val token = profileToken ?: return@withContext false
+        val ptzUrl = ptzServiceUrl ?: return@withContext false
         
-        val params = mapOf(
+        val ptzSoapClient = ONVIFSoapClient(ptzUrl, credentials)
+        val presetParams = mapOf(
             "ProfileToken" to token,
             "PresetToken" to presetToken
         )
-
-        soapClient.sendRequest("GotoPreset", PTZ_NAMESPACE, params) != null
+        
+        val response = ptzSoapClient.sendRequest("GotoPreset", PTZ_NAMESPACE, presetParams)
+        return@withContext response != null
     }
 
-    suspend fun setPreset(name: String): String? = withContext(Dispatchers.IO) {
-        val token = profileToken ?: return@withContext null
+    suspend fun setPreset(presetName: String): Boolean = withContext(Dispatchers.IO) {
+        val token = profileToken ?: return@withContext false
+        val ptzUrl = ptzServiceUrl ?: return@withContext false
         
-        val params = mapOf(
+        val ptzSoapClient = ONVIFSoapClient(ptzUrl, credentials)
+        val presetParams = mapOf(
             "ProfileToken" to token,
-            "PresetName" to name
+            "PresetName" to presetName
         )
-
-        val response = soapClient.sendRequest("SetPreset", PTZ_NAMESPACE, params)
-        val presetToken = response?.getPropertyAsString("PresetToken")
         
-        // Save preset locally
-        presetToken?.let { token ->
-            val deviceId = serviceUrl // Use service URL as device ID
-            val preset = PTZPreset(
-                id = "${deviceId}_${name}",
-                name = name,
-                deviceId = deviceId,
-                presetToken = token
-            )
-            PTZPresetManager.addPreset(preset)
-        }
-        
-        presetToken
-    }
-
-    suspend fun getPresets(): List<PTZPreset> = withContext(Dispatchers.IO) {
-        val deviceId = serviceUrl // Use service URL as device ID
-        PTZPresetManager.getPresetsForDevice(deviceId)
-    }
-
-    private fun getFirstProfile(): String? {
-        return try {
-            val response = soapClient.sendRequest("GetProfiles", "http://www.onvif.org/ver10/media/wsdl")
-            response?.getProperty("Profiles")?.let { profiles ->
-                // Extract first profile token - simplified parsing
-                val tokenStart = profiles.indexOf("token=\"") + 7
-                val tokenEnd = profiles.indexOf("\"", tokenStart)
-                if (tokenStart > 6 && tokenEnd > tokenStart) {
-                    profiles.substring(tokenStart, tokenEnd)
-                } else null
-            }
-        } catch (e: Exception) {
-            null
-        }
+        val response = ptzSoapClient.sendRequest("SetPreset", PTZ_NAMESPACE, presetParams)
+        return@withContext response != null
     }
 }
 
 enum class PTZDirection {
-    UP, DOWN, LEFT, RIGHT
+    LEFT, RIGHT, UP, DOWN
+}
+
+enum class ZoomDirection {
+    IN, OUT
 }

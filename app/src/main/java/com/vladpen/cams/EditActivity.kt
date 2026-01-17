@@ -58,12 +58,16 @@ class EditActivity : AppCompatActivity() {
             binding.cbAlert.isChecked = stream.alert == true
 
             // Populate ONVIF fields if this is an ONVIF device
-            if (stream.isOnvifDevice) {
-                binding.etOnvifUrl.setText(stream.onvifServiceUrl ?: "")
-                stream.onvifCredentials?.let { creds ->
-                    binding.etOnvifUsername.setText(creds.username)
-                    binding.etOnvifPassword.setText(creds.password)
+            if (stream.isOnvifDevice && stream.onvifServiceUrl != null) {
+                val credentials = stream.onvifCredentials
+                val onvifUrl = if (credentials != null) {
+                    "onvif://${credentials.username}:${credentials.password}@${stream.onvifServiceUrl!!.removePrefix("http://")}"
+                } else {
+                    stream.onvifServiceUrl!!
                 }
+                binding.etOnvifUrl.setText(onvifUrl)
+                binding.cbInvertHorizontal.isChecked = stream.invertHorizontalPTZ
+                binding.cbInvertVertical.isChecked = stream.invertVerticalPTZ
                 // Show ONVIF configuration
                 toggleOnvifConfiguration()
             }
@@ -172,13 +176,11 @@ class EditActivity : AppCompatActivity() {
 
         // Handle ONVIF configuration
         val onvifUrl = binding.etOnvifUrl.text.toString().trim()
-        val onvifUsername = binding.etOnvifUsername.text.toString().trim()
-        val onvifPassword = binding.etOnvifPassword.text.toString().trim()
-        
-        val isOnvifDevice = onvifUrl.isNotEmpty()
-        val onvifCredentials = if (onvifUsername.isNotEmpty() && onvifPassword.isNotEmpty()) {
-            ONVIFCredentials(onvifUsername, onvifPassword)
+        val parsedOnvif = if (onvifUrl.isNotEmpty()) {
+            ONVIFUrlParser.parseOnvifUrl(onvifUrl)
         } else null
+        
+        val isOnvifDevice = parsedOnvif != null
 
         var newStream = StreamDataModel(
             name = binding.etEditName.text.toString().trim(),
@@ -188,7 +190,9 @@ class EditActivity : AppCompatActivity() {
             sftp = if (sftpUrl != "") sftpUrl else null,
             alert = if (binding.cbAlert.isChecked && sftpUrl != "") true else null,
             isOnvifDevice = isOnvifDevice,
-            onvifServiceUrl = if (isOnvifDevice) onvifUrl else null,
+            onvifServiceUrl = parsedOnvif?.serviceUrl,
+            invertHorizontalPTZ = binding.cbInvertHorizontal.isChecked,
+            invertVerticalPTZ = binding.cbInvertVertical.isChecked,
             deviceCapabilities = if (isOnvifDevice) {
                 // Default capabilities - will be updated when device is tested
                 DeviceCapabilities(true, true, 
@@ -198,8 +202,8 @@ class EditActivity : AppCompatActivity() {
         )
         
         // Apply credentials if provided
-        if (onvifCredentials != null) {
-            newStream = newStream.withCredentials(onvifCredentials)
+        if (parsedOnvif?.credentials != null) {
+            newStream = newStream.withCredentials(parsedOnvif.credentials)
         }
         if (streamId < 0)
             streamId = StreamData.add(newStream)
@@ -373,13 +377,15 @@ class EditActivity : AppCompatActivity() {
             // Hide ONVIF fields
             binding.tvOnvifLabel.visibility = View.GONE
             binding.etOnvifUrl.visibility = View.GONE
-            binding.llOnvifCredentials.visibility = View.GONE
+            binding.cbInvertHorizontal.visibility = View.GONE
+            binding.cbInvertVertical.visibility = View.GONE
             binding.tvAddOnvif.text = "Add ONVIF Configuration"
         } else {
             // Show ONVIF fields
             binding.tvOnvifLabel.visibility = View.VISIBLE
             binding.etOnvifUrl.visibility = View.VISIBLE
-            binding.llOnvifCredentials.visibility = View.VISIBLE
+            binding.cbInvertHorizontal.visibility = View.VISIBLE
+            binding.cbInvertVertical.visibility = View.VISIBLE
             binding.tvAddOnvif.text = "Hide ONVIF Configuration"
         }
     }

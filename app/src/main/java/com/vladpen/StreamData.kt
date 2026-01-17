@@ -24,7 +24,9 @@ data class StreamDataModel(
     val isOnvifDevice: Boolean = false,
     val onvifServiceUrl: String? = null,
     private val encryptedCredentials: String? = null,
-    val deviceCapabilities: DeviceCapabilities? = null
+    val deviceCapabilities: DeviceCapabilities? = null,
+    val invertHorizontalPTZ: Boolean = false,
+    val invertVerticalPTZ: Boolean = false
 ) {
     // Secure credential access
     val onvifCredentials: ONVIFCredentials?

@@ -1,87 +1,111 @@
-# ONVIF PTZ Control Requirements
+# ONVIF PTZ Control and Motion Detection Implementation Requirements
+
+## Overview
+This document outlines the requirements for implementing ONVIF PTZ (Pan-Tilt-Zoom) control and motion detection features in the Android RTSP camera application with touch-based gesture control.
 
 ## User Stories
 
-### Camera Discovery
-WHEN a user opens the camera configuration screen  
-THE SYSTEM SHALL provide an option to discover ONVIF cameras on the network
+### US1: Touch-Based PTZ Control
+**As a** camera operator  
+**I want** to control PTZ movement with intuitive touch gestures and visual feedback  
+**So that** I can quickly and naturally adjust camera position with clear visual guidance
 
-WHEN a user selects "Discover ONVIF Cameras"  
-THE SYSTEM SHALL scan the local network for ONVIF-compatible devices  
-AND display a list of discovered cameras with their names and IP addresses
+#### Acceptance Criteria
+- WHEN the user views a video stream THE SYSTEM SHALL display video in fullscreen mode
+- WHEN the user touches near the center of the screen THE SYSTEM SHALL show a PTZ dot under their finger
+- WHEN the user drags their finger THE SYSTEM SHALL move the PTZ dot to follow their finger position
+- WHEN the user drags up from center THE SYSTEM SHALL move camera up proportionally to drag distance
+- WHEN the user drags down from center THE SYSTEM SHALL move camera down proportionally to drag distance  
+- WHEN the user drags left from center THE SYSTEM SHALL move camera left proportionally to drag distance
+- WHEN the user drags right from center THE SYSTEM SHALL move camera right proportionally to drag distance
+- WHEN the user releases their finger THE SYSTEM SHALL smoothly slide the PTZ dot back to center
+- WHEN the PTZ dot reaches center THE SYSTEM SHALL fade out and disappear
+- WHEN the user touches near center again THE SYSTEM SHALL immediately show the PTZ dot under their finger
+- WHEN no touch activity for 3 seconds THE SYSTEM SHALL hide all PTZ control indicators
 
-WHEN a user selects a discovered ONVIF camera  
-THE SYSTEM SHALL automatically populate the camera configuration with RTSP URL and ONVIF service endpoint
+### US2: ONVIF Device Discovery
+**As a** camera operator  
+**I want** to automatically discover ONVIF cameras on my network  
+**So that** I can easily add them without manual configuration
 
-### PTZ Control Interface
-WHEN a user is viewing a camera stream that supports PTZ  
-THE SYSTEM SHALL display PTZ control buttons on the video interface
+#### Acceptance Criteria
+- WHEN the user taps "Discover ONVIF Cameras" THE SYSTEM SHALL scan the local network for ONVIF devices
+- WHEN ONVIF devices are found THE SYSTEM SHALL display a list with device names and IP addresses
+- WHEN the user selects a discovered device THE SYSTEM SHALL auto-populate camera settings
+- WHEN discovery fails THE SYSTEM SHALL show appropriate error message
 
-WHEN a user taps directional arrows (up, down, left, right)  
-THE SYSTEM SHALL send continuous move commands to the camera in the selected direction
+### US3: Manual ONVIF Configuration
+**As a** camera operator  
+**I want** to manually configure ONVIF settings  
+**So that** I can connect to cameras that don't support auto-discovery
 
-WHEN a user releases a directional arrow  
-THE SYSTEM SHALL send a stop command to halt camera movement
+#### Acceptance Criteria
+- WHEN configuring a camera THE SYSTEM SHALL provide fields for ONVIF service URL, username, and password
+- WHEN ONVIF credentials are provided THE SYSTEM SHALL encrypt and store them securely
+- WHEN invalid ONVIF settings are entered THE SYSTEM SHALL show validation errors
+- WHEN ONVIF is configured THE SYSTEM SHALL test connectivity and show status
 
-WHEN a user taps zoom in (+) or zoom out (-)  
-THE SYSTEM SHALL send zoom commands to the camera
+### US4: Motion Detection Events
+**As a** security operator  
+**I want** to receive visual notifications when motion is detected  
+**So that** I can respond quickly to security events
 
-### PTZ Capabilities Detection
-WHEN the app connects to an ONVIF camera  
-THE SYSTEM SHALL query the camera's PTZ capabilities  
-AND only display controls for supported movements (pan, tilt, zoom)
+#### Acceptance Criteria
+- WHEN motion is detected via ONVIF events THE SYSTEM SHALL display a red border around the video
+- WHEN motion detection is active THE SYSTEM SHALL show a motion indicator icon
+- WHEN motion stops THE SYSTEM SHALL fade out the red border over 3 seconds
+- WHEN motion detection is disabled THE SYSTEM SHALL not show motion indicators
 
-WHEN a camera does not support PTZ  
-THE SYSTEM SHALL not display PTZ controls
+### US5: PTZ Preset Management
+**As a** camera operator  
+**I want** to save and recall camera positions  
+**So that** I can quickly return to important viewing angles
 
-### Preset Management
-WHEN a user long-presses on the video while PTZ controls are visible  
-THE SYSTEM SHALL show options to save current position as a preset
+#### Acceptance Criteria
+- WHEN the user long-presses during PTZ control THE SYSTEM SHALL offer to save current position as preset
+- WHEN presets exist THE SYSTEM SHALL show preset selection in PTZ controls
+- WHEN a preset is selected THE SYSTEM SHALL move camera to saved position
+- WHEN presets are managed THE SYSTEM SHALL allow renaming and deletion
 
-WHEN a user saves a preset  
-THE SYSTEM SHALL store the preset with a user-defined name
+## Technical Requirements
 
-WHEN a user accesses preset menu  
-THE SYSTEM SHALL display saved presets and allow navigation to them
+### Performance Requirements
+- PTZ commands SHALL respond within 200ms of user input
+- Video playback SHALL maintain smooth framerate during PTZ operations
+- ONVIF discovery SHALL complete within 10 seconds
+- Motion detection SHALL trigger visual feedback within 100ms
 
-### Error Handling
-WHEN ONVIF discovery fails  
-THE SYSTEM SHALL display an error message indicating network issues or no cameras found
+### Security Requirements
+- ONVIF credentials SHALL be encrypted using Android Keystore
+- All ONVIF communications SHALL use WS-Security authentication
+- Input validation SHALL prevent ONVIF injection attacks
+- Network communications SHALL validate SSL certificates when available
 
-WHEN PTZ commands fail  
-THE SYSTEM SHALL show a brief error notification without disrupting video playbook
+### Compatibility Requirements
+- SHALL support ONVIF Profile S specification
+- SHALL maintain backward compatibility with existing RTSP functionality
+- SHALL work on Android API level 21 and above
+- SHALL handle network connectivity changes gracefully
 
-WHEN ONVIF authentication fails  
-THE SYSTEM SHALL prompt for credentials and retry the connection
+### User Interface Requirements
+- Touch gestures SHALL provide haptic feedback
+- PTZ controls SHALL auto-hide after 3 seconds of inactivity
+- Motion detection indicators SHALL be clearly visible but non-intrusive
+- Error messages SHALL be user-friendly and actionable
 
-### ONVIF Motion Detection Events
-WHEN the app connects to an ONVIF camera  
-THE SYSTEM SHALL investigate and determine if the camera supports ONVIF motion detection events
+## Non-Functional Requirements
 
-WHEN an ONVIF camera supports motion detection events  
-THE SYSTEM SHALL subscribe to motion detection notifications from the camera
+### Reliability
+- PTZ operations SHALL handle network timeouts gracefully
+- System SHALL recover from temporary ONVIF service interruptions
+- Motion detection SHALL not cause memory leaks during extended operation
 
-WHEN a motion detection event is received from an ONVIF camera  
-THE SYSTEM SHALL display a visual indicator on the camera stream (e.g., red border or motion icon)
+### Usability
+- Touch-based PTZ control SHALL feel natural and responsive
+- Discovery process SHALL require minimal user interaction
+- Configuration SHALL provide clear feedback on connection status
 
-WHEN motion detection events are active  
-THE SYSTEM SHALL provide an option to enable/disable motion event notifications in camera settings
-
-WHEN motion detection events are enabled  
-THE SYSTEM SHALL send local notifications to the user when motion is detected
-
-WHEN investigating ONVIF motion detection capabilities  
-THE SYSTEM SHALL log findings about event support and implementation requirements for future development
-
-## Acceptance Criteria
-
-- PTZ controls appear only for ONVIF cameras with PTZ capabilities
-- Camera movement is smooth and responsive to user input
-- Discovery finds cameras within 10 seconds on local network
-- PTZ controls do not interfere with existing video playback functionality
-- Preset positions are saved persistently across app sessions
-- All PTZ operations work with standard ONVIF Profile S cameras
-- Motion detection events are investigated and implemented if supported by ONVIF standard
-- Motion detection visual indicators do not obstruct video viewing
-- Motion event notifications can be toggled on/off per camera
-- Investigation findings are documented for future reference
+### Maintainability
+- ONVIF implementation SHALL follow clean architecture principles
+- Code SHALL include comprehensive unit tests
+- API interfaces SHALL be well-documented

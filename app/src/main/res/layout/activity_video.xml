@@ -1,54 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="false"
     tools:context=".VideoActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/clScreenBox"
+    <org.videolan.libvlc.util.VLCVideoLayout
+        android:id="@+id/videoLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent" />
 
-        <FrameLayout
-            android:id="@+id/flVideoBox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+    <com.vladpen.onvif.TouchGestureOverlay
+        android:id="@+id/ptzOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
-            <org.videolan.libvlc.util.VLCVideoLayout
-                android:id="@+id/videoLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </FrameLayout>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabPTZ"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:src="@android:drawable/ic_menu_directions"
-            android:contentDescription="PTZ Controls"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/videoBar" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <include android:id="@+id/progressBar" layout="@layout/progress_bar" />
-
-    <include android:id="@+id/videoBar" layout="@layout/video_bar" />
-
-    <include android:id="@+id/toolbar" layout="@layout/toolbar" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

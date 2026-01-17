@@ -179,7 +179,8 @@ class PTZControlView @JvmOverloads constructor(
     private fun startZoom(factor: Float) {
         controlJob?.cancel()
         controlJob = scope.launch {
-            ptzController?.zoom(factor)
+            val direction = if (factor > 0) ZoomDirection.IN else ZoomDirection.OUT
+            ptzController?.zoom(direction, kotlin.math.abs(factor))
             delay(100)
             ptzController?.stop()
         }

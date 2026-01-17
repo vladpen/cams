@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.PopupMenu
 import com.vladpen.Settings
 import com.vladpen.StreamData
+import com.vladpen.onvif.PTZSettingsDialog
 
 class MainMenu(val context: MainActivity) {
 
@@ -56,5 +57,9 @@ class MainMenu(val context: MainActivity) {
     private fun aboutScreen() {
         val intent = Intent(context, AboutActivity::class.java)
         context.startActivity(intent)
+    }
+    
+    fun ptzSettings() {
+        PTZSettingsDialog(context).show()
     }
 }

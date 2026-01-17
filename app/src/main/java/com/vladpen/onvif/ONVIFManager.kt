@@ -176,7 +176,8 @@ class ONVIFManager private constructor() {
     }
 
     suspend fun performZoom(deviceId: String, factor: Float): Boolean {
-        return ptzControllers[deviceId]?.zoom(factor) ?: false
+        val direction = if (factor > 0) ZoomDirection.IN else ZoomDirection.OUT
+        return ptzControllers[deviceId]?.zoom(direction, kotlin.math.abs(factor)) ?: false
     }
 
     suspend fun gotoPreset(deviceId: String, presetToken: String): Boolean {
@@ -184,6 +185,7 @@ class ONVIFManager private constructor() {
     }
 
     suspend fun setPreset(deviceId: String, name: String): String? {
-        return ptzControllers[deviceId]?.setPreset(name)
+        val success = ptzControllers[deviceId]?.setPreset(name) ?: false
+        return if (success) name else null
     }
 }
