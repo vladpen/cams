@@ -57,6 +57,17 @@ class EditActivity : AppCompatActivity() {
             binding.rbEditUdp.isChecked = !stream.tcp
             binding.cbAlert.isChecked = stream.alert == true
 
+            // Populate ONVIF fields if this is an ONVIF device
+            if (stream.isOnvifDevice) {
+                binding.etOnvifUrl.setText(stream.onvifServiceUrl ?: "")
+                stream.onvifCredentials?.let { creds ->
+                    binding.etOnvifUsername.setText(creds.username)
+                    binding.etOnvifPassword.setText(creds.password)
+                }
+                // Show ONVIF configuration
+                toggleOnvifConfiguration()
+            }
+
             val startup = SourceData.getStartup()
             binding.cbStartup.isChecked = (
                     startup != null && startup.type == "stream" && startup.id == streamId
@@ -100,6 +111,9 @@ class EditActivity : AppCompatActivity() {
         }
         binding.tvDiscoverOnvif.setOnClickListener {
             discoverOnvifDevices()
+        }
+        binding.tvAddOnvif.setOnClickListener {
+            toggleOnvifConfiguration()
         }
         binding.btnSave.setOnClickListener {
             save()
@@ -156,14 +170,37 @@ class EditActivity : AppCompatActivity() {
         if (!validate(streamUrl, channelUrl))
             return
 
-        val newStream = StreamDataModel(
+        // Handle ONVIF configuration
+        val onvifUrl = binding.etOnvifUrl.text.toString().trim()
+        val onvifUsername = binding.etOnvifUsername.text.toString().trim()
+        val onvifPassword = binding.etOnvifPassword.text.toString().trim()
+        
+        val isOnvifDevice = onvifUrl.isNotEmpty()
+        val onvifCredentials = if (onvifUsername.isNotEmpty() && onvifPassword.isNotEmpty()) {
+            ONVIFCredentials(onvifUsername, onvifPassword)
+        } else null
+
+        var newStream = StreamDataModel(
             binding.etEditName.text.toString().trim(),
             streamUrl,
             if (channelUrl != "") channelUrl else null,
             binding.rbEditTcp.isChecked,
             if (sftpUrl != "") sftpUrl else null,
-            if (binding.cbAlert.isChecked && sftpUrl != "") true else null
+            if (binding.cbAlert.isChecked && sftpUrl != "") true else null,
+            isOnvifDevice = isOnvifDevice,
+            onvifServiceUrl = if (isOnvifDevice) onvifUrl else null,
+            deviceCapabilities = if (isOnvifDevice) {
+                // Default capabilities - will be updated when device is tested
+                DeviceCapabilities(true, true, 
+                    PTZCapabilities(true, true, true, true, 10),
+                    EventCapabilities(true, false, 5))
+            } else null
         )
+        
+        // Apply credentials if provided
+        if (onvifCredentials != null) {
+            newStream = newStream.withCredentials(onvifCredentials)
+        }
         if (streamId < 0)
             streamId = StreamData.add(newStream)
         else
@@ -327,5 +364,23 @@ class EditActivity : AppCompatActivity() {
             }
             .setNegativeButton("Skip", null)
             .show()
+    }
+
+    private fun toggleOnvifConfiguration() {
+        val isVisible = binding.tvOnvifLabel.visibility == View.VISIBLE
+        
+        if (isVisible) {
+            // Hide ONVIF fields
+            binding.tvOnvifLabel.visibility = View.GONE
+            binding.etOnvifUrl.visibility = View.GONE
+            binding.llOnvifCredentials.visibility = View.GONE
+            binding.tvAddOnvif.text = "Add ONVIF Configuration"
+        } else {
+            // Show ONVIF fields
+            binding.tvOnvifLabel.visibility = View.VISIBLE
+            binding.etOnvifUrl.visibility = View.VISIBLE
+            binding.llOnvifCredentials.visibility = View.VISIBLE
+            binding.tvAddOnvif.text = "Hide ONVIF Configuration"
+        }
     }
 }
