@@ -21,24 +21,24 @@
 
 ## Phase 2: ONVIF Protocol Implementation
 
-- [ ] **Implement ONVIF SOAP client**
+- [x] **Implement ONVIF SOAP client**
   - Create ONVIFSoapClient class for basic SOAP communication
   - Implement authentication (WS-UsernameToken and HTTP Digest)
   - Add error handling and timeout management
 
-- [ ] **Implement WS-Discovery for device discovery**
+- [x] **Implement WS-Discovery for device discovery**
   - Create ONVIFDiscovery class
   - Implement UDP multicast probe/match protocol
   - Add device information parsing from discovery responses
 
-- [ ] **Implement device capabilities detection**
+- [x] **Implement device capabilities detection**
   - Query device services and capabilities
   - Parse PTZ capabilities from device responses
   - Parse event capabilities from device responses
 
 ## Phase 3: PTZ Control Implementation
 
-- [ ] **Create PTZController class**
+- [x] **Create PTZController class**
   - Implement continuousMove() method
   - Implement stop() method
   - Implement zoom() method
@@ -50,7 +50,7 @@
   - Implement preset storage in local database
   - Add preset UI management
 
-- [ ] **Create PTZ control UI overlay**
+- [x] **Create PTZ control UI overlay**
   - Design PTZControlView custom view
   - Implement directional pad with touch handling
   - Add zoom controls (+/- buttons)
