@@ -19,6 +19,9 @@ Features:
 - Maximum security and data privacy.
 - TCP/UDP protocol switching.
   This option is important when viewing cameras over the internet, where UDP may not be supported or work poorly.
+- **ONVIF PTZ Control**: Pan, tilt, and zoom control for ONVIF-compatible cameras.
+- **ONVIF Device Discovery**: Automatic detection of ONVIF cameras on the network.
+- **ONVIF Motion Detection**: Real-time motion detection events from ONVIF cameras.
 
 <img src="https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/1_main_ru.jpg"
 alt="Main screen"
@@ -81,6 +84,40 @@ For SFTP server, it's better to create chroot, for example, as described [here](
 
 **Tip:** you can use emoji as icons in camera names.
 For example, the screenshots above use icons from the standard mobile phone set.
+
+## ONVIF Setup
+
+This fork includes enhanced ONVIF support for automatic camera discovery and PTZ control.
+
+### ONVIF Camera Discovery
+
+1. In the camera edit screen, tap "Discover ONVIF Cameras"
+2. The app will scan your network for ONVIF-compatible devices
+3. Select a discovered camera to auto-populate connection settings
+4. Enter ONVIF credentials if required
+
+### PTZ Control
+
+For ONVIF cameras with PTZ capabilities:
+- Touch the video screen to show PTZ controls
+- Use directional arrows for pan and tilt movement
+- Use +/- buttons for zoom control
+- Controls auto-hide after 5 seconds of inactivity
+
+### Motion Detection Events
+
+ONVIF cameras supporting motion detection will:
+- Display a red border around the video when motion is detected
+- Show a motion indicator icon in the top-right corner
+- Send local notifications (if enabled in camera settings)
+
+### Supported ONVIF Features
+
+- **Device Discovery**: WS-Discovery protocol for automatic camera detection
+- **PTZ Control**: Pan, tilt, zoom, and preset management
+- **Motion Events**: Real-time motion detection notifications
+- **Profile S Compliance**: Compatible with ONVIF Profile S cameras
+- **Secure Authentication**: WS-UsernameToken and HTTP Digest authentication
 
 ## Motion Detection Alerts
 

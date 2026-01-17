@@ -80,7 +80,26 @@ class PTZController(
         )
 
         val response = soapClient.sendRequest("SetPreset", PTZ_NAMESPACE, params)
-        response?.getPropertyAsString("PresetToken")
+        val presetToken = response?.getPropertyAsString("PresetToken")
+        
+        // Save preset locally
+        presetToken?.let { token ->
+            val deviceId = serviceUrl // Use service URL as device ID
+            val preset = PTZPreset(
+                id = "${deviceId}_${name}",
+                name = name,
+                deviceId = deviceId,
+                presetToken = token
+            )
+            PTZPresetManager.addPreset(preset)
+        }
+        
+        presetToken
+    }
+
+    suspend fun getPresets(): List<PTZPreset> = withContext(Dispatchers.IO) {
+        val deviceId = serviceUrl // Use service URL as device ID
+        PTZPresetManager.getPresetsForDevice(deviceId)
     }
 
     private fun getFirstProfile(): String? {

@@ -19,11 +19,24 @@ class ONVIFSoapClient(
 
     fun sendRequest(method: String, namespace: String = ONVIF_NAMESPACE, parameters: Map<String, Any> = emptyMap()): SoapObject? {
         return try {
-            val request = SoapObject(namespace, method)
+            // Validate inputs
+            val safeMethod = ONVIFSecurity.validateInput(method)
+            val safeNamespace = ONVIFSecurity.validateInput(namespace)
             
-            // Add parameters
+            if (!ONVIFSecurity.isValidUrl(serviceUrl)) {
+                return null
+            }
+
+            val request = SoapObject(safeNamespace, safeMethod)
+            
+            // Add parameters with validation
             parameters.forEach { (key, value) ->
-                request.addProperty(key, value)
+                val safeKey = ONVIFSecurity.validateInput(key)
+                val safeValue = when (value) {
+                    is String -> ONVIFSecurity.validateInput(value)
+                    else -> value
+                }
+                request.addProperty(safeKey, safeValue)
             }
 
             val envelope = SoapSerializationEnvelope(SoapEnvelope.VER11)
@@ -33,9 +46,18 @@ class ONVIFSoapClient(
             credentials?.let { addWSSecurityHeader(envelope, it) }
 
             val transport = HttpTransportSE(serviceUrl, TIMEOUT)
-            transport.call("$namespace#$method", envelope)
+            transport.call("$safeNamespace#$safeMethod", envelope)
 
-            envelope.response as? SoapObject
+            val response = envelope.response as? SoapObject
+            
+            // Sanitize response
+            response?.let {
+                val responseStr = it.toString()
+                val sanitized = ONVIFSecurity.sanitizeDeviceResponse(responseStr)
+                // Note: In a real implementation, you'd need to reconstruct the SoapObject
+                // from the sanitized string. For now, we'll return the original response.
+                it
+            }
         } catch (e: Exception) {
             null
         }

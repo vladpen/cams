@@ -10,6 +10,8 @@ import com.vladpen.cams.MainApp.Companion.context
 
 import com.vladpen.onvif.DeviceCapabilities
 import com.vladpen.onvif.ONVIFCredentials
+import com.vladpen.onvif.ONVIFSecurity
+import com.vladpen.cams.MainApp.Companion.context
 
 data class StreamDataModel(
     val name: String,
@@ -21,9 +23,22 @@ data class StreamDataModel(
     // ONVIF properties
     val isOnvifDevice: Boolean = false,
     val onvifServiceUrl: String? = null,
-    val onvifCredentials: ONVIFCredentials? = null,
+    private val encryptedCredentials: String? = null,
     val deviceCapabilities: DeviceCapabilities? = null
-)
+) {
+    // Secure credential access
+    val onvifCredentials: ONVIFCredentials?
+        get() = encryptedCredentials?.let { 
+            ONVIFSecurity.decryptCredentials(context, it) 
+        }
+    
+    fun withCredentials(credentials: ONVIFCredentials?): StreamDataModel {
+        val encrypted = credentials?.let { 
+            ONVIFSecurity.encryptCredentials(context, it) 
+        }
+        return copy(encryptedCredentials = encrypted)
+    }
+}
 
 object StreamData {
     private const val STREAM_FILE_NAME = "streams.json"
