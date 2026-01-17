@@ -49,10 +49,29 @@ WHEN ONVIF discovery fails
 THE SYSTEM SHALL display an error message indicating network issues or no cameras found
 
 WHEN PTZ commands fail  
-THE SYSTEM SHALL show a brief error notification without disrupting video playback
+THE SYSTEM SHALL show a brief error notification without disrupting video playbook
 
 WHEN ONVIF authentication fails  
 THE SYSTEM SHALL prompt for credentials and retry the connection
+
+### ONVIF Motion Detection Events
+WHEN the app connects to an ONVIF camera  
+THE SYSTEM SHALL investigate and determine if the camera supports ONVIF motion detection events
+
+WHEN an ONVIF camera supports motion detection events  
+THE SYSTEM SHALL subscribe to motion detection notifications from the camera
+
+WHEN a motion detection event is received from an ONVIF camera  
+THE SYSTEM SHALL display a visual indicator on the camera stream (e.g., red border or motion icon)
+
+WHEN motion detection events are active  
+THE SYSTEM SHALL provide an option to enable/disable motion event notifications in camera settings
+
+WHEN motion detection events are enabled  
+THE SYSTEM SHALL send local notifications to the user when motion is detected
+
+WHEN investigating ONVIF motion detection capabilities  
+THE SYSTEM SHALL log findings about event support and implementation requirements for future development
 
 ## Acceptance Criteria
 
@@ -62,3 +81,7 @@ THE SYSTEM SHALL prompt for credentials and retry the connection
 - PTZ controls do not interfere with existing video playback functionality
 - Preset positions are saved persistently across app sessions
 - All PTZ operations work with standard ONVIF Profile S cameras
+- Motion detection events are investigated and implemented if supported by ONVIF standard
+- Motion detection visual indicators do not obstruct video viewing
+- Motion event notifications can be toggled on/off per camera
+- Investigation findings are documented for future reference
