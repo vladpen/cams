@@ -1,11 +1,11 @@
-ПОЛИТИКА ЗАЩИТЫ И ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ
+PRIVACY POLICY
 
-Данная Политика в отношении обработки персональных данных (далее – Политика) предназначена исключительно для информирования пользователей о сборе их персональных данных.
+This Privacy Policy regarding the processing of personal data (hereinafter - Policy) is intended solely to inform users about the collection of their personal data.
 
-Настоящее приложение не собирает и не обрабатывает персональные данные пользователя (ФИО, дата рождения, номер телефона, электронная почта и тп), а также не передает их третьим лицам.
+This application does not collect or process user personal data (full name, date of birth, phone number, email, etc.), and does not transfer them to third parties.
 
-Использование приложения означает согласие пользователя с настоящей Политикой; в случае несогласия пользователь должен воздержаться от использования приложения.
+Use of the application means the user's consent to this Policy; in case of disagreement, the user should refrain from using the application.
 
-Данная Политика может быть изменена разработчиком приложения. При внесении изменений в актуальной редакции указывается дата последнего обновления.
+This Policy may be changed by the application developer. When making changes, the date of the last update is indicated in the current version.
 
-17.05.2022 г.
+May 17, 2022
