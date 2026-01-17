@@ -21,7 +21,5 @@
 #-renamesourcefileattribute SourceFile
 
 # ONVIF library rules
--keep class org.ksoap2.** { *; }
 -keep class org.apache.http.** { *; }
 -dontwarn org.apache.http.**
--dontwarn org.ksoap2.**

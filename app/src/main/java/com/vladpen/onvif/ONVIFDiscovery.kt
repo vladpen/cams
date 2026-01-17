@@ -121,7 +121,9 @@ class ONVIFDiscovery {
             val response = client.sendRequest("GetDeviceInformation")
             
             response?.let {
-                val name = it.getPropertyAsString("Manufacturer") + " " + it.getPropertyAsString("Model")
+                val manufacturer = it.getProperty("Manufacturer") ?: "Unknown"
+                val model = it.getProperty("Model") ?: "Camera"
+                val name = "$manufacturer $model"
                 val capabilities = getDeviceCapabilities(serviceUrl)
                 DeviceInfo(name, capabilities)
             }
@@ -136,14 +138,15 @@ class ONVIFDiscovery {
             val response = client.sendRequest("GetCapabilities")
             
             response?.let {
-                val ptzUrl = extractCapabilityUrl(it, "PTZ")
-                val eventUrl = extractCapabilityUrl(it, "Events")
+                val responseStr = it.toString()
+                val ptzSupported = responseStr.contains("PTZ")
+                val eventSupported = responseStr.contains("Events")
                 
                 DeviceCapabilities(
-                    supportsPTZ = ptzUrl != null,
-                    supportsMotionEvents = eventUrl != null,
-                    ptzCapabilities = if (ptzUrl != null) PTZCapabilities(true, true, true, true, 10) else null,
-                    eventCapabilities = if (eventUrl != null) EventCapabilities(true, false, 5) else null
+                    supportsPTZ = ptzSupported,
+                    supportsMotionEvents = eventSupported,
+                    ptzCapabilities = if (ptzSupported) PTZCapabilities(true, true, true, true, 10) else null,
+                    eventCapabilities = if (eventSupported) EventCapabilities(true, false, 5) else null
                 )
             } ?: DeviceCapabilities(false, false, null, null)
         } catch (e: Exception) {
@@ -151,10 +154,10 @@ class ONVIFDiscovery {
         }
     }
 
-    private fun extractCapabilityUrl(response: SoapObject, capability: String): String? {
+    private fun extractCapabilityUrl(response: ONVIFResponse, capability: String): String? {
         // Simplified capability URL extraction
         return try {
-            response.getProperty(capability)?.toString()
+            response.getProperty(capability)
         } catch (e: Exception) {
             null
         }

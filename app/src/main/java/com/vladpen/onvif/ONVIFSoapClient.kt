@@ -1,12 +1,16 @@
 package com.vladpen.onvif
 
-import org.ksoap2.SoapEnvelope
-import org.ksoap2.serialization.SoapObject
-import org.ksoap2.serialization.SoapSerializationEnvelope
-import org.ksoap2.transport.HttpTransportSE
+import kotlinx.coroutines.*
+import java.io.StringWriter
+import java.net.HttpURLConnection
+import java.net.URL
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.xml.parsers.DocumentBuilderFactory
+import org.w3c.dom.Document
+import org.w3c.dom.Element
+import java.io.ByteArrayInputStream
 
 class ONVIFSoapClient(
     private val serviceUrl: String,
@@ -17,7 +21,7 @@ class ONVIFSoapClient(
         private const val ONVIF_NAMESPACE = "http://www.onvif.org/ver10/device/wsdl"
     }
 
-    fun sendRequest(method: String, namespace: String = ONVIF_NAMESPACE, parameters: Map<String, Any> = emptyMap()): SoapObject? {
+    fun sendRequest(method: String, namespace: String = ONVIF_NAMESPACE, parameters: Map<String, Any> = emptyMap()): ONVIFResponse? {
         return try {
             // Validate inputs
             val safeMethod = ONVIFSecurity.validateInput(method)
@@ -27,62 +31,125 @@ class ONVIFSoapClient(
                 return null
             }
 
-            val request = SoapObject(safeNamespace, safeMethod)
+            val soapEnvelope = createSoapEnvelope(safeMethod, safeNamespace, parameters)
+            val response = sendHttpRequest(soapEnvelope)
             
-            // Add parameters with validation
-            parameters.forEach { (key, value) ->
-                val safeKey = ONVIFSecurity.validateInput(key)
-                val safeValue = when (value) {
-                    is String -> ONVIFSecurity.validateInput(value)
-                    else -> value
-                }
-                request.addProperty(safeKey, safeValue)
-            }
-
-            val envelope = SoapSerializationEnvelope(SoapEnvelope.VER11)
-            envelope.setOutputSoapObject(request)
-
-            // Add WS-Security header if credentials provided
-            credentials?.let { addWSSecurityHeader(envelope, it) }
-
-            val transport = HttpTransportSE(serviceUrl, TIMEOUT)
-            transport.call("$safeNamespace#$safeMethod", envelope)
-
-            val response = envelope.response as? SoapObject
-            
-            // Sanitize response
-            response?.let {
-                val responseStr = it.toString()
-                val sanitized = ONVIFSecurity.sanitizeDeviceResponse(responseStr)
-                // Note: In a real implementation, you'd need to reconstruct the SoapObject
-                // from the sanitized string. For now, we'll return the original response.
-                it
-            }
+            response?.let { parseResponse(it) }
         } catch (e: Exception) {
             null
         }
     }
 
-    private fun addWSSecurityHeader(envelope: SoapSerializationEnvelope, creds: ONVIFCredentials) {
+    private fun createSoapEnvelope(method: String, namespace: String, parameters: Map<String, Any>): String {
+        val securityHeader = credentials?.let { createWSSecurityHeader(it) } ?: ""
+        
+        val parameterXml = parameters.entries.joinToString("") { (key, value) ->
+            "<$key>$value</$key>"
+        }
+
+        return """<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tds="$namespace">
+    <soap:Header>
+        $securityHeader
+    </soap:Header>
+    <soap:Body>
+        <tds:$method>
+            $parameterXml
+        </tds:$method>
+    </soap:Body>
+</soap:Envelope>"""
+    }
+
+    private fun createWSSecurityHeader(creds: ONVIFCredentials): String {
         val created = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US).format(Date())
         val nonce = UUID.randomUUID().toString().replace("-", "").substring(0, 16)
         val digest = createPasswordDigest(nonce, created, creds.password)
 
-        val security = SoapObject("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "Security")
-        val usernameToken = SoapObject("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "UsernameToken")
-        
-        usernameToken.addProperty("Username", creds.username)
-        usernameToken.addProperty("Password", digest)
-        usernameToken.addProperty("Nonce", nonce)
-        usernameToken.addProperty("Created", created)
-        
-        security.addSoapObject(usernameToken)
-        envelope.headerOut = arrayOf(security)
+        return """
+        <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+            <wsse:UsernameToken>
+                <wsse:Username>${creds.username}</wsse:Username>
+                <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordDigest">$digest</wsse:Password>
+                <wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">$nonce</wsse:Nonce>
+                <wsu:Created xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">$created</wsu:Created>
+            </wsse:UsernameToken>
+        </wsse:Security>
+        """.trimIndent()
     }
 
     private fun createPasswordDigest(nonce: String, created: String, password: String): String {
         val digest = MessageDigest.getInstance("SHA-1")
         val input = (nonce + created + password).toByteArray()
         return Base64.getEncoder().encodeToString(digest.digest(input))
+    }
+
+    private fun sendHttpRequest(soapEnvelope: String): String? {
+        return try {
+            val url = URL(serviceUrl)
+            val connection = url.openConnection() as HttpURLConnection
+            
+            connection.requestMethod = "POST"
+            connection.setRequestProperty("Content-Type", "application/soap+xml; charset=utf-8")
+            connection.setRequestProperty("SOAPAction", "")
+            connection.connectTimeout = TIMEOUT
+            connection.readTimeout = TIMEOUT
+            connection.doOutput = true
+
+            connection.outputStream.use { output ->
+                output.write(soapEnvelope.toByteArray())
+            }
+
+            val responseCode = connection.responseCode
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                connection.inputStream.use { input ->
+                    input.bufferedReader().readText()
+                }
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun parseResponse(xmlResponse: String): ONVIFResponse? {
+        return try {
+            val sanitized = ONVIFSecurity.sanitizeDeviceResponse(xmlResponse)
+            val factory = DocumentBuilderFactory.newInstance()
+            val builder = factory.newDocumentBuilder()
+            val document = builder.parse(ByteArrayInputStream(sanitized.toByteArray()))
+            
+            ONVIFResponse(document)
+        } catch (e: Exception) {
+            null
+        }
+    }
+}
+
+class ONVIFResponse(private val document: Document) {
+    fun getProperty(name: String): String? {
+        return try {
+            val elements = document.getElementsByTagName(name)
+            if (elements.length > 0) {
+                elements.item(0).textContent
+            } else null
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    fun getPropertyAsString(name: String): String? = getProperty(name)
+
+    override fun toString(): String {
+        return try {
+            val transformer = javax.xml.transform.TransformerFactory.newInstance().newTransformer()
+            val source = javax.xml.transform.dom.DOMSource(document)
+            val writer = StringWriter()
+            val result = javax.xml.transform.stream.StreamResult(writer)
+            transformer.transform(source, result)
+            writer.toString()
+        } catch (e: Exception) {
+            ""
+        }
     }
 }

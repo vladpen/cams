@@ -60,7 +60,6 @@ dependencies {
     implementation 'com.github.mwiede:jsch:2.27.2'
     
     // ONVIF dependencies
-    implementation 'com.google.code.ksoap2-android:ksoap2-android:3.6.4'
     implementation 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
 
     testImplementation 'junit:junit:4.13.2'

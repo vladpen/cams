@@ -264,6 +264,11 @@ class VideoActivity : AppCompatActivity(), Layout, Player {
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        // Show PTZ controls on touch
+        if (event.action == MotionEvent.ACTION_DOWN) {
+            ptzControlView?.show()
+        }
+        
         val res = gestureDetector.onTouchEvent(event)
         if (res)
             gestureInProgress = true
@@ -391,25 +396,6 @@ class VideoActivity : AppCompatActivity(), Layout, Player {
             // Subscribe to motion events
             onvifManager?.subscribeToMotionEvents(deviceId)
         }
-    }
-
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        // Show PTZ controls on touch
-        if (event.action == MotionEvent.ACTION_DOWN) {
-            ptzControlView?.show()
-        }
-        
-        val res = gestureDetector.onTouchEvent(event)
-        if (res)
-            gestureInProgress = true
-
-        if (event.action == MotionEvent.ACTION_UP) {
-            if (!gestureInProgress)
-                initBars()
-            else
-                gestureInProgress = false
-        }
-        return res || super.onTouchEvent(event)
     }
 
     override fun onDestroy() {

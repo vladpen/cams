@@ -105,7 +105,7 @@ class PTZController(
     private fun getFirstProfile(): String? {
         return try {
             val response = soapClient.sendRequest("GetProfiles", "http://www.onvif.org/ver10/media/wsdl")
-            response?.getProperty("Profiles")?.toString()?.let { profiles ->
+            response?.getProperty("Profiles")?.let { profiles ->
                 // Extract first profile token - simplified parsing
                 val tokenStart = profiles.indexOf("token=\"") + 7
                 val tokenEnd = profiles.indexOf("\"", tokenStart)

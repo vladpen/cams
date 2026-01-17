@@ -124,18 +124,16 @@ class MotionEventService(
         }
     }
 
-    private fun parseEventMessages(response: org.ksoap2.serialization.SoapObject, deviceId: String) {
+    private fun parseEventMessages(response: ONVIFResponse, deviceId: String) {
         try {
             // Simplified event parsing
             val messages = response.getProperty("NotificationMessage")
             if (messages != null) {
-                val messageStr = messages.toString()
-                
                 when {
-                    messageStr.contains("Motion") && messageStr.contains("true") -> {
+                    messages.contains("Motion") && messages.contains("true") -> {
                         listener?.onMotionDetected(deviceId)
                     }
-                    messageStr.contains("Motion") && messageStr.contains("false") -> {
+                    messages.contains("Motion") && messages.contains("false") -> {
                         listener?.onMotionStopped(deviceId)
                     }
                 }
