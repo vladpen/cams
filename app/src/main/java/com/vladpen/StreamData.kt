@@ -8,13 +8,22 @@ import com.vladpen.Utils.getOption
 import com.vladpen.Utils.saveOption
 import com.vladpen.cams.MainApp.Companion.context
 
+import com.vladpen.onvif.DeviceCapabilities
+import com.vladpen.onvif.ONVIFCredentials
+
 data class StreamDataModel(
     val name: String,
     var url: String,
     var url2: String?,
     val tcp: Boolean,
     var sftp: String?,
-    val alert: Boolean?)
+    val alert: Boolean?,
+    // ONVIF properties
+    val isOnvifDevice: Boolean = false,
+    val onvifServiceUrl: String? = null,
+    val onvifCredentials: ONVIFCredentials? = null,
+    val deviceCapabilities: DeviceCapabilities? = null
+)
 
 object StreamData {
     private const val STREAM_FILE_NAME = "streams.json"
