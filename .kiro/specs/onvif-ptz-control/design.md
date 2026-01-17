@@ -1,8 +1,8 @@
-# ONVIF PTZ Control Technical Design
+# ONVIF PTZ Control and Automatic Stream Discovery Technical Design
 
 ## Architecture Overview
 
-The touch-based PTZ control system uses a gesture-driven approach where users interact directly with the video surface to control camera movement. The system provides intuitive, proportional control with visual feedback.
+The enhanced ONVIF system provides automatic RTSP stream discovery and touch-based PTZ control. Users only need to enter an ONVIF URL, and the system automatically discovers and configures RTSP streams while providing intuitive gesture-based camera control.
 
 ## Component Architecture
 
@@ -25,7 +25,83 @@ The touch-based PTZ control system uses a gesture-driven approach where users in
 │                 ONVIFManager                               │
 │  - Executes PTZ commands                                   │
 │  - Manages ONVIF connections                               │
+│  - Discovers RTSP streams automatically                    │
 └─────────────────────────────────────────────────────────────┘
+```
+
+## Automatic Stream Discovery System
+
+### ONVIF Stream Discovery Flow
+```kotlin
+class ONVIFStreamDiscovery {
+    suspend fun discoverStreams(onvifUrl: String, credentials: ONVIFCredentials): StreamDiscoveryResult {
+        // 1. Connect to ONVIF device
+        val deviceClient = ONVIFSoapClient(onvifUrl, credentials)
+        
+        // 2. Get available media profiles
+        val profiles = deviceClient.sendRequest("GetProfiles", MEDIA_NAMESPACE)
+        
+        // 3. Select best profiles for primary/secondary streams
+        val primaryProfile = selectHighestQualityProfile(profiles)
+        val secondaryProfile = selectSecondaryProfile(profiles)
+        
+        // 4. Get RTSP URLs for selected profiles
+        val primaryRtsp = getStreamUri(deviceClient, primaryProfile.token)
+        val secondaryRtsp = secondaryProfile?.let { getStreamUri(deviceClient, it.token) }
+        
+        return StreamDiscoveryResult(
+            primaryRtspUrl = primaryRtsp,
+            secondaryRtspUrl = secondaryRtsp,
+            profiles = profiles
+        )
+    }
+    
+    private suspend fun getStreamUri(client: ONVIFSoapClient, profileToken: String): String {
+        val streamSetup = mapOf(
+            "Stream" to "RTP-Unicast",
+            "Transport" to mapOf("Protocol" to "RTSP")
+        )
+        val params = mapOf(
+            "StreamSetup" to streamSetup,
+            "ProfileToken" to profileToken
+        )
+        
+        val response = client.sendRequest("GetStreamUri", MEDIA_NAMESPACE, params)
+        return response.getProperty("Uri") ?: throw Exception("No stream URI found")
+    }
+}
+```
+
+### Profile Selection Logic
+```kotlin
+data class MediaProfile(
+    val token: String,
+    val name: String,
+    val videoConfig: VideoConfiguration
+)
+
+data class VideoConfiguration(
+    val width: Int,
+    val height: Int,
+    val frameRate: Int,
+    val bitrate: Int
+)
+
+fun selectHighestQualityProfile(profiles: List<MediaProfile>): MediaProfile {
+    return profiles.maxByOrNull { profile ->
+        profile.videoConfig.width * profile.videoConfig.height * profile.videoConfig.frameRate
+    } ?: profiles.first()
+}
+
+fun selectSecondaryProfile(profiles: List<MediaProfile>): MediaProfile? {
+    if (profiles.size < 2) return null
+    
+    val sorted = profiles.sortedByDescending { profile ->
+        profile.videoConfig.width * profile.videoConfig.height
+    }
+    
+    return sorted.getOrNull(1) // Second highest quality
+}
 ```
 
 ## Touch Gesture System
@@ -239,6 +315,49 @@ class TouchGestureOverlay : View {
 - **Accessibility**: Support for alternative input methods
 
 ## Integration Points
+
+### EditActivity Integration
+```kotlin
+class EditActivity {
+    private fun onOnvifUrlChanged(onvifUrl: String) {
+        if (onvifUrl.startsWith("onvif://")) {
+            // Show progress indicator
+            binding.progressDiscovery.visibility = View.VISIBLE
+            binding.etEditUrl.isEnabled = false
+            
+            // Start stream discovery
+            lifecycleScope.launch {
+                try {
+                    val parsed = ONVIFUrlParser.parseOnvifUrl(onvifUrl)
+                    val discovery = ONVIFStreamDiscovery()
+                    val result = discovery.discoverStreams(parsed.serviceUrl, parsed.credentials)
+                    
+                    // Auto-populate RTSP URLs
+                    binding.etEditUrl.setText(result.primaryRtspUrl)
+                    binding.etEditUrl2.setText(result.secondaryRtspUrl ?: "")
+                    
+                    // Show success message
+                    showDiscoverySuccess(result.profiles.size)
+                    
+                } catch (e: Exception) {
+                    // Show error and allow manual entry
+                    showDiscoveryError(e.message)
+                    binding.etEditUrl.isEnabled = true
+                } finally {
+                    binding.progressDiscovery.visibility = View.GONE
+                }
+            }
+        }
+    }
+}
+```
+
+### User Experience Flow
+1. **ONVIF URL Entry**: User enters `onvif://username:password@ip:port/path`
+2. **Automatic Discovery**: System shows progress and discovers streams
+3. **Auto-Population**: RTSP URLs are automatically filled in
+4. **Fallback**: If discovery fails, manual RTSP entry is still available
+5. **Dual Channel**: Secondary stream automatically configured if available
 
 ### Existing Components
 - **VideoActivity**: Minimal changes, add overlay and gesture controller

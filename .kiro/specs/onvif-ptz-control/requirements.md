@@ -1,11 +1,24 @@
-# ONVIF PTZ Control and Motion Detection Implementation Requirements
+# ONVIF PTZ Control and Automatic Stream Discovery Requirements
 
 ## Overview
-This document outlines the requirements for implementing ONVIF PTZ (Pan-Tilt-Zoom) control and motion detection features in the Android RTSP camera application with touch-based gesture control.
+This document outlines the requirements for implementing ONVIF PTZ (Pan-Tilt-Zoom) control with automatic RTSP stream discovery and touch-based gesture control in the Android RTSP camera application.
 
 ## User Stories
 
-### US1: Touch-Based PTZ Control
+### US1: Automatic ONVIF Stream Discovery
+**As a** camera operator  
+**I want** to enter only an ONVIF URL and have the system automatically discover RTSP streams  
+**So that** I don't need to manually configure RTSP URLs for ONVIF-compatible cameras
+
+#### Acceptance Criteria
+- WHEN the user enters an ONVIF URL THE SYSTEM SHALL automatically discover available stream profiles
+- WHEN stream profiles are found THE SYSTEM SHALL automatically populate the RTSP URL field
+- WHEN multiple profiles exist THE SYSTEM SHALL select the highest quality as primary stream
+- WHEN a secondary profile exists THE SYSTEM SHALL configure it for dual-channel support
+- WHEN discovery fails THE SYSTEM SHALL show clear error messages and allow manual RTSP entry
+- WHEN discovery is in progress THE SYSTEM SHALL show a progress indicator
+
+### US2: Touch-Based PTZ Control
 **As a** camera operator  
 **I want** to control PTZ movement with intuitive touch gestures and visual feedback  
 **So that** I can quickly and naturally adjust camera position with clear visual guidance
