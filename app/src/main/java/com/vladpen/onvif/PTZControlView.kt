@@ -198,6 +198,10 @@ class PTZControlView @JvmOverloads constructor(
         invalidate()
     }
 
+    fun hide() {
+        visibility = GONE
+    }
+
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         scope.cancel()

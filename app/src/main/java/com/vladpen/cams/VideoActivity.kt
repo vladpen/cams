@@ -264,11 +264,6 @@ class VideoActivity : AppCompatActivity(), Layout, Player {
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        // Show PTZ controls on touch
-        if (event.action == MotionEvent.ACTION_DOWN) {
-            ptzControlView?.show()
-        }
-        
         val res = gestureDetector.onTouchEvent(event)
         if (res)
             gestureInProgress = true
@@ -295,14 +290,28 @@ class VideoActivity : AppCompatActivity(), Layout, Player {
 
         onvifManager = ONVIFManager.getInstance()
         
-        // Initialize PTZ controller if supported
+        // Show PTZ button if supported
         if (stream.deviceCapabilities?.supportsPTZ == true) {
+            binding.fabPTZ.visibility = View.VISIBLE
+            binding.fabPTZ.setOnClickListener {
+                togglePTZControls()
+            }
             initPTZControls()
         }
         
         // Initialize motion detection if supported
         if (stream.deviceCapabilities?.supportsMotionEvents == true) {
             initMotionDetection()
+        }
+    }
+
+    private fun togglePTZControls() {
+        ptzControlView?.let { ptzView ->
+            if (ptzView.visibility == View.VISIBLE) {
+                ptzView.visibility = View.GONE
+            } else {
+                ptzView.show()
+            }
         }
     }
 
