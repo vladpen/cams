@@ -7,7 +7,8 @@
     <org.videolan.libvlc.util.VLCVideoLayout
         android:id="@+id/videoLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_gravity="center" />
 
     <com.vladpen.onvif.TouchGestureOverlay
         android:id="@+id/ptzOverlay"

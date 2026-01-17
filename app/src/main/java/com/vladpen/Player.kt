@@ -33,9 +33,8 @@ interface Player {
         mediaPlayer = MediaPlayer(libVlc)
         mediaPlayer.attachViews(view, null, false, false)
 
-        if (SourceData.getStretch()) {
-            mediaPlayer.videoScale = MediaPlayer.ScaleType.SURFACE_FILL
-        }
+        // Maintain aspect ratio and center video on screen
+        mediaPlayer.videoScale = MediaPlayer.ScaleType.SURFACE_FIT_SCREEN
 
         mediaPlayer.setEventListener {
             when (it.type) {

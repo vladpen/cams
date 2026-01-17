@@ -26,7 +26,8 @@ data class StreamDataModel(
     private val encryptedCredentials: String? = null,
     val deviceCapabilities: DeviceCapabilities? = null,
     val invertHorizontalPTZ: Boolean = false,
-    val invertVerticalPTZ: Boolean = false
+    val invertVerticalPTZ: Boolean = false,
+    val ptzRateLimit: Long = 200L // Default 200ms between PTZ commands
 ) {
     // Secure credential access
     val onvifCredentials: ONVIFCredentials?

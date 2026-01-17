@@ -139,6 +139,30 @@
                 android:text="Invert Vertical PTZ"
                 android:visibility="gone" />
 
+            <LinearLayout
+                android:id="@+id/llPtzRateLimit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PTZ Rate Limit (ms): "
+                    android:layout_gravity="center_vertical" />
+
+                <EditText
+                    android:id="@+id/etPtzRateLimit"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:hint="200"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/tvAddOnvif"
                 android:layout_width="wrap_content"

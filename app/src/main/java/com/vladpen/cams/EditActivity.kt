@@ -68,6 +68,7 @@ class EditActivity : AppCompatActivity() {
                 binding.etOnvifUrl.setText(onvifUrl)
                 binding.cbInvertHorizontal.isChecked = stream.invertHorizontalPTZ
                 binding.cbInvertVertical.isChecked = stream.invertVerticalPTZ
+                binding.etPtzRateLimit.setText(stream.ptzRateLimit.toString())
                 // Show ONVIF configuration
                 toggleOnvifConfiguration()
             }
@@ -193,6 +194,7 @@ class EditActivity : AppCompatActivity() {
             onvifServiceUrl = parsedOnvif?.serviceUrl,
             invertHorizontalPTZ = binding.cbInvertHorizontal.isChecked,
             invertVerticalPTZ = binding.cbInvertVertical.isChecked,
+            ptzRateLimit = binding.etPtzRateLimit.text.toString().toLongOrNull() ?: 200L,
             deviceCapabilities = if (isOnvifDevice) {
                 // Default capabilities - will be updated when device is tested
                 DeviceCapabilities(true, true, 
@@ -379,6 +381,7 @@ class EditActivity : AppCompatActivity() {
             binding.etOnvifUrl.visibility = View.GONE
             binding.cbInvertHorizontal.visibility = View.GONE
             binding.cbInvertVertical.visibility = View.GONE
+            binding.llPtzRateLimit.visibility = View.GONE
             binding.tvAddOnvif.text = "Add ONVIF Configuration"
         } else {
             // Show ONVIF fields
@@ -386,6 +389,7 @@ class EditActivity : AppCompatActivity() {
             binding.etOnvifUrl.visibility = View.VISIBLE
             binding.cbInvertHorizontal.visibility = View.VISIBLE
             binding.cbInvertVertical.visibility = View.VISIBLE
+            binding.llPtzRateLimit.visibility = View.VISIBLE
             binding.tvAddOnvif.text = "Hide ONVIF Configuration"
         }
     }

@@ -18,7 +18,7 @@ class PTZGestureController(
     
     // Rate limiting
     private var lastCommandTime = 0L
-    private val commandInterval = 200L // 200ms between commands (5 commands per second)
+    private val commandInterval get() = stream.ptzRateLimit // Use stream-specific rate limit
     
     override fun onGestureStart() {
         android.util.Log.d("PTZ_GESTURE", "Gesture started")

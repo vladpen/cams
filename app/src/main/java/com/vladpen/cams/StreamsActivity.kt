@@ -1,6 +1,7 @@
 package com.vladpen.cams
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Rect
 import android.os.Bundle
@@ -13,6 +14,7 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.view.WindowManager
 import android.widget.FrameLayout
+import android.widget.RelativeLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.Insets
@@ -52,7 +54,21 @@ class StreamsActivity : AppCompatActivity(), Layout {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Lock to landscape orientation for better video viewing
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        
+        // Enable fullscreen immersive mode
+        window.decorView.systemUiVisibility = (
+            View.SYSTEM_UI_FLAG_FULLSCREEN or
+            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        )
+        
         setContentView(binding.root)
+        
+        // Hide toolbar for true fullscreen experience
+        binding.toolbar.root.visibility = View.GONE
         edgeToEdge(binding.root) { innerPadding ->
             insets = innerPadding
         }
@@ -89,6 +105,8 @@ class StreamsActivity : AppCompatActivity(), Layout {
                 val stream = StreamData.getById(sourceId) ?: return
                 binding.toolbar.tvLabel.text = stream.name
                 streams = listOf(sourceId)
+                // Hide toolbar for single stream fullscreen experience
+                binding.toolbar.root.visibility = View.GONE
             }
             "group" -> {
                 val group = GroupData.getById(sourceId) ?: return
@@ -120,6 +138,15 @@ class StreamsActivity : AppCompatActivity(), Layout {
 
             val frame = FrameLayout(this)
             frame.id = FrameLayout.generateViewId()
+            
+            // Center the frame in the RelativeLayout
+            val layoutParams = RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT
+            )
+            layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT)
+            frame.layoutParams = layoutParams
+            
             binding.rlStreamsBox.addView(frame)
 
             val fragment = StreamFragment.newInstance(id)
