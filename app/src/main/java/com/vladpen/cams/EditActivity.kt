@@ -175,18 +175,24 @@ class EditActivity : AppCompatActivity() {
         val onvifUsername = binding.etOnvifUsername.text.toString().trim()
         val onvifPassword = binding.etOnvifPassword.text.toString().trim()
         
+        android.util.Log.d("ONVIF", "Save - onvifUrl: '$onvifUrl'")
+        android.util.Log.d("ONVIF", "Save - onvifUsername: '$onvifUsername'")
+        android.util.Log.d("ONVIF", "Save - onvifPassword: '${if (onvifPassword.isNotEmpty()) "***" else ""}'")
+        
         val isOnvifDevice = onvifUrl.isNotEmpty()
+        android.util.Log.d("ONVIF", "Save - isOnvifDevice: $isOnvifDevice")
+        
         val onvifCredentials = if (onvifUsername.isNotEmpty() && onvifPassword.isNotEmpty()) {
             ONVIFCredentials(onvifUsername, onvifPassword)
         } else null
 
         var newStream = StreamDataModel(
-            binding.etEditName.text.toString().trim(),
-            streamUrl,
-            if (channelUrl != "") channelUrl else null,
-            binding.rbEditTcp.isChecked,
-            if (sftpUrl != "") sftpUrl else null,
-            if (binding.cbAlert.isChecked && sftpUrl != "") true else null,
+            name = binding.etEditName.text.toString().trim(),
+            url = streamUrl,
+            url2 = if (channelUrl != "") channelUrl else null,
+            tcp = binding.rbEditTcp.isChecked,
+            sftp = if (sftpUrl != "") sftpUrl else null,
+            alert = if (binding.cbAlert.isChecked && sftpUrl != "") true else null,
             isOnvifDevice = isOnvifDevice,
             onvifServiceUrl = if (isOnvifDevice) onvifUrl else null,
             deviceCapabilities = if (isOnvifDevice) {
@@ -197,8 +203,11 @@ class EditActivity : AppCompatActivity() {
             } else null
         )
         
+        android.util.Log.d("ONVIF", "Created stream with isOnvifDevice: ${newStream.isOnvifDevice}")
+        
         // Apply credentials if provided
         if (onvifCredentials != null) {
+            android.util.Log.d("ONVIF", "Applying ONVIF credentials")
             newStream = newStream.withCredentials(onvifCredentials)
         }
         if (streamId < 0)

@@ -62,6 +62,7 @@ class VideoActivity : AppCompatActivity(), Layout, Player {
     }
 
     private fun initActivity() {
+        android.util.Log.d("ONVIF", "VideoActivity initActivity called")
         initToolbar()
         initVideoBar()
         initMute()
@@ -75,7 +76,9 @@ class VideoActivity : AppCompatActivity(), Layout, Player {
         Alert.init(this, binding.toolbar.btnAlert)
         
         // Initialize ONVIF if this is an ONVIF device
+        android.util.Log.d("ONVIF", "About to call initOnvifFeatures")
         initOnvifFeatures()
+        android.util.Log.d("ONVIF", "initOnvifFeatures completed")
     }
 
     private val callback = object : OnBackPressedCallback(true) {
@@ -283,26 +286,25 @@ class VideoActivity : AppCompatActivity(), Layout, Player {
     }
 
     private fun initOnvifFeatures() {
-        // Check if this stream has ONVIF capabilities
-        if (!stream.isOnvifDevice || stream.onvifServiceUrl == null) {
-            return
-        }
-
-        onvifManager = ONVIFManager.getInstance()
+        android.util.Log.d("ONVIF", "initOnvifFeatures called")
         
-        // Show PTZ button if supported
-        if (stream.deviceCapabilities?.supportsPTZ == true) {
+        // FORCE SHOW PTZ BUTTON FOR TESTING
+        try {
+            android.util.Log.d("ONVIF", "Forcing PTZ button to be visible")
             binding.fabPTZ.visibility = View.VISIBLE
+            android.util.Log.d("ONVIF", "PTZ button visibility set to VISIBLE")
+            
             binding.fabPTZ.setOnClickListener {
-                togglePTZControls()
+                android.util.Log.d("ONVIF", "PTZ button clicked!")
+                // Simple test - just show a toast or log
             }
-            initPTZControls()
+            android.util.Log.d("ONVIF", "PTZ button click listener set")
+        } catch (e: Exception) {
+            android.util.Log.e("ONVIF", "Error setting up PTZ button: ${e.message}")
         }
         
-        // Initialize motion detection if supported
-        if (stream.deviceCapabilities?.supportsMotionEvents == true) {
-            initMotionDetection()
-        }
+        android.util.Log.d("ONVIF", "stream.isOnvifDevice: ${stream.isOnvifDevice}")
+        android.util.Log.d("ONVIF", "stream.onvifServiceUrl: ${stream.onvifServiceUrl}")
     }
 
     private fun togglePTZControls() {

@@ -93,6 +93,9 @@ class StreamsActivity : AppCompatActivity(), Layout {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         Alert.init(this, binding.toolbar.btnAlert)
+        
+        // Initialize ONVIF features
+        initOnvifFeatures()
     }
 
     private fun initFragments() {
@@ -298,5 +301,29 @@ class StreamsActivity : AppCompatActivity(), Layout {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         initLayout(binding.root)
+    }
+
+    private fun initOnvifFeatures() {
+        android.util.Log.d("ONVIF", "StreamsActivity initOnvifFeatures called")
+        
+        // For single stream, check if it's ONVIF enabled
+        if (!isGroup && streams.isNotEmpty()) {
+            val stream = StreamData.getById(streams[0])
+            android.util.Log.d("ONVIF", "Stream found: ${stream?.name}")
+            android.util.Log.d("ONVIF", "Is ONVIF device: ${stream?.isOnvifDevice}")
+            
+            if (stream?.isOnvifDevice == true) {
+                android.util.Log.d("ONVIF", "Showing PTZ button for ONVIF stream")
+                binding.fabPTZ.visibility = View.VISIBLE
+                binding.fabPTZ.setOnClickListener {
+                    android.util.Log.d("ONVIF", "PTZ button clicked in StreamsActivity")
+                    android.widget.Toast.makeText(this, "PTZ Controls Coming Soon!", android.widget.Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                android.util.Log.d("ONVIF", "Not an ONVIF device, hiding PTZ button")
+            }
+        } else {
+            android.util.Log.d("ONVIF", "Group or no streams, hiding PTZ button")
+        }
     }
 }
