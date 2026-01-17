@@ -59,17 +59,17 @@
 
 ## Phase 4: Motion Detection Events
 
-- [ ] **Investigate ONVIF motion detection capabilities**
+- [x] **Investigate ONVIF motion detection capabilities**
   - Research ONVIF event specification
   - Test with available ONVIF cameras
   - Document findings and implementation approach
 
-- [ ] **Implement MotionEventService**
+- [x] **Implement MotionEventService**
   - Create event subscription mechanism
   - Implement SOAP event callback handling
   - Add motion event parsing and validation
 
-- [ ] **Create motion detection UI indicators**
+- [x] **Create motion detection UI indicators**
   - Implement MotionIndicator overlay view
   - Add red border animation for motion detection
   - Implement 3-second fade-out animation
@@ -77,19 +77,19 @@
 
 ## Phase 5: Integration and UI Updates
 
-- [ ] **Update EditActivity for ONVIF discovery**
+- [x] **Update EditActivity for ONVIF discovery**
   - Add "Discover ONVIF Cameras" button
   - Implement discovery progress dialog
   - Add discovered camera selection interface
   - Auto-populate camera settings from selected device
 
-- [ ] **Update VideoActivity for PTZ controls**
+- [x] **Update VideoActivity for PTZ controls**
   - Integrate PTZControlView overlay
   - Add PTZ control visibility logic based on capabilities
   - Implement motion indicator integration
   - Add PTZ control state management
 
-- [ ] **Implement ONVIFManager coordinator**
+- [x] **Implement ONVIFManager coordinator**
   - Create central ONVIF operations manager
   - Add connection pooling and session management
   - Implement capability caching

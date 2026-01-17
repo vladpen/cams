@@ -94,6 +94,16 @@
                 android:autofillHints=""
                 android:gravity="center" />
 
+            <TextView
+                android:id="@+id/tvDiscoverOnvif"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:padding="10dp"
+                android:text="Discover ONVIF Cameras"
+                android:textColor="@color/files_link"
+                android:background="?attr/selectableItemBackground" />
+
             <LinearLayout
                 android:id="@+id/llChannelBox"
                 android:layout_width="match_parent"

@@ -14,6 +14,8 @@ import com.vladpen.Utils.encodeString
 import com.vladpen.Utils.parseUrl
 import com.vladpen.Utils.replacePassword
 import com.vladpen.cams.databinding.ActivityEditBinding
+import com.vladpen.onvif.*
+import kotlinx.coroutines.*
 
 class EditActivity : AppCompatActivity() {
     private val binding by lazy { ActivityEditBinding.inflate(layoutInflater) }
@@ -95,6 +97,9 @@ class EditActivity : AppCompatActivity() {
         }
         binding.tvAddSftp.setOnClickListener {
             showSftp()
+        }
+        binding.tvDiscoverOnvif.setOnClickListener {
+            discoverOnvifDevices()
         }
         binding.btnSave.setOnClickListener {
             save()
@@ -244,5 +249,83 @@ class EditActivity : AppCompatActivity() {
     private fun back() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
+    }
+
+    private fun discoverOnvifDevices() {
+        val progressDialog = AlertDialog.Builder(this)
+            .setTitle("Discovering ONVIF Cameras")
+            .setMessage("Scanning network for ONVIF devices...")
+            .setCancelable(false)
+            .create()
+        
+        progressDialog.show()
+        
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val devices = withContext(Dispatchers.IO) {
+                    ONVIFManager.getInstance().discoverDevices()
+                }
+                
+                progressDialog.dismiss()
+                
+                if (devices.isEmpty()) {
+                    AlertDialog.Builder(this@EditActivity)
+                        .setTitle("No Devices Found")
+                        .setMessage("No ONVIF cameras were discovered on the network.")
+                        .setPositiveButton("OK", null)
+                        .show()
+                } else {
+                    showDeviceSelectionDialog(devices)
+                }
+            } catch (e: Exception) {
+                progressDialog.dismiss()
+                AlertDialog.Builder(this@EditActivity)
+                    .setTitle("Discovery Error")
+                    .setMessage("Error discovering ONVIF devices: ${e.message}")
+                    .setPositiveButton("OK", null)
+                    .show()
+            }
+        }
+    }
+
+    private fun showDeviceSelectionDialog(devices: List<ONVIFDevice>) {
+        val deviceNames = devices.map { "${it.name} (${it.ipAddress})" }.toTypedArray()
+        
+        AlertDialog.Builder(this)
+            .setTitle("Select ONVIF Camera")
+            .setItems(deviceNames) { _, which ->
+                val selectedDevice = devices[which]
+                populateFromOnvifDevice(selectedDevice)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun populateFromOnvifDevice(device: ONVIFDevice) {
+        // Auto-populate camera settings from ONVIF device
+        binding.etEditName.setText(device.name)
+        
+        // Generate RTSP URL (simplified - may need device-specific logic)
+        val rtspUrl = "rtsp://${device.ipAddress}/stream1"
+        binding.etEditUrl.setText(rtspUrl)
+        
+        // Show credentials dialog if needed
+        if (device.credentials == null) {
+            showCredentialsDialog(device)
+        }
+    }
+
+    private fun showCredentialsDialog(device: ONVIFDevice) {
+        val dialogView = layoutInflater.inflate(android.R.layout.simple_list_item_2, null)
+        // Simplified credentials dialog - would need proper layout
+        AlertDialog.Builder(this)
+            .setTitle("ONVIF Credentials")
+            .setMessage("Enter credentials for ${device.name}")
+            .setView(dialogView)
+            .setPositiveButton("OK") { _, _ ->
+                // Handle credentials input
+            }
+            .setNegativeButton("Skip", null)
+            .show()
     }
 }

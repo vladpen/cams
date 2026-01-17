@@ -13,6 +13,8 @@ import androidx.core.graphics.Insets
 import com.vladpen.*
 import com.vladpen.Effects.edgeToEdge
 import com.vladpen.cams.databinding.ActivityVideoBinding
+import com.vladpen.onvif.*
+import kotlinx.coroutines.*
 import org.videolan.libvlc.LibVLC
 import org.videolan.libvlc.MediaPlayer
 import java.io.IOException
@@ -38,6 +40,12 @@ class VideoActivity : AppCompatActivity(), Layout, Player {
     private val seekStep: Long = 10000 // milliseconds
     private val watchdogInterval: Long = 10000 // milliseconds
     private var isPlaying = true
+
+    // ONVIF properties
+    private var ptzControlView: PTZControlView? = null
+    private var motionIndicator: MotionIndicator? = null
+    private var onvifManager: ONVIFManager? = null
+    private val onvifScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +73,9 @@ class VideoActivity : AppCompatActivity(), Layout, Player {
         this.onBackPressedDispatcher.addCallback(callback)
 
         Alert.init(this, binding.toolbar.btnAlert)
+        
+        // Initialize ONVIF if this is an ONVIF device
+        initOnvifFeatures()
     }
 
     private val callback = object : OnBackPressedCallback(true) {
@@ -269,5 +280,147 @@ class VideoActivity : AppCompatActivity(), Layout, Player {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         initLayout(binding.root)
+    }
+
+    private fun initOnvifFeatures() {
+        // Check if this stream has ONVIF capabilities
+        if (!stream.isOnvifDevice || stream.onvifServiceUrl == null) {
+            return
+        }
+
+        onvifManager = ONVIFManager.getInstance()
+        
+        // Initialize PTZ controller if supported
+        if (stream.deviceCapabilities?.supportsPTZ == true) {
+            initPTZControls()
+        }
+        
+        // Initialize motion detection if supported
+        if (stream.deviceCapabilities?.supportsMotionEvents == true) {
+            initMotionDetection()
+        }
+    }
+
+    private fun initPTZControls() {
+        val serviceUrl = stream.onvifServiceUrl ?: return
+        val credentials = stream.onvifCredentials
+        
+        // Create PTZ control view
+        ptzControlView = PTZControlView(this).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        }
+        
+        // Add to video container
+        binding.flVideoBox.addView(ptzControlView)
+        
+        // Initialize PTZ controller
+        onvifScope.launch {
+            val deviceId = stream.url // Use URL as device ID for now
+            val controller = onvifManager?.initializePTZController(deviceId, serviceUrl, credentials)
+            ptzControlView?.setPTZController(controller)
+            
+            // Set up PTZ control listener
+            ptzControlView?.setListener(object : PTZControlView.PTZControlListener {
+                override fun onPTZCommand(direction: PTZDirection, isPressed: Boolean) {
+                    onvifScope.launch {
+                        if (isPressed) {
+                            onvifManager?.performPTZMove(deviceId, direction)
+                        } else {
+                            onvifManager?.stopPTZMovement(deviceId)
+                        }
+                    }
+                }
+
+                override fun onZoomCommand(factor: Float) {
+                    onvifScope.launch {
+                        onvifManager?.performZoom(deviceId, factor)
+                    }
+                }
+            })
+        }
+    }
+
+    private fun initMotionDetection() {
+        val serviceUrl = stream.onvifServiceUrl ?: return
+        val credentials = stream.onvifCredentials
+        
+        // Create motion indicator
+        motionIndicator = MotionIndicator(this).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        }
+        
+        // Add to video container
+        binding.flVideoBox.addView(motionIndicator)
+        
+        // Initialize motion event service
+        onvifScope.launch {
+            val deviceId = stream.url // Use URL as device ID for now
+            val service = onvifManager?.initializeMotionEventService(deviceId, serviceUrl, credentials)
+            
+            // Set up ONVIF manager listener for motion events
+            onvifManager?.setListener(object : ONVIFManager.ONVIFManagerListener {
+                override fun onDeviceDiscovered(devices: List<ONVIFDevice>) {}
+                
+                override fun onMotionDetected(deviceId: String) {
+                    if (deviceId == stream.url) {
+                        runOnUiThread {
+                            motionIndicator?.showMotionDetected()
+                        }
+                    }
+                }
+                
+                override fun onMotionStopped(deviceId: String) {
+                    if (deviceId == stream.url) {
+                        runOnUiThread {
+                            motionIndicator?.hideMotionDetected()
+                        }
+                    }
+                }
+                
+                override fun onPTZError(deviceId: String, error: String) {
+                    // Handle PTZ errors
+                }
+            })
+            
+            // Subscribe to motion events
+            onvifManager?.subscribeToMotionEvents(deviceId)
+        }
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        // Show PTZ controls on touch
+        if (event.action == MotionEvent.ACTION_DOWN) {
+            ptzControlView?.show()
+        }
+        
+        val res = gestureDetector.onTouchEvent(event)
+        if (res)
+            gestureInProgress = true
+
+        if (event.action == MotionEvent.ACTION_UP) {
+            if (!gestureInProgress)
+                initBars()
+            else
+                gestureInProgress = false
+        }
+        return res || super.onTouchEvent(event)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        onvifScope.cancel()
+        
+        // Cleanup ONVIF resources
+        stream.url.let { deviceId ->
+            onvifScope.launch {
+                onvifManager?.unsubscribeFromMotionEvents(deviceId)
+            }
+        }
     }
 }
