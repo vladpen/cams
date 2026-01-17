@@ -175,13 +175,7 @@ class EditActivity : AppCompatActivity() {
         val onvifUsername = binding.etOnvifUsername.text.toString().trim()
         val onvifPassword = binding.etOnvifPassword.text.toString().trim()
         
-        android.util.Log.d("ONVIF", "Save - onvifUrl: '$onvifUrl'")
-        android.util.Log.d("ONVIF", "Save - onvifUsername: '$onvifUsername'")
-        android.util.Log.d("ONVIF", "Save - onvifPassword: '${if (onvifPassword.isNotEmpty()) "***" else ""}'")
-        
         val isOnvifDevice = onvifUrl.isNotEmpty()
-        android.util.Log.d("ONVIF", "Save - isOnvifDevice: $isOnvifDevice")
-        
         val onvifCredentials = if (onvifUsername.isNotEmpty() && onvifPassword.isNotEmpty()) {
             ONVIFCredentials(onvifUsername, onvifPassword)
         } else null
@@ -203,11 +197,8 @@ class EditActivity : AppCompatActivity() {
             } else null
         )
         
-        android.util.Log.d("ONVIF", "Created stream with isOnvifDevice: ${newStream.isOnvifDevice}")
-        
         // Apply credentials if provided
         if (onvifCredentials != null) {
-            android.util.Log.d("ONVIF", "Applying ONVIF credentials")
             newStream = newStream.withCredentials(onvifCredentials)
         }
         if (streamId < 0)

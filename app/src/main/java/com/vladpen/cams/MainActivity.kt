@@ -63,12 +63,6 @@ class MainActivity: AppCompatActivity() {
         else
             Alert.init(this, binding.toolbar.btnAlert)
 
-        // Add test PTZ button
-        binding.fabTest.setOnClickListener {
-            android.util.Log.d("ONVIF", "Test PTZ button clicked!")
-            android.widget.Toast.makeText(this, "PTZ Test Button Works!", android.widget.Toast.LENGTH_SHORT).show()
-        }
-
         this.onBackPressedDispatcher.addCallback(callback)
     }
 

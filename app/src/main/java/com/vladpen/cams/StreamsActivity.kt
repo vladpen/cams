@@ -9,6 +9,7 @@ import android.os.Looper
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.view.WindowManager
 import android.widget.FrameLayout
@@ -19,6 +20,8 @@ import androidx.core.net.toUri
 import com.vladpen.*
 import com.vladpen.Effects.edgeToEdge
 import com.vladpen.cams.databinding.ActivityStreamsBinding
+import com.vladpen.onvif.*
+import kotlinx.coroutines.*
 
 
 class StreamsActivity : AppCompatActivity(), Layout {
@@ -40,6 +43,12 @@ class StreamsActivity : AppCompatActivity(), Layout {
     private lateinit var gestureDetector: VideoGestureDetector
     private var gestureInProgress = 0
     private val watchdogInterval: Long = 10000 // milliseconds
+
+    // ONVIF properties
+    private var ptzControlView: PTZControlView? = null
+    private var motionIndicator: MotionIndicator? = null
+    private var onvifManager: ONVIFManager? = null
+    private val onvifScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -304,26 +313,138 @@ class StreamsActivity : AppCompatActivity(), Layout {
     }
 
     private fun initOnvifFeatures() {
-        android.util.Log.d("ONVIF", "StreamsActivity initOnvifFeatures called")
-        
         // For single stream, check if it's ONVIF enabled
         if (!isGroup && streams.isNotEmpty()) {
             val stream = StreamData.getById(streams[0])
-            android.util.Log.d("ONVIF", "Stream found: ${stream?.name}")
-            android.util.Log.d("ONVIF", "Is ONVIF device: ${stream?.isOnvifDevice}")
             
-            if (stream?.isOnvifDevice == true) {
-                android.util.Log.d("ONVIF", "Showing PTZ button for ONVIF stream")
+            if (stream?.isOnvifDevice == true && stream.onvifServiceUrl != null) {
                 binding.fabPTZ.visibility = View.VISIBLE
                 binding.fabPTZ.setOnClickListener {
-                    android.util.Log.d("ONVIF", "PTZ button clicked in StreamsActivity")
-                    android.widget.Toast.makeText(this, "PTZ Controls Coming Soon!", android.widget.Toast.LENGTH_SHORT).show()
+                    togglePTZControls()
                 }
-            } else {
-                android.util.Log.d("ONVIF", "Not an ONVIF device, hiding PTZ button")
+                
+                // Initialize ONVIF features
+                onvifManager = ONVIFManager.getInstance()
+                
+                if (stream.deviceCapabilities?.supportsPTZ == true) {
+                    initPTZControls(stream)
+                }
+                
+                if (stream.deviceCapabilities?.supportsMotionEvents == true) {
+                    initMotionDetection(stream)
+                }
             }
-        } else {
-            android.util.Log.d("ONVIF", "Group or no streams, hiding PTZ button")
+        }
+    }
+
+    private fun initPTZControls(stream: StreamDataModel) {
+        val serviceUrl = stream.onvifServiceUrl ?: return
+        val credentials = stream.onvifCredentials
+        
+        // Create PTZ control view
+        ptzControlView = PTZControlView(this).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        }
+        
+        // Add to streams container
+        binding.rlStreamsBox.addView(ptzControlView)
+        
+        // Initialize PTZ controller
+        onvifScope.launch {
+            val deviceId = stream.url
+            val controller = onvifManager?.initializePTZController(deviceId, serviceUrl, credentials)
+            ptzControlView?.setPTZController(controller)
+            
+            ptzControlView?.setListener(object : PTZControlView.PTZControlListener {
+                override fun onPTZCommand(direction: PTZDirection, isPressed: Boolean) {
+                    onvifScope.launch {
+                        if (isPressed) {
+                            onvifManager?.performPTZMove(deviceId, direction)
+                        } else {
+                            onvifManager?.stopPTZMovement(deviceId)
+                        }
+                    }
+                }
+
+                override fun onZoomCommand(factor: Float) {
+                    onvifScope.launch {
+                        onvifManager?.performZoom(deviceId, factor)
+                    }
+                }
+            })
+        }
+    }
+
+    private fun initMotionDetection(stream: StreamDataModel) {
+        val serviceUrl = stream.onvifServiceUrl ?: return
+        val credentials = stream.onvifCredentials
+        
+        // Create motion indicator
+        motionIndicator = MotionIndicator(this).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        }
+        
+        // Add to streams container
+        binding.rlStreamsBox.addView(motionIndicator)
+        
+        // Initialize motion event service
+        onvifScope.launch {
+            val deviceId = stream.url
+            onvifManager?.initializeMotionEventService(deviceId, serviceUrl, credentials)
+            
+            onvifManager?.setListener(object : ONVIFManager.ONVIFManagerListener {
+                override fun onDeviceDiscovered(devices: List<ONVIFDevice>) {}
+                
+                override fun onMotionDetected(deviceId: String) {
+                    if (deviceId == stream.url) {
+                        runOnUiThread {
+                            motionIndicator?.showMotionDetected()
+                        }
+                    }
+                }
+                
+                override fun onMotionStopped(deviceId: String) {
+                    if (deviceId == stream.url) {
+                        runOnUiThread {
+                            motionIndicator?.hideMotionDetected()
+                        }
+                    }
+                }
+                
+                override fun onPTZError(deviceId: String, error: String) {}
+            })
+            
+            onvifManager?.subscribeToMotionEvents(deviceId)
+        }
+    }
+
+    private fun togglePTZControls() {
+        ptzControlView?.let { ptzView ->
+            if (ptzView.visibility == View.VISIBLE) {
+                ptzView.hide()
+            } else {
+                ptzView.show()
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        onvifScope.cancel()
+        
+        if (!isGroup && streams.isNotEmpty()) {
+            val deviceId = StreamData.getById(streams[0])?.url
+            deviceId?.let {
+                onvifScope.launch {
+                    onvifManager?.unsubscribeFromMotionEvents(it)
+                }
+            }
         }
     }
 }
