@@ -167,8 +167,28 @@ class TouchGestureOverlay @JvmOverloads constructor(
         
         android.util.Log.d("PTZ_DRAW", "Drawing dot: alpha=$dotAlpha at ($dotX, $dotY)")
         
+        // Draw speed zones when active (subtle visual feedback)
+        if (isActive && dotAlpha > 0f) {
+            // Draw speed zone indicators (very subtle)
+            val zoneAlpha = (50 * dotAlpha).toInt() // Very transparent
+            
+            // Slow zone (0-10% radius)
+            dotPaint.alpha = zoneAlpha
+            dotPaint.style = Paint.Style.STROKE
+            dotPaint.strokeWidth = 2f
+            canvas.drawCircle(centerX, centerY, centerRadius * 0.1f, dotPaint)
+            
+            // Medium zone (10-30% radius)  
+            canvas.drawCircle(centerX, centerY, centerRadius * 0.3f, dotPaint)
+            
+            // Reset paint style
+            dotPaint.style = Paint.Style.FILL
+        }
+        
+        // Draw PTZ dot
         if (dotAlpha > 0f) {
             dotPaint.alpha = (255 * dotAlpha).toInt()
+            dotPaint.style = Paint.Style.FILL
             canvas.drawCircle(dotX, dotY, dotRadius, dotPaint)
             android.util.Log.d("PTZ_DRAW", "Dot drawn with alpha ${dotPaint.alpha}")
         }

@@ -18,10 +18,10 @@ This document outlines the requirements for implementing ONVIF PTZ (Pan-Tilt-Zoo
 - WHEN discovery fails THE SYSTEM SHALL show clear error messages and allow manual RTSP entry
 - WHEN discovery is in progress THE SYSTEM SHALL show a progress indicator
 
-### US2: Touch-Based PTZ Control
+### US2: Touch-Based PTZ Control with Variable Speed
 **As a** camera operator  
-**I want** to control PTZ movement with intuitive touch gestures and visual feedback  
-**So that** I can quickly and naturally adjust camera position with clear visual guidance
+**I want** to control PTZ movement with intuitive touch gestures, visual feedback, and variable speed based on distance  
+**So that** I can quickly and naturally adjust camera position with precise control and clear visual guidance
 
 #### Acceptance Criteria
 - WHEN the user views a video stream THE SYSTEM SHALL display video in fullscreen mode
@@ -31,6 +31,8 @@ This document outlines the requirements for implementing ONVIF PTZ (Pan-Tilt-Zoo
 - WHEN the user drags down from center THE SYSTEM SHALL move camera down proportionally to drag distance  
 - WHEN the user drags left from center THE SYSTEM SHALL move camera left proportionally to drag distance
 - WHEN the user drags right from center THE SYSTEM SHALL move camera right proportionally to drag distance
+- WHEN the PTZ dot is close to center THE SYSTEM SHALL move camera slowly for precise positioning
+- WHEN the PTZ dot is far from center THE SYSTEM SHALL move camera faster for quick repositioning
 - WHEN the user releases their finger THE SYSTEM SHALL smoothly slide the PTZ dot back to center
 - WHEN the PTZ dot reaches center THE SYSTEM SHALL fade out and disappear
 - WHEN the user touches near center again THE SYSTEM SHALL immediately show the PTZ dot under their finger
@@ -84,6 +86,7 @@ This document outlines the requirements for implementing ONVIF PTZ (Pan-Tilt-Zoo
 
 ### Performance Requirements
 - PTZ commands SHALL respond within 200ms of user input
+- PTZ speed SHALL scale smoothly from 0.1x to 1.0x based on distance from center
 - Video playback SHALL maintain smooth framerate during PTZ operations
 - ONVIF discovery SHALL complete within 10 seconds
 - Motion detection SHALL trigger visual feedback within 100ms

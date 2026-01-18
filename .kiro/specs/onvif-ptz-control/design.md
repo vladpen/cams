@@ -130,21 +130,40 @@ sealed class PTZDotState {
 - **Fade Animation**: Alpha fade from 100% to 0% over 200ms after reaching center
 - **Re-appearance**: Instant show when center touched again
 
-### Coordinate Mapping
+### Coordinate Mapping with Variable Speed
 ```kotlin
-// Convert touch coordinates to PTZ values
+// Convert touch coordinates to PTZ values with distance-based speed scaling
 fun touchToPTZ(touchX: Float, touchY: Float, centerX: Float, centerY: Float): PTZVector {
     val deltaX = (touchX - centerX) / (screenWidth / 2)  // -1.0 to 1.0
     val deltaY = (centerY - touchY) / (screenHeight / 2) // -1.0 to 1.0 (inverted)
+    
+    // Calculate distance from center (0.0 to 1.0)
+    val distance = sqrt(deltaX * deltaX + deltaY * deltaY).coerceAtMost(1.0f)
+    
+    // Apply speed scaling based on distance
+    val speedMultiplier = calculateSpeedMultiplier(distance)
+    
     return PTZVector(
-        pan = deltaX.coerceIn(-1.0f, 1.0f),
-        tilt = deltaY.coerceIn(-1.0f, 1.0f)
+        pan = (deltaX * speedMultiplier).coerceIn(-1.0f, 1.0f),
+        tilt = (deltaY * speedMultiplier).coerceIn(-1.0f, 1.0f),
+        speed = speedMultiplier
     )
+}
+
+// Speed scaling function: slow near center, fast at edges
+fun calculateSpeedMultiplier(distance: Float): Float {
+    return when {
+        distance < 0.1f -> 0.1f  // Minimum speed for precise control
+        distance < 0.3f -> 0.1f + (distance - 0.1f) * 2.0f  // Linear ramp up
+        else -> 0.5f + (distance - 0.3f) * 0.714f  // Continue to max 1.0
+    }.coerceIn(0.1f, 1.0f)
 }
 ```
 
-### Movement Calculation
+### Movement Calculation with Variable Speed
 - **Proportional Control**: Movement speed proportional to distance from center
+- **Speed Scaling**: 0.1x speed near center (0-10% radius), scaling to 1.0x at edges
+- **Smooth Transition**: Linear speed ramp from 10% to 30% radius, then gradual to 100%
 - **Deadzone**: 10% deadzone around center to prevent jitter
 - **Acceleration Curve**: Exponential curve for fine control near center
 - **Position Tracking**: Track cumulative movement for return-to-center
@@ -200,9 +219,9 @@ class PTZDotAnimator {
 }
 ```
 
-## PTZ Command Generation
+### PTZ Command Generation with Variable Speed
 
-### Continuous Movement
+#### Continuous Movement with Speed Control
 ```kotlin
 class PTZGestureController {
     private var basePosition = PTZPosition(0f, 0f)
@@ -211,7 +230,14 @@ class PTZGestureController {
     fun onGestureMove(vector: PTZVector) {
         currentOffset = vector
         val targetPosition = basePosition + vector
-        ptzController.continuousMove(targetPosition)
+        
+        // Apply speed scaling to PTZ velocity
+        val scaledVelocity = PTZVelocity(
+            pan = vector.pan * vector.speed,
+            tilt = vector.tilt * vector.speed
+        )
+        
+        ptzController.continuousMove(scaledVelocity)
     }
     
     fun onGestureEnd() {
@@ -220,6 +246,17 @@ class PTZGestureController {
         ptzController.stop()
     }
 }
+
+data class PTZVector(
+    val pan: Float,
+    val tilt: Float,
+    val speed: Float = 1.0f  // Speed multiplier (0.1 to 1.0)
+)
+
+data class PTZVelocity(
+    val pan: Float,    // Velocity with speed applied
+    val tilt: Float    // Velocity with speed applied
+)
 ```
 
 ### Position Tracking
@@ -289,11 +326,12 @@ class TouchGestureOverlay : View {
 - **Multi-touch**: Ignore additional fingers, use only first touch
 - **Edge Cases**: Handle touch outside screen bounds gracefully
 
-## Performance Considerations
+### Performance Considerations
 
-### Optimization Strategies
+#### Optimization Strategies
 - **Command Throttling**: Limit PTZ commands to 10Hz to prevent overload
-- **Gesture Smoothing**: Apply low-pass filter to reduce jitter
+- **Speed Calculation**: Efficient distance calculation using squared distance where possible
+- **Gesture Smoothing**: Apply low-pass filter to reduce jitter while preserving speed changes
 - **Efficient Rendering**: Use hardware acceleration for overlay graphics
 - **Memory Management**: Recycle touch event objects
 

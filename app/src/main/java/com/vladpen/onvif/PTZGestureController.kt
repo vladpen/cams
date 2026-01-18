@@ -3,6 +3,7 @@ package com.vladpen.onvif
 import com.vladpen.StreamDataModel
 import kotlinx.coroutines.*
 import kotlin.math.abs
+import kotlin.math.sqrt
 
 class PTZGestureController(
     private val ptzController: PTZController,
@@ -28,8 +29,18 @@ class PTZGestureController(
     
     override fun onGestureMove(panSpeed: Float, tiltSpeed: Float) {
         android.util.Log.d("PTZ_GESTURE", "Gesture move: pan=$panSpeed, tilt=$tiltSpeed")
-        currentPanSpeed = panSpeed
-        currentTiltSpeed = tiltSpeed
+        
+        // Calculate distance from center (0.0 to 1.0)
+        val distance = sqrt(panSpeed * panSpeed + tiltSpeed * tiltSpeed).coerceAtMost(1.0f)
+        
+        // Apply variable speed based on distance
+        val speedMultiplier = calculateSpeedMultiplier(distance)
+        
+        // Apply speed scaling to movement
+        currentPanSpeed = panSpeed * speedMultiplier
+        currentTiltSpeed = tiltSpeed * speedMultiplier
+        
+        android.util.Log.d("PTZ_GESTURE", "Distance: $distance, Speed multiplier: $speedMultiplier")
         
         // Rate limiting - only send command if enough time has passed
         val currentTime = System.currentTimeMillis()
@@ -45,8 +56,8 @@ class PTZGestureController(
                 android.util.Log.d("PTZ_GESTURE", "Sending PTZ move command")
                 
                 // Apply inversion settings from stream configuration
-                val invertedPanSpeed = if (stream.invertHorizontalPTZ) -panSpeed else panSpeed
-                val invertedTiltSpeed = if (stream.invertVerticalPTZ) -tiltSpeed else tiltSpeed
+                val invertedPanSpeed = if (stream.invertHorizontalPTZ) -currentPanSpeed else currentPanSpeed
+                val invertedTiltSpeed = if (stream.invertVerticalPTZ) -currentTiltSpeed else currentTiltSpeed
                 
                 // Determine movement direction
                 val direction = when {
@@ -58,18 +69,27 @@ class PTZGestureController(
                     }
                 }
                 
-                // Increase speed multiplier for more responsive movement
-                val speed = kotlin.math.max(abs(invertedPanSpeed), abs(invertedTiltSpeed)) * 20f // 20x multiplier
-                val clampedSpeed = kotlin.math.min(speed, 1.0f) // Cap at 1.0
-                // Use minimum speed of 0.3 for noticeable movement
-                val finalSpeed = kotlin.math.max(clampedSpeed, 0.3f)
-                android.util.Log.d("PTZ_GESTURE", "Calculated speed: $speed, clamped: $clampedSpeed, final: $finalSpeed")
+                // Use the calculated speed with multiplier
+                val speed = kotlin.math.max(abs(invertedPanSpeed), abs(invertedTiltSpeed)) * 20f
+                val clampedSpeed = kotlin.math.min(speed, 1.0f)
+                val finalSpeed = kotlin.math.max(clampedSpeed, 0.1f) // Minimum 0.1 for precise control
+                
+                android.util.Log.d("PTZ_GESTURE", "Final speed: $finalSpeed (multiplier: $speedMultiplier)")
                 ptzController.continuousMove(direction, finalSpeed)
                 
             } catch (e: Exception) {
                 // Handle PTZ command errors silently
             }
         }
+    }
+    
+    // Speed scaling function: slow near center, fast at edges
+    private fun calculateSpeedMultiplier(distance: Float): Float {
+        return when {
+            distance < 0.1f -> 0.1f  // Minimum speed for precise control
+            distance < 0.3f -> 0.1f + (distance - 0.1f) * 2.0f  // Linear ramp up
+            else -> 0.5f + (distance - 0.3f) * 0.714f  // Continue to max 1.0
+        }.coerceIn(0.1f, 1.0f)
     }
     
     override fun onGestureEnd() {
@@ -102,4 +122,15 @@ class PTZGestureController(
 data class PTZPosition(
     val pan: Float,
     val tilt: Float
+)
+
+data class PTZVector(
+    val pan: Float,
+    val tilt: Float,
+    val speed: Float = 1.0f  // Speed multiplier (0.1 to 1.0)
+)
+
+data class PTZVelocity(
+    val pan: Float,    // Velocity with speed applied
+    val tilt: Float    // Velocity with speed applied
 )
