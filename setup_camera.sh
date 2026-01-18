@@ -33,7 +33,7 @@ echo "Entering ONVIF URL..."
 adb shell input keyevent 61
 adb shell input keyevent 61
 sleep 1
-adb shell input text "onvif://thingino:AjVHVSUPOoZQkGG2U@10.0.0.51:80/onvif/device_service"
+adb shell input text "onvif://thingino:AjVHVSUPOoZQkGG2U@10.0.0.51:80/onvif/device_service
 sleep 1
 
 # Save the configuration

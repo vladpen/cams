@@ -2,17 +2,21 @@ package com.vladpen.cams
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.vladpen.*
 import com.vladpen.Effects.edgeToEdge
 import com.vladpen.Utils.decodeString
 import com.vladpen.Utils.encodeString
 import com.vladpen.Utils.parseUrl
 import com.vladpen.Utils.replacePassword
+import com.vladpen.onvif.*
+import kotlinx.coroutines.launch
 import com.vladpen.cams.databinding.ActivityEditBinding
 import com.vladpen.onvif.*
 import kotlinx.coroutines.*
@@ -72,6 +76,9 @@ class EditActivity : AppCompatActivity() {
                 // Show ONVIF configuration
                 toggleOnvifConfiguration()
             }
+            
+            // Set up ONVIF URL change handler for automatic stream discovery
+            setupOnvifUrlHandler()
 
             val startup = SourceData.getStartup()
             binding.cbStartup.isChecked = (
@@ -391,6 +398,56 @@ class EditActivity : AppCompatActivity() {
             binding.cbInvertVertical.visibility = View.VISIBLE
             binding.llPtzRateLimit.visibility = View.VISIBLE
             binding.tvAddOnvif.text = "Hide ONVIF Configuration"
+        }
+    }
+    
+    private fun setupOnvifUrlHandler() {
+        binding.etOnvifUrl.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                val onvifUrl = binding.etOnvifUrl.text.toString().trim()
+                if (onvifUrl.startsWith("onvif://") && binding.etEditUrl.text.toString().trim().isEmpty()) {
+                    discoverStreamsFromOnvif(onvifUrl)
+                }
+            }
+        }
+    }
+    
+    private fun discoverStreamsFromOnvif(onvifUrl: String) {
+        Log.d("ONVIF", "EditActivity: Starting discovery for URL: $onvifUrl")
+        lifecycleScope.launch {
+            try {
+                // Show progress
+                binding.etEditUrl.hint = "Discovering streams..."
+                binding.etEditUrl.isEnabled = false
+                
+                // Parse ONVIF URL
+                val parsed = ONVIFUrlParser.parseOnvifUrl(onvifUrl)
+                    ?: throw Exception("Invalid ONVIF URL format")
+                
+                Log.d("ONVIF", "EditActivity: Parsed URL - Service: ${parsed.serviceUrl}, User: ${parsed.credentials?.username}")
+                
+                // Discover streams
+                val discovery = ONVIFStreamDiscovery()
+                val result = discovery.discoverStreams(parsed.serviceUrl, parsed.credentials)
+                
+                Log.d("ONVIF", "EditActivity: Discovery successful - Primary: ${result.primaryRtspUrl}")
+                
+                // Auto-populate RTSP URLs
+                binding.etEditUrl.setText(result.primaryRtspUrl)
+                if (result.secondaryRtspUrl != null) {
+                    binding.etEditChannel.setText(result.secondaryRtspUrl)
+                }
+                
+                // Show success message
+                binding.etEditUrl.hint = "Stream discovered (${result.profiles.size} profiles found)"
+                
+            } catch (e: Exception) {
+                Log.e("ONVIF", "EditActivity: Discovery failed", e)
+                // Show error and allow manual entry
+                binding.etEditUrl.hint = "Discovery failed: ${e.message}. Enter RTSP URL manually."
+            } finally {
+                binding.etEditUrl.isEnabled = true
+            }
         }
     }
 }

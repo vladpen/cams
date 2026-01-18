@@ -168,6 +168,54 @@ class ONVIFResponse(private val document: Document) {
     }
 
     fun getPropertyAsString(name: String): String? = getProperty(name)
+    
+    fun getAttribute(name: String): String? {
+        return try {
+            val element = document.documentElement
+            val attr = element.getAttribute(name)
+            if (attr.isNotEmpty()) attr else null
+        } catch (e: Exception) {
+            null
+        }
+    }
+    
+    fun debugDumpProperties(): String {
+        return try {
+            val element = document.documentElement
+            val children = element.childNodes
+            val properties = mutableListOf<String>()
+            
+            for (i in 0 until children.length) {
+                val child = children.item(i)
+                if (child.nodeType == org.w3c.dom.Node.ELEMENT_NODE) {
+                    properties.add("${child.nodeName}: ${child.textContent}")
+                }
+            }
+            
+            "Available properties: ${properties.joinToString(", ")}"
+        } catch (e: Exception) {
+            "Error dumping properties: ${e.message}"
+        }
+    }
+    
+    fun getPropertyList(name: String): List<ONVIFResponse>? {
+        return try {
+            val elements = document.getElementsByTagName(name)
+            val results = mutableListOf<ONVIFResponse>()
+            
+            for (i in 0 until elements.length) {
+                val element = elements.item(i) as Element
+                val newDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument()
+                val importedNode = newDoc.importNode(element, true)
+                newDoc.appendChild(importedNode)
+                results.add(ONVIFResponse(newDoc))
+            }
+            
+            if (results.isNotEmpty()) results else null
+        } catch (e: Exception) {
+            null
+        }
+    }
 
     override fun toString(): String {
         return try {
