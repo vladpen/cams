@@ -76,9 +76,6 @@ class EditActivity : AppCompatActivity() {
                 // Show ONVIF configuration
                 toggleOnvifConfiguration()
             }
-            
-            // Set up ONVIF URL change handler for automatic stream discovery
-            setupOnvifUrlHandler()
 
             val startup = SourceData.getStartup()
             binding.cbStartup.isChecked = (
@@ -106,6 +103,11 @@ class EditActivity : AppCompatActivity() {
                 binding.tvAddSftp.visibility = View.GONE
             }
         }
+        
+        // Set up ONVIF URL change handler for automatic stream discovery
+        // Must be after the if/else block so it works for both new and existing cameras
+        setupOnvifUrlHandler()
+        
         binding.tvAddChannel.setOnClickListener {
             Effects.fadeOut(arrayOf(binding.tvAddChannel))
             binding.tvDelChannel.visibility = View.VISIBLE
@@ -402,12 +404,26 @@ class EditActivity : AppCompatActivity() {
     }
     
     private fun setupOnvifUrlHandler() {
+        Log.e("ONVIF_HANDLER", "=== Setting up ONVIF URL handler ===")
+        
         // Trigger on focus loss
         binding.etOnvifUrl.setOnFocusChangeListener { _, hasFocus ->
+            Log.e("ONVIF_HANDLER", "=== Focus changed: hasFocus=$hasFocus ===")
             if (!hasFocus) {
                 val onvifUrl = binding.etOnvifUrl.text.toString().trim()
-                if (onvifUrl.startsWith("onvif://") && binding.etEditUrl.text.toString().trim().isEmpty()) {
-                    discoverStreamsFromOnvif(onvifUrl)
+                val rtspUrl = binding.etEditUrl.text.toString().trim()
+                Log.e("ONVIF_HANDLER", "=== Focus lost - ONVIF URL: '$onvifUrl', RTSP URL: '$rtspUrl' ===")
+                
+                if (onvifUrl.startsWith("onvif://")) {
+                    Log.e("ONVIF_HANDLER", "=== ONVIF URL detected ===")
+                    if (rtspUrl.isEmpty()) {
+                        Log.e("ONVIF_HANDLER", "=== RTSP URL is empty, triggering discovery ===")
+                        discoverStreamsFromOnvif(onvifUrl)
+                    } else {
+                        Log.e("ONVIF_HANDLER", "=== RTSP URL already populated, skipping discovery ===")
+                    }
+                } else {
+                    Log.e("ONVIF_HANDLER", "=== Not an ONVIF URL, skipping ===")
                 }
             }
         }
@@ -420,12 +436,24 @@ class EditActivity : AppCompatActivity() {
             override fun afterTextChanged(s: android.text.Editable?) {
                 discoveryJob?.cancel()
                 val onvifUrl = s.toString().trim()
-                if (onvifUrl.startsWith("onvif://") && binding.etEditUrl.text.toString().trim().isEmpty()) {
-                    // Wait 1 second after user stops typing before triggering discovery
-                    discoveryJob = lifecycleScope.launch {
-                        kotlinx.coroutines.delay(1000)
-                        discoverStreamsFromOnvif(onvifUrl)
+                val rtspUrl = binding.etEditUrl.text.toString().trim()
+                
+                Log.e("ONVIF_HANDLER", "=== Text changed - ONVIF URL: '$onvifUrl', RTSP URL: '$rtspUrl' ===")
+                
+                if (onvifUrl.startsWith("onvif://")) {
+                    if (rtspUrl.isEmpty()) {
+                        Log.e("ONVIF_HANDLER", "=== Starting 1-second delay timer for discovery ===")
+                        // Wait 1 second after user stops typing before triggering discovery
+                        discoveryJob = lifecycleScope.launch {
+                            kotlinx.coroutines.delay(1000)
+                            Log.e("ONVIF_HANDLER", "=== Timer expired, triggering discovery ===")
+                            discoverStreamsFromOnvif(onvifUrl)
+                        }
+                    } else {
+                        Log.e("ONVIF_HANDLER", "=== RTSP URL already populated, not starting timer ===")
                     }
+                } else {
+                    Log.e("ONVIF_HANDLER", "=== Not an ONVIF URL yet ===")
                 }
             }
         })
