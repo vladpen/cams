@@ -47,6 +47,18 @@ but works perfectly standalone thanks to the ability to connect to any IP camera
 Plays most types of video streams (not just RTSP).
 The screenshot above shows an image from a real video camera and three test videos in "Group" mode.
 
+### Video Playback Technology
+
+The app uses **VLC for Android (libvlc)** as its video playback engine, providing:
+- Support for RTSP, RTMP, HTTP, and other streaming protocols
+- Hardware-accelerated H.264, H.265/HEVC video decoding
+- Low-latency streaming optimized for IP cameras
+- Robust network error handling and reconnection
+- Multi-format codec support
+
+VLC library is obtained from Maven Central: `org.videolan.android:libvlc-all:3.6.5`  
+License: LGPL 2.1+ / GPL 2.0+ - See [VideoLAN Legal](https://www.videolan.org/legal.html)
+
 *IMPORTANT. The application is focused on security and data privacy, so it does not collect or process any user information.
 Data is not sent to any servers, including Google's technical infrastructure and manufacturers' "cloud" storage.*
 
