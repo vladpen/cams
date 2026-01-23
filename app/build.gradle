@@ -10,8 +10,8 @@ android {
         applicationId 'uk.org.retallack.onvifcamera'
         minSdk 24
         targetSdk 36
-        versionCode 1010132
-        versionName '2.4.4'
+        versionCode 1010133
+        versionName '2.4.5'
         base.archivesName = 'cams'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
