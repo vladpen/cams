@@ -87,32 +87,89 @@ For example, the screenshots above use icons from the standard mobile phone set.
 
 ## ONVIF Setup
 
-This fork includes enhanced ONVIF support for automatic camera discovery and PTZ control.
+This fork includes enhanced ONVIF support for automatic camera discovery, stream configuration, and PTZ control.
+
+### Adding ONVIF Cameras
+
+#### Quick Setup (Recommended)
+1. Tap "Add Camera" in the main screen
+2. Enter a camera name
+3. Tap "Add ONVIF Configuration" to show ONVIF fields
+4. Enter your ONVIF URL in the format:
+   ```
+   onvif://username:password@camera-ip:port/onvif/device_service
+   ```
+   Example: `onvif://admin:password123@192.168.1.100:80/onvif/device_service`
+5. Wait 1 second - the app will automatically discover and populate RTSP stream URLs
+6. Tap "Save"
+
+#### Manual RTSP Entry
+If automatic discovery fails, you can still manually enter RTSP URLs:
+- The ONVIF URL is optional
+- Enter RTSP URLs directly in the "Address" fields
+- ONVIF PTZ control will still work if ONVIF URL is provided
+
+#### Common ONVIF Endpoints
+Different cameras use different ONVIF service paths:
+- Most cameras: `/onvif/device_service`
+- Some cameras: `/onvif/media_service`
+- Thingino cameras: `/onvif/device_service`
+
+The app automatically tries multiple endpoints to find the correct one.
 
 ### Touch-Based PTZ Control
 
 For ONVIF cameras with PTZ capabilities:
 - Touch the center of the video screen to activate PTZ control
 - Drag your finger to pan and tilt the camera
+- **Variable Speed**: Movement speed scales with distance from center
+  - Near center: Slow, precise control (10% speed)
+  - Medium distance: Moderate speed (up to 50%)
+  - Far from center: Fast movement (up to 100% speed)
 - The PTZ dot follows your finger movement with visual feedback
 - Release to stop movement - the dot smoothly returns to center
 - Per-camera settings for PTZ inversion and rate limiting
 - Works in fullscreen landscape mode for optimal control
 
-### ONVIF Configuration
+### ONVIF Configuration Options
 
-Configure ONVIF cameras using the single URL format:
-```
-onvif://username:password@camera-ip:port/onvif/device_service
-```
+In the camera edit screen, you can configure:
+- **Invert Horizontal PTZ**: Reverse left/right movement direction
+- **Invert Vertical PTZ**: Reverse up/down movement direction  
+- **PTZ Rate Limit**: Minimum milliseconds between PTZ commands (default: 200ms)
+
+These settings are saved per-camera and persist across app restarts.
+
+### Automatic Stream Discovery
+
+When you enter an ONVIF URL, the app automatically:
+1. Connects to the camera's ONVIF service
+2. Discovers available media profiles
+3. Selects the highest quality profile for primary stream
+4. Selects a secondary profile for dual-channel support (if available)
+5. Retrieves RTSP URLs for both streams
+6. Auto-populates the RTSP URL fields
+
+This eliminates the need to manually find and enter RTSP URLs for ONVIF cameras.
 
 ### Supported ONVIF Features
 
-- **Device Discovery**: WS-Discovery protocol for automatic camera detection
-- **Touch PTZ Control**: Intuitive gesture-based pan, tilt, and zoom
+- **Automatic Stream Discovery**: GetProfiles and GetStreamUri for RTSP URL detection
+- **Device Discovery**: WS-Discovery protocol for automatic camera detection on network
+- **Touch PTZ Control**: Intuitive gesture-based pan, tilt, and zoom with variable speed
 - **Per-Camera Settings**: Individual PTZ inversion and rate limiting configuration
 - **Profile S Compliance**: Compatible with ONVIF Profile S cameras
 - **Secure Authentication**: WS-UsernameToken and HTTP Digest authentication
+
+### Troubleshooting ONVIF
+
+If automatic discovery fails:
+- Verify the ONVIF URL format is correct
+- Check that ONVIF is enabled on your camera
+- Ensure the username/password are correct
+- Try different ONVIF endpoints (`/onvif/device_service` vs `/onvif/media_service`)
+- Check network connectivity between phone and camera
+- Manually enter RTSP URLs as fallback
 
 ## Motion Detection Alerts
 
