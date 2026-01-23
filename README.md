@@ -1,6 +1,11 @@
-## Cams
+## ONVIF Camera
 
-> **Note**: This is a fork of the [original cams repository](https://github.com/vladpen/cams) with additional features including ONVIF PTZ control support.
+> **Note**: This is a fork of the [original cams repository](https://github.com/vladpen/cams) with enhanced ONVIF features including automatic stream discovery and touch-based PTZ control.
+
+**Package ID**: `uk.org.retallack.onvifcamera`  
+**Original Package**: `com.vladpen.cams`
+
+This fork can be installed alongside the original Cams app without conflicts.
 
 ![Cams](https://raw.githubusercontent.com/vladpen/cams/main/fastlane/metadata/android/ru-RU/images/phoneScreenshots/5_cover.jpg)
 

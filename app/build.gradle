@@ -7,7 +7,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId 'com.vladpen.cams'
+        applicationId 'uk.org.retallack.onvifcamera'
         minSdk 24
         targetSdk 36
         versionCode 1010132

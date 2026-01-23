@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Cams</string>
+    <string name="app_name">ONVIF Camera</string>
     <string name="main_title">Câmeras</string>
     <string name="cam_add">Adicionar câmera</string>
     <string name="cam_name">Nome *</string>
