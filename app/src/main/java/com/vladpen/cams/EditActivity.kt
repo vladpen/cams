@@ -402,6 +402,7 @@ class EditActivity : AppCompatActivity() {
     }
     
     private fun setupOnvifUrlHandler() {
+        // Trigger on focus loss
         binding.etOnvifUrl.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 val onvifUrl = binding.etOnvifUrl.text.toString().trim()
@@ -410,6 +411,24 @@ class EditActivity : AppCompatActivity() {
                 }
             }
         }
+        
+        // Also trigger when user finishes typing (after 1 second delay)
+        var discoveryJob: kotlinx.coroutines.Job? = null
+        binding.etOnvifUrl.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: android.text.Editable?) {
+                discoveryJob?.cancel()
+                val onvifUrl = s.toString().trim()
+                if (onvifUrl.startsWith("onvif://") && binding.etEditUrl.text.toString().trim().isEmpty()) {
+                    // Wait 1 second after user stops typing before triggering discovery
+                    discoveryJob = lifecycleScope.launch {
+                        kotlinx.coroutines.delay(1000)
+                        discoverStreamsFromOnvif(onvifUrl)
+                    }
+                }
+            }
+        })
     }
     
     private fun discoverStreamsFromOnvif(onvifUrl: String) {

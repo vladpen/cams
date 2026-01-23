@@ -40,7 +40,12 @@ class PTZGestureController(
         currentPanSpeed = panSpeed * speedMultiplier
         currentTiltSpeed = tiltSpeed * speedMultiplier
         
-        android.util.Log.d("PTZ_GESTURE", "Distance: $distance, Speed multiplier: $speedMultiplier")
+        android.util.Log.d("PTZ_SPEED", "=== SPEED DEBUG ===")
+        android.util.Log.d("PTZ_SPEED", "Distance from center: $distance")
+        android.util.Log.d("PTZ_SPEED", "Speed multiplier: $speedMultiplier")
+        android.util.Log.d("PTZ_SPEED", "Original pan/tilt: $panSpeed, $tiltSpeed")
+        android.util.Log.d("PTZ_SPEED", "Scaled pan/tilt: $currentPanSpeed, $currentTiltSpeed")
+        android.util.Log.d("PTZ_SPEED", "==================")
         
         // Rate limiting - only send command if enough time has passed
         val currentTime = System.currentTimeMillis()
@@ -74,7 +79,12 @@ class PTZGestureController(
                 val clampedSpeed = kotlin.math.min(speed, 1.0f)
                 val finalSpeed = kotlin.math.max(clampedSpeed, 0.1f) // Minimum 0.1 for precise control
                 
-                android.util.Log.d("PTZ_GESTURE", "Final speed: $finalSpeed (multiplier: $speedMultiplier)")
+                android.util.Log.d("PTZ_SPEED", "FINAL SPEED CALCULATION:")
+                android.util.Log.d("PTZ_SPEED", "Raw speed: $speed")
+                android.util.Log.d("PTZ_SPEED", "Clamped speed: $clampedSpeed") 
+                android.util.Log.d("PTZ_SPEED", "Final speed sent to camera: $finalSpeed")
+                android.util.Log.d("PTZ_SPEED", "Speed multiplier applied: $speedMultiplier")
+                
                 ptzController.continuousMove(direction, finalSpeed)
                 
             } catch (e: Exception) {
