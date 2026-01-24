@@ -1,10 +1,11 @@
-## Unreleased
+## 2.4.6 - 2026-01-24
 
 - Restructured configuration page: ONVIF fields now appear first and are always visible
 - RTSP URL moved below ONVIF configuration section
 - Added ONVIF motion detection support with fast polling fallback
 - Updated About page to reflect fork status and maintainer information
 - Added comprehensive debug logging for ONVIF troubleshooting
+- Multi-architecture support: separate APKs for armeabi-v7a, arm64-v8a, x86, and x86_64
 
 ## 2.4.5 - 2026-01-24
 
