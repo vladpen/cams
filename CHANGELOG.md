@@ -2,6 +2,9 @@
 
 - Restructured configuration page: ONVIF fields now appear first and are always visible
 - RTSP URL moved below ONVIF configuration section
+- Added ONVIF motion detection support with fast polling fallback
+- Updated About page to reflect fork status and maintainer information
+- Added comprehensive debug logging for ONVIF troubleshooting
 
 ## 2.4.5 - 2026-01-24
 
