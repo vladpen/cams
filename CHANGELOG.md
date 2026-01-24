@@ -1,3 +1,7 @@
+## 2.4.5 - 2026-01-24
+
+Fork with ONVIF PTZ control support
+
 ## 2.4.4 - 2025-10-17
 
 Component update
