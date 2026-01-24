@@ -56,10 +56,15 @@
     <string name="about">About</string>
     <string name="about_text">
         <![CDATA[
-            <h1>Cams, version %1$s</h1><br/>
-            Copyright &copy; %2$s vladpen under MIT license<br/><br/>
-            <a href="https://github.com/vladpen/cams">Home page</a><br/><br/>
-            <a href="https://github.com/vladpen/cams/issues">
+            <h1>ONVIF Camera, version %1$s</h1><br/>
+            <b>Fork of Cams with ONVIF PTZ Control</b><br/><br/>
+            Forked and maintained by Mark Retallack<br/>
+            <a href="https://github.com/mretallack/cams">https://github.com/mretallack/cams</a><br/><br/>
+            Original Cams app by vladpen<br/>
+            <a href="https://github.com/vladpen/cams">https://github.com/vladpen/cams</a><br/><br/>
+            Copyright &copy; %2$s Mark Retallack, vladpen<br/>
+            Licensed under MIT license<br/><br/>
+            <a href="https://github.com/mretallack/cams/issues">
                 Bug reports and issue tracker</a>
         ]]>
     </string>

@@ -364,7 +364,10 @@ class StreamsActivity : AppCompatActivity(), Layout {
                 
                 if (stream.deviceCapabilities?.supportsMotionEvents == true) {
                     android.util.Log.d("ONVIF", "Initializing motion detection")
+                    android.util.Log.d("ONVIF", "Device capabilities: ${stream.deviceCapabilities}")
                     initMotionDetection(stream)
+                } else {
+                    android.util.Log.d("ONVIF", "Motion events not supported. Capabilities: ${stream.deviceCapabilities}")
                 }
             } else {
                 android.util.Log.d("ONVIF", "Not an ONVIF device or missing service URL")
@@ -428,8 +431,12 @@ class StreamsActivity : AppCompatActivity(), Layout {
     }
 
     private fun initMotionDetection(stream: StreamDataModel) {
+        android.util.Log.d("MOTION_INIT", "=== Initializing motion detection ===")
         val serviceUrl = stream.onvifServiceUrl ?: return
         val credentials = stream.onvifCredentials
+        
+        android.util.Log.d("MOTION_INIT", "Service URL: $serviceUrl")
+        android.util.Log.d("MOTION_INIT", "Has credentials: ${credentials != null}")
         
         // Create motion indicator
         motionIndicator = MotionIndicator(this).apply {
@@ -441,26 +448,34 @@ class StreamsActivity : AppCompatActivity(), Layout {
         
         // Add to streams container
         binding.rlStreamsBox.addView(motionIndicator)
+        android.util.Log.d("MOTION_INIT", "Motion indicator added to view")
         
         // Initialize motion event service
         onvifScope.launch {
             val deviceId = stream.url
-            onvifManager?.initializeMotionEventService(deviceId, serviceUrl, credentials)
+            android.util.Log.d("MOTION_INIT", "Initializing motion event service for device: $deviceId")
+            
+            val service = onvifManager?.initializeMotionEventService(deviceId, serviceUrl, credentials)
+            android.util.Log.d("MOTION_INIT", "Motion event service created: ${service != null}")
             
             onvifManager?.setListener(object : ONVIFManager.ONVIFManagerListener {
                 override fun onDeviceDiscovered(devices: List<ONVIFDevice>) {}
                 
                 override fun onMotionDetected(deviceId: String) {
+                    android.util.Log.d("MOTION_INIT", "*** Motion detected callback for: $deviceId ***")
                     if (deviceId == stream.url) {
                         runOnUiThread {
+                            android.util.Log.d("MOTION_INIT", "Showing motion indicator")
                             motionIndicator?.showMotionDetected()
                         }
                     }
                 }
                 
                 override fun onMotionStopped(deviceId: String) {
+                    android.util.Log.d("MOTION_INIT", "*** Motion stopped callback for: $deviceId ***")
                     if (deviceId == stream.url) {
                         runOnUiThread {
+                            android.util.Log.d("MOTION_INIT", "Hiding motion indicator")
                             motionIndicator?.hideMotionDetected()
                         }
                     }
