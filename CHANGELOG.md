@@ -1,3 +1,8 @@
+## Unreleased
+
+- Restructured configuration page: ONVIF fields now appear first and are always visible
+- RTSP URL moved below ONVIF configuration section
+
 ## 2.4.5 - 2026-01-24
 
 Fork with ONVIF PTZ control support

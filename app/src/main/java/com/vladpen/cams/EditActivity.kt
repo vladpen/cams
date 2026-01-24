@@ -73,8 +73,6 @@ class EditActivity : AppCompatActivity() {
                 binding.cbInvertHorizontal.isChecked = stream.invertHorizontalPTZ
                 binding.cbInvertVertical.isChecked = stream.invertVerticalPTZ
                 binding.etPtzRateLimit.setText(stream.ptzRateLimit.toString())
-                // Show ONVIF configuration
-                toggleOnvifConfiguration()
             }
 
             val startup = SourceData.getStartup()
@@ -125,9 +123,6 @@ class EditActivity : AppCompatActivity() {
         }
         binding.tvDiscoverOnvif.setOnClickListener {
             discoverOnvifDevices()
-        }
-        binding.tvAddOnvif.setOnClickListener {
-            toggleOnvifConfiguration()
         }
         binding.btnSave.setOnClickListener {
             save()
@@ -379,28 +374,6 @@ class EditActivity : AppCompatActivity() {
             }
             .setNegativeButton("Skip", null)
             .show()
-    }
-
-    private fun toggleOnvifConfiguration() {
-        val isVisible = binding.tvOnvifLabel.visibility == View.VISIBLE
-        
-        if (isVisible) {
-            // Hide ONVIF fields
-            binding.tvOnvifLabel.visibility = View.GONE
-            binding.etOnvifUrl.visibility = View.GONE
-            binding.cbInvertHorizontal.visibility = View.GONE
-            binding.cbInvertVertical.visibility = View.GONE
-            binding.llPtzRateLimit.visibility = View.GONE
-            binding.tvAddOnvif.text = "Add ONVIF Configuration"
-        } else {
-            // Show ONVIF fields
-            binding.tvOnvifLabel.visibility = View.VISIBLE
-            binding.etOnvifUrl.visibility = View.VISIBLE
-            binding.cbInvertHorizontal.visibility = View.VISIBLE
-            binding.cbInvertVertical.visibility = View.VISIBLE
-            binding.llPtzRateLimit.visibility = View.VISIBLE
-            binding.tvAddOnvif.text = "Hide ONVIF Configuration"
-        }
     }
     
     private fun setupOnvifUrlHandler() {

@@ -33,6 +33,70 @@
                 android:autofillHints=""
                 android:gravity="center" />
 
+            <TextView
+                android:id="@+id/tvDiscoverOnvif"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:padding="10dp"
+                android:text="Discover ONVIF Cameras"
+                android:textColor="@color/files_link"
+                android:background="?attr/selectableItemBackground" />
+
+            <TextView
+                android:id="@+id/tvOnvifLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="ONVIF Configuration"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etOnvifUrl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="ONVIF URL (e.g., onvif://username:password@192.168.1.100:80/onvif/device_service)"
+                android:inputType="textUri"
+                android:textSize="16sp"
+                android:autofillHints="" />
+
+            <CheckBox
+                android:id="@+id/cbInvertHorizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Invert Horizontal PTZ" />
+
+            <CheckBox
+                android:id="@+id/cbInvertVertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Invert Vertical PTZ" />
+
+            <LinearLayout
+                android:id="@+id/llPtzRateLimit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PTZ Rate Limit (ms): "
+                    android:layout_gravity="center_vertical" />
+
+                <EditText
+                    android:id="@+id/etPtzRateLimit"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:hint="200"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -93,85 +157,6 @@
                 android:hint="@string/cam_url_hint"
                 android:autofillHints=""
                 android:gravity="center" />
-
-            <TextView
-                android:id="@+id/tvDiscoverOnvif"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:padding="10dp"
-                android:text="Discover ONVIF Cameras"
-                android:textColor="@color/files_link"
-                android:background="?attr/selectableItemBackground" />
-
-            <TextView
-                android:id="@+id/tvOnvifLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="ONVIF Configuration (Optional)"
-                android:textStyle="bold"
-                android:visibility="gone" />
-
-            <EditText
-                android:id="@+id/etOnvifUrl"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:hint="ONVIF URL (e.g., onvif://username:password@192.168.1.100:80/onvif/device_service)"
-                android:inputType="textUri"
-                android:textSize="16sp"
-                android:visibility="gone"
-                android:autofillHints="" />
-
-            <CheckBox
-                android:id="@+id/cbInvertHorizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Invert Horizontal PTZ"
-                android:visibility="gone" />
-
-            <CheckBox
-                android:id="@+id/cbInvertVertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Invert Vertical PTZ"
-                android:visibility="gone" />
-
-            <LinearLayout
-                android:id="@+id/llPtzRateLimit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp"
-                android:visibility="gone">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="PTZ Rate Limit (ms): "
-                    android:layout_gravity="center_vertical" />
-
-                <EditText
-                    android:id="@+id/etPtzRateLimit"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:hint="200"
-                    android:textSize="16sp" />
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/tvAddOnvif"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:padding="10dp"
-                android:text="Add ONVIF Configuration"
-                android:textColor="@color/files_link"
-                android:background="?attr/selectableItemBackground" />
 
             <LinearLayout
                 android:id="@+id/llChannelBox"
