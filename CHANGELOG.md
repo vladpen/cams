@@ -1,3 +1,7 @@
+## 2.4.7 - 2026-01-24
+
+- Fixed F-Droid version code calculation for multi-architecture APKs
+
 ## 2.4.6 - 2026-01-24
 
 - Restructured configuration page: ONVIF fields now appear first and are always visible
