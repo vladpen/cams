@@ -31,8 +31,6 @@ class ONVIFSoapClient(
     fun sendRequest(method: String, namespace: String = ONVIF_NAMESPACE, parameters: Map<String, Any> = emptyMap()): ONVIFResponse? {
         return try {
             android.util.Log.d("ONVIF", "Sending SOAP request: $method to $serviceUrl")
-            android.util.Log.d("ONVIF_DETAIL", "Method: $method, Namespace: $namespace")
-            android.util.Log.d("ONVIF_DETAIL", "Parameters: $parameters")
             
             // Validate inputs
             val safeMethod = ONVIFSecurity.validateInput(method)
@@ -45,7 +43,6 @@ class ONVIFSoapClient(
 
             val soapEnvelope = createSoapEnvelope(safeMethod, safeNamespace, parameters)
             android.util.Log.d("ONVIF", "SOAP envelope created, sending HTTP request")
-            android.util.Log.d("ONVIF_SOAP", "Full SOAP envelope:\n$soapEnvelope")
             
             val response = sendHttpRequest(soapEnvelope)
             

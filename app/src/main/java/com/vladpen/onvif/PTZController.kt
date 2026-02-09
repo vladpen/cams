@@ -16,9 +16,7 @@ class PTZController(
     private var ptzServiceUrl: String? = null
 
     suspend fun initialize(): Boolean = withContext(Dispatchers.IO) {
-        android.util.Log.d("PTZ_CONTROLLER", "=== PTZ INITIALIZATION START ===")
-        android.util.Log.d("PTZ_CONTROLLER", "Service URL: $serviceUrl")
-        android.util.Log.d("PTZ_CONTROLLER", "Username: ${credentials?.username}")
+        android.util.Log.d("PTZ_CONTROLLER", "Initializing PTZ for $serviceUrl")
         
         // Discover service URLs from GetCapabilities
         val deviceClient = ONVIFSoapClient(serviceUrl, credentials)
@@ -27,7 +25,6 @@ class PTZController(
         if (capabilitiesResponse != null) {
             // Try to extract PTZ XAddr from capabilities - look for PTZ.XAddr specifically
             val ptzXAddr = capabilitiesResponse.getProperty("PTZ.XAddr")
-            android.util.Log.d("PTZ_CONTROLLER", "Raw PTZ.XAddr from capabilities: $ptzXAddr")
             
             ptzServiceUrl = if (ptzXAddr != null && ptzXAddr.isNotEmpty()) {
                 // Use hostname instead of IP if XAddr contains IP
@@ -45,21 +42,19 @@ class PTZController(
             mediaServiceUrl = capabilitiesResponse.getProperty("Media.XAddr")
                 ?: tryCommonMediaPaths()
             
-            android.util.Log.d("PTZ_CONTROLLER", "Final PTZ URL: $ptzServiceUrl")
-            android.util.Log.d("PTZ_CONTROLLER", "Final Media URL: $mediaServiceUrl")
+            android.util.Log.d("PTZ_CONTROLLER", "PTZ URL: $ptzServiceUrl")
         } else {
             // Fallback to common paths
-            android.util.Log.d("PTZ_CONTROLLER", "GetCapabilities failed, trying common paths")
+            android.util.Log.w("PTZ_CONTROLLER", "GetCapabilities failed, using fallback paths")
             ptzServiceUrl = tryCommonPtzPaths()
             mediaServiceUrl = tryCommonMediaPaths()
-            android.util.Log.d("PTZ_CONTROLLER", "Fallback PTZ URL: $ptzServiceUrl")
-            android.util.Log.d("PTZ_CONTROLLER", "Fallback Media URL: $mediaServiceUrl")
         }
         
         profileToken = getFirstProfile()
         val success = profileToken != null && ptzServiceUrl != null
-        android.util.Log.d("PTZ_CONTROLLER", "Profile token: $profileToken")
-        android.util.Log.d("PTZ_CONTROLLER", "=== PTZ INITIALIZATION ${if (success) "SUCCEEDED" else "FAILED"} ===")
+        if (!success) {
+            android.util.Log.e("PTZ_CONTROLLER", "Initialization failed")
+        }
         success
     }
     
@@ -87,22 +82,21 @@ class PTZController(
         
         for (url in mediaUrls) {
             try {
-                android.util.Log.d("PTZ_CONTROLLER", "Trying media endpoint: $url")
                 val mediaSoapClient = ONVIFSoapClient(url, credentials)
                 val response = mediaSoapClient.sendRequest("GetProfiles", MEDIA_NAMESPACE)
                 
                 if (response != null) {
                     val token = parseProfileTokenFromResponse(response)
                     if (token != null) {
-                        android.util.Log.d("PTZ_CONTROLLER", "Found profile token: $token")
                         return token
                     }
                 }
             } catch (e: Exception) {
-                android.util.Log.d("PTZ_CONTROLLER", "Failed with $url: ${e.message}")
+                // Try next endpoint
             }
         }
         
+        android.util.Log.e("PTZ_CONTROLLER", "Failed to get profile token")
         return null
     }
 
@@ -113,7 +107,6 @@ class PTZController(
             ?: response.getAttribute("token")
         
         if (token != null) {
-            android.util.Log.d("PTZ_CONTROLLER", "Extracted profile token: $token")
             return token
         }
         
@@ -123,22 +116,14 @@ class PTZController(
         
         if (profiles != null && profiles.isNotEmpty()) {
             val firstProfile = profiles[0]
-            val profileToken = firstProfile.getProperty("token") 
+            return firstProfile.getProperty("token") 
                 ?: firstProfile.getAttribute("token")
-            android.util.Log.d("PTZ_CONTROLLER", "Extracted token from profile list: $profileToken")
-            return profileToken
         }
         
-        android.util.Log.d("PTZ_CONTROLLER", "Using fallback profile token")
         return "Profile_0" // Default fallback
     }
 
     suspend fun continuousMove(direction: PTZDirection, speed: Float = 0.5f): Boolean = withContext(Dispatchers.IO) {
-        android.util.Log.d("PTZ_CONTROLLER", "=== PTZ MOVE START ===")
-        android.util.Log.d("PTZ_CONTROLLER", "Direction: $direction, Speed: $speed")
-        android.util.Log.d("PTZ_CONTROLLER", "Profile Token: $profileToken")
-        android.util.Log.d("PTZ_CONTROLLER", "PTZ Service URL: $ptzServiceUrl")
-        
         val token = profileToken ?: run {
             android.util.Log.e("PTZ_CONTROLLER", "No profile token available")
             return@withContext false
@@ -158,8 +143,6 @@ class PTZController(
             PTZDirection.DOWN -> Pair(0f, -0.1f)
         }
         
-        android.util.Log.d("PTZ_CONTROLLER", "Pan Distance: $panDistance, Tilt Distance: $tiltDistance")
-        
         val moveParams = mapOf(
             "ProfileToken" to token,
             "Translation" to """
@@ -172,15 +155,11 @@ class PTZController(
             """.trimIndent()
         )
         
-        android.util.Log.d("PTZ_CONTROLLER", "Sending RelativeMove request...")
         val response = ptzSoapClient.sendRequest("RelativeMove", PTZ_NAMESPACE, moveParams)
-        val success = response != null
-        android.util.Log.d("PTZ_CONTROLLER", "=== PTZ MOVE ${if (success) "SUCCESS" else "FAILED"} ===")
-        return@withContext success
+        return@withContext response != null
     }
 
     suspend fun stop(): Boolean = withContext(Dispatchers.IO) {
-        android.util.Log.d("PTZ_CONTROLLER", "stop() called")
         val token = profileToken ?: return@withContext false
         val ptzUrl = ptzServiceUrl ?: return@withContext false
         
@@ -188,7 +167,6 @@ class PTZController(
         val stopParams = mapOf("ProfileToken" to token)
         
         val response = ptzSoapClient.sendRequest("Stop", PTZ_NAMESPACE, stopParams)
-        android.util.Log.d("PTZ_CONTROLLER", "Stop response: ${response != null}")
         return@withContext response != null
     }
 
