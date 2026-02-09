@@ -75,11 +75,15 @@ class ONVIFStreamDiscovery {
         val primaryRtsp = getStreamUri(workingClient, primaryProfile.token)
         val secondaryRtsp = secondaryProfile?.let { getStreamUri(workingClient, it.token) }
         
-        Log.d("ONVIF", "Discovery complete - Primary RTSP: $primaryRtsp, Secondary RTSP: $secondaryRtsp")
+        // Inject credentials into RTSP URLs
+        val primaryWithCreds = injectCredentials(primaryRtsp, credentials)
+        val secondaryWithCreds = secondaryRtsp?.let { injectCredentials(it, credentials) }
+        
+        Log.d("ONVIF", "Discovery complete - Primary RTSP: $primaryWithCreds, Secondary RTSP: $secondaryWithCreds")
         
         StreamDiscoveryResult(
-            primaryRtspUrl = primaryRtsp,
-            secondaryRtspUrl = secondaryRtsp,
+            primaryRtspUrl = primaryWithCreds,
+            secondaryRtspUrl = secondaryWithCreds,
             profiles = profiles
         )
     }
@@ -125,6 +129,20 @@ class ONVIFStreamDiscovery {
         val rtspRegex = Regex("(rtsp://[^\\s]+?)(?:false|true|PT\\d+S)")
         val match = rtspRegex.find(text)
         return match?.groupValues?.get(1)
+    }
+    
+    private fun injectCredentials(rtspUrl: String, credentials: ONVIFCredentials?): String {
+        if (credentials == null) return rtspUrl
+        
+        return try {
+            val uri = java.net.URI(rtspUrl)
+            val userInfo = "${credentials.username}:${credentials.password}"
+            val port = if (uri.port == -1) "" else ":${uri.port}"
+            "rtsp://$userInfo@${uri.host}$port${uri.path ?: ""}"
+        } catch (e: Exception) {
+            Log.e("ONVIF", "Failed to inject credentials: ${e.message}")
+            rtspUrl
+        }
     }
     
     private fun parseProfiles(response: ONVIFResponse): List<MediaProfile> {
