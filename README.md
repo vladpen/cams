@@ -188,6 +188,28 @@ If automatic discovery fails:
 - Check network connectivity between phone and camera
 - Manually enter RTSP URLs as fallback
 
+#### Thingino Camera Notes
+
+Thingino cameras have specific ONVIF requirements:
+
+**PTZ Control:**
+- Thingino firmware (as of recent updates) only supports **RelativeMove** for PTZ control
+- ContinuousMove is no longer supported - the camera accepts commands but doesn't execute them
+- The app automatically uses RelativeMove for all Thingino cameras
+- PTZ commands must use the **hostname** (not IP address) for proper operation
+- PTZ endpoint is `/onvif/ptz_service` (discovered via GetCapabilities)
+
+**Stream Discovery:**
+- RTSP URLs returned by GetStreamUri do not include credentials
+- The app automatically injects ONVIF credentials into discovered RTSP URLs
+- Use the hostname in your ONVIF URL (e.g., `onvif://user:pass@camera.local:80/onvif/device_service`)
+- The camera may return IP addresses in GetCapabilities responses, but PTZ requires using the original hostname
+
+**Common Issues:**
+- If PTZ doesn't work, ensure you're using a hostname (not IP) in the ONVIF URL
+- If streams don't authenticate, the app will automatically add credentials from ONVIF URL
+- After firmware updates, PTZ behavior may change - RelativeMove is currently the only supported method
+
 ## Motion Detection Alerts
 
 Optionally, the application can notify about camera motion detector triggers.
