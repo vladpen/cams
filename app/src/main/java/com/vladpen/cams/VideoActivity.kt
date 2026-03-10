@@ -10,12 +10,16 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.Insets
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.vladpen.*
 import com.vladpen.Effects.edgeToEdge
 import com.vladpen.cams.databinding.ActivityVideoBinding
 import org.videolan.libvlc.LibVLC
 import org.videolan.libvlc.MediaPlayer
 import java.io.IOException
+
 
 class VideoActivity : AppCompatActivity(), Layout, Player {
     private val binding by lazy { ActivityVideoBinding.inflate(layoutInflater) }
@@ -41,9 +45,22 @@ class VideoActivity : AppCompatActivity(), Layout, Player {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        edgeToEdge(window)
         setContentView(binding.root)
-        edgeToEdge(binding.root) { innerPadding ->
-            insets = innerPadding
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            binding.toolbar.clToolbar.updatePadding(
+                left = systemBarsInsets.left,
+                right = systemBarsInsets.right,
+                top = systemBarsInsets.top
+            )
+            binding.videoBar.clVideoBar.updatePadding(
+                left = systemBarsInsets.left,
+                right = systemBarsInsets.right,
+                bottom = systemBarsInsets.bottom
+            )
+            insets
         }
         streamId = intent.getIntExtra("streamId", -1)
         stream = StreamData.getById(streamId) ?: return

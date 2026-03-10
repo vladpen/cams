@@ -10,6 +10,7 @@ import com.vladpen.*
 import com.vladpen.Effects.edgeToEdge
 import com.vladpen.cams.databinding.ActivityFilesBinding
 
+
 class FilesActivity: AppCompatActivity() {
     private val binding by lazy { ActivityFilesBinding.inflate(layoutInflater) }
     private lateinit var remotePath: String
@@ -19,8 +20,8 @@ class FilesActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        edgeToEdge(window)
         setContentView(binding.root)
-        edgeToEdge(binding.root)
         initActivity()
     }
 

@@ -21,6 +21,7 @@ import com.vladpen.Utils
 import com.vladpen.cams.MainApp.Companion.context
 import com.vladpen.cams.databinding.ActivityMainBinding
 
+
 class MainActivity: AppCompatActivity() {
     companion object {
         private var isCreated: Boolean = false
@@ -36,8 +37,8 @@ class MainActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         if (redirect())
             return
+        edgeToEdge(window)
         setContentView(binding.root)
-        edgeToEdge(binding.root)
         initActivity()
     }
 

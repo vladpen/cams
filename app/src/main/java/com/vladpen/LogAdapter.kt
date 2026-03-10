@@ -19,7 +19,7 @@ class LogAdapter(private val dataSet: List<String>) : RecyclerView.Adapter<LogAd
 
     override fun getItemCount(): Int = dataSet.count()
 
-    inner class Holder(private val binding: LogItemBinding) :
+    class Holder(private val binding: LogItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(row: String) {
             binding.tvItemLine.text = row

@@ -16,6 +16,7 @@ import com.vladpen.cams.databinding.ActivityEditGroupBinding
 
 private const val STREAMS_MIN = 2
 
+
 class GroupEditActivity : AppCompatActivity() {
     private val binding by lazy { ActivityEditGroupBinding.inflate(layoutInflater) }
     private var groupId: Int = -1
@@ -23,8 +24,8 @@ class GroupEditActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        edgeToEdge(window)
         setContentView(binding.root)
-        edgeToEdge(binding.root)
         initActivity()
     }
 

@@ -1,3 +1,7 @@
+## 2.5 - 2026-03-10
+
+Edge-to-Edge video
+
 ## 2.4.4 - 2025-10-17
 
 Component update

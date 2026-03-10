@@ -16,6 +16,9 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.Insets
 import androidx.core.net.toUri
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.vladpen.*
 import com.vladpen.Effects.edgeToEdge
 import com.vladpen.cams.databinding.ActivityStreamsBinding
@@ -43,9 +46,22 @@ class StreamsActivity : AppCompatActivity(), Layout {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        edgeToEdge(window)
         setContentView(binding.root)
-        edgeToEdge(binding.root) { innerPadding ->
-            insets = innerPadding
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            binding.toolbar.clToolbar.updatePadding(
+                left = systemBarsInsets.left,
+                right = systemBarsInsets.right,
+                top = systemBarsInsets.top
+            )
+            binding.llStreamsBar.updatePadding(
+                left = systemBarsInsets.left,
+                right = systemBarsInsets.right,
+                bottom = systemBarsInsets.bottom
+            )
+            insets
         }
         sourceId = intent.getIntExtra("id", -1)
         val sourceType = intent.getStringExtra("type") ?: return

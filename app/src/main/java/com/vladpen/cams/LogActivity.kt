@@ -33,8 +33,8 @@ class LogActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        edgeToEdge(window)
         setContentView(binding.root)
-        edgeToEdge(binding.root)
         initActivity()
     }
 

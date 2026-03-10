@@ -15,6 +15,7 @@ import com.vladpen.Utils.parseUrl
 import com.vladpen.Utils.replacePassword
 import com.vladpen.cams.databinding.ActivityEditBinding
 
+
 class EditActivity : AppCompatActivity() {
     private val binding by lazy { ActivityEditBinding.inflate(layoutInflater) }
     private var streamId: Int = -1
@@ -22,8 +23,8 @@ class EditActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        edgeToEdge(window)
         setContentView(binding.root)
-        edgeToEdge(binding.root)
         initActivity()
     }
 

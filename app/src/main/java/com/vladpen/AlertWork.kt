@@ -174,12 +174,11 @@ class AlertWork(context: Context, params: WorkerParameters) : CoroutineWorker(co
         var mTime = 0
         var folderName = ""
         ls.forEach {
-            val e = it
-            if (e.filename == "." || e.filename == "..")
+            if (it.filename == "." || it.filename == "..")
                 return@forEach
-            if (mTime == 0 || e.attrs.mTime > mTime) {
-                mTime = e.attrs.mTime
-                folderName = if (e.attrs.isDir) e.filename else ""
+            if (mTime == 0 || it.attrs.mTime > mTime) {
+                mTime = it.attrs.mTime
+                folderName = if (it.attrs.isDir) it.filename else ""
             }
         }
         if (folderName != "")
