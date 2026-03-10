@@ -1,50 +1,50 @@
 plugins {
-    id 'com.android.application'
+    id('com.android.application')
 }
 
 android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId 'com.vladpen.cams'
-        minSdk 24
-        targetSdk 36
+        applicationId = 'com.vladpen.cams'
+        minSdk = 24
+        targetSdk = 36
         versionCode 1010132
-        versionName '2.4.4'
+        versionName = '2.4.4'
         base.archivesName = 'cams'
-        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        testInstrumentationRunner = 'androidx.test.runner.AndroidJUnitRunner'
     }
     buildTypes {
         release {
-            minifyEnabled false
-            shrinkResources false
+            minifyEnabled = false
+            shrinkResources = false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_21
-        targetCompatibility JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     buildFeatures {
-        viewBinding true
+        viewBinding = true
     }
     packaging {
         resources.excludes.add('META-INF/versions/9/OSGI-INF/MANIFEST.MF')
     }
     packagingOptions {
         jniLibs {
-            useLegacyPackaging true
+            useLegacyPackaging = true
         }
     }
     splits {
         abi {
-            enable true
+            enable = true
             reset()
             include 'armeabi-v7a', 'arm64-v8a', 'x86_64', 'x86'
-            universalApk false
+            universalApk = false
         }
     }
-    namespace 'com.vladpen.cams'
+    namespace = 'com.vladpen.cams'
 }
 
 dependencies {
@@ -56,7 +56,7 @@ dependencies {
 
     implementation 'org.videolan.android:libvlc-all:3.6.5'
     implementation 'com.google.code.gson:gson:2.13.2'
-    implementation 'com.github.mwiede:jsch:2.27.7'
+    implementation 'com.github.mwiede:jsch:2.27.8'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.3.0'
