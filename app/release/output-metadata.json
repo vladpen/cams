@@ -16,8 +16,8 @@
         }
       ],
       "attributes": [],
-      "versionCode": 1010132,
-      "versionName": "2.4.4",
+      "versionCode": 1010133,
+      "versionName": "2.5",
       "outputFile": "cams-armeabi-v7a-release.apk"
     },
     {
@@ -29,22 +29,9 @@
         }
       ],
       "attributes": [],
-      "versionCode": 1010132,
-      "versionName": "2.4.4",
+      "versionCode": 1010133,
+      "versionName": "2.5",
       "outputFile": "cams-x86_64-release.apk"
-    },
-    {
-      "type": "ONE_OF_MANY",
-      "filters": [
-        {
-          "filterType": "ABI",
-          "value": "x86"
-        }
-      ],
-      "attributes": [],
-      "versionCode": 1010132,
-      "versionName": "2.4.4",
-      "outputFile": "cams-x86-release.apk"
     },
     {
       "type": "ONE_OF_MANY",
@@ -55,9 +42,22 @@
         }
       ],
       "attributes": [],
-      "versionCode": 1010132,
-      "versionName": "2.4.4",
+      "versionCode": 1010133,
+      "versionName": "2.5",
       "outputFile": "cams-arm64-v8a-release.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "x86"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 1010133,
+      "versionName": "2.5",
+      "outputFile": "cams-x86-release.apk"
     }
   ],
   "elementType": "File",
@@ -68,8 +68,8 @@
       "baselineProfiles": [
         "baselineProfiles/1/cams-armeabi-v7a-release.dm",
         "baselineProfiles/1/cams-x86_64-release.dm",
-        "baselineProfiles/1/cams-x86-release.dm",
-        "baselineProfiles/1/cams-arm64-v8a-release.dm"
+        "baselineProfiles/1/cams-arm64-v8a-release.dm",
+        "baselineProfiles/1/cams-x86-release.dm"
       ]
     },
     {
@@ -78,8 +78,8 @@
       "baselineProfiles": [
         "baselineProfiles/0/cams-armeabi-v7a-release.dm",
         "baselineProfiles/0/cams-x86_64-release.dm",
-        "baselineProfiles/0/cams-x86-release.dm",
-        "baselineProfiles/0/cams-arm64-v8a-release.dm"
+        "baselineProfiles/0/cams-arm64-v8a-release.dm",
+        "baselineProfiles/0/cams-x86-release.dm"
       ]
     }
   ],
