@@ -231,4 +231,101 @@ height="80">](https://f-droid.org/packages/com.vladpen.cams/)
 alt="Доступно в RuStore"
 height="57">](https://apps.rustore.ru/app/com.vladpen.cams)
 
+## Release Procedure
+
+### Prerequisites
+
+1. Ensure you're on the `main` branch and it's up to date:
+   ```bash
+   git checkout main
+   git fetch origin
+   git status  # Should show "up to date with origin/main"
+   ```
+
+2. Ensure all feature branches are merged:
+   ```bash
+   git log main..fixes --oneline  # Should be empty if fixes is merged
+   ```
+
+### Version Update
+
+1. Update version in `app/build.gradle`:
+   - Increment `versionCode` by 6 (e.g., 10101350 → 10101356)
+   - Update `versionName` (e.g., '2.4.8' → '2.4.9')
+
+2. Update `CHANGELOG.md`:
+   - Add new version section at the top with date
+   - List all changes since last release
+
+3. Commit changes:
+   ```bash
+   git add app/build.gradle CHANGELOG.md
+   git commit -m "Release vX.Y.Z: Brief description"
+   ```
+
+### Create Release
+
+1. Create and push tag:
+   ```bash
+   git tag -a vX.Y.Z -m "Release vX.Y.Z: Brief description"
+   git push origin main
+   git push origin vX.Y.Z
+   ```
+
+### Update F-Droid
+
+1. Switch to fdroiddata repository:
+   ```bash
+   cd /home/mark/git/fdroiddata
+   ```
+
+2. Ensure branches are up to date:
+   ```bash
+   git checkout master
+   git fetch upstream
+   git merge upstream/master --ff-only
+   git push origin master
+   ```
+
+3. Update package branch:
+   ```bash
+   git checkout add-onvifcamera-v2
+   git rebase upstream/master
+   ```
+
+4. Update `metadata/uk.org.retallack.onvifcamera.yml`:
+   - Add four new build entries (one per architecture: armeabi-v7a, arm64-v8a, x86, x86_64)
+   - Version codes: base-3, base-2, base-1, base (e.g., 10101347, 10101348, 10101349, 10101350)
+   - Update `CurrentVersion` and `CurrentVersionCode` at bottom
+   - Builds must be in ascending version code order
+
+5. Commit and push:
+   ```bash
+   git add metadata/uk.org.retallack.onvifcamera.yml
+   git commit -m "Update ONVIF Camera to vX.Y.Z - Brief description"
+   git push origin add-onvifcamera-v2 --force-with-lease
+   ```
+
+6. Monitor CI pipeline at: https://gitlab.com/Retallack/fdroiddata/-/pipelines
+
+### Version Code Calculation
+
+Format: `XXYYZZZZ` where:
+- `XX` = Major version (01)
+- `YY` = Minor version (01)
+- `ZZZZ` = Patch version + 4 for base (e.g., patch 8 → 0134 + 4 = 0138 → 10101380)
+
+Architecture offsets from base:
+- armeabi-v7a: base - 3
+- arm64-v8a: base - 2
+- x86: base - 1
+- x86_64: base (highest)
+
+Example for v2.4.9:
+- Base: 10101356 (01 01 0135 + 6 for next patch)
+- armeabi-v7a: 10101353
+- arm64-v8a: 10101354
+- x86: 10101355
+- x86_64: 10101356
+
 *Copyright (c) 2022-2025 vladpen under MIT license. Use it with absolutely no warranty.*
