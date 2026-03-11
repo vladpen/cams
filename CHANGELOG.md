@@ -1,3 +1,9 @@
+## 2.4.8 - 2026-01-27
+
+- Fixed PTZ control for Thingino cameras (now uses RelativeMove instead of ContinuousMove)
+- Fixed ONVIF stream discovery to inject credentials into RTSP URLs
+- Updated README with Thingino camera requirements and troubleshooting
+
 ## 2.4.7 - 2026-01-24
 
 - Fixed F-Droid version code calculation for multi-architecture APKs
