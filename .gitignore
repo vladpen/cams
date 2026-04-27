@@ -11,3 +11,7 @@
 local.properties
 /app/release/cams-release
 /app/release/cams-release.aab
+
+# Secrets
+.env
+*.keystore
