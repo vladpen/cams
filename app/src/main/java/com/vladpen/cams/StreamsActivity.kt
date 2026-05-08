@@ -162,28 +162,25 @@ class StreamsActivity : AppCompatActivity(), Layout {
     }
 
     private fun initMute() {
-        if (isGroup) {
-            return
-        }
         setMute(StreamData.getMute())
 
         binding.btnMute.setOnClickListener {
             var mute = StreamData.getMute()
             mute = if (mute == 0) 1 else 0
             setMute(mute)
-            fragments[0].play()
+            for (f in fragments) {
+                f.play()
+            }
             StreamData.setMute(mute)
         }
     }
 
     private fun setMute(mute: Int) {
-        if (mute == 1) {
-            fragments[0].volume = 0
-            binding.btnMute.setImageResource(R.drawable.ic_baseline_volume_off_24)
-        } else {
-            fragments[0].volume = 100
-            binding.btnMute.setImageResource(R.drawable.ic_baseline_volume_on_24)
+        for (f in fragments) {
+            f.volume = if (mute == 1) 0 else 100
         }
+        val imgId = if (mute == 1) R.drawable.ic_baseline_volume_off_24 else R.drawable.ic_baseline_volume_on_24
+        binding.btnMute.setImageResource(imgId)
     }
 
     fun showMute() {
