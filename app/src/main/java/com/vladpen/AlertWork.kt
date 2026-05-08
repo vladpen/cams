@@ -19,6 +19,7 @@ import androidx.work.WorkerParameters
 import com.jcraft.jsch.ChannelSftp
 import com.jcraft.jsch.JSch
 import com.jcraft.jsch.Session
+import com.jcraft.jsch.UserInfo
 import com.vladpen.cams.R
 import com.vladpen.cams.StreamsActivity
 import kotlinx.coroutines.delay
@@ -110,11 +111,12 @@ class AlertWork(context: Context, params: WorkerParameters) : CoroutineWorker(co
         val password = Utils.decodeString(sftpData.password)
 
         val session = jsch.getSession(sftpData.user, sftpData.host, sftpData.port)
-        session?.setPassword(password)
-        session?.setConfig("StrictHostKeyChecking", "no")
-        session?.connect(3000)
 
-        val channel = session?.openChannel("sftp") as ChannelSftp
+        session.userInfo = SftpUserInfo(password = password)
+        session.setConfig("StrictHostKeyChecking", "no")
+        session.connect(3000)
+
+        val channel = session.openChannel("sftp") as ChannelSftp
         channel.connect(3000)
         return ConnectionDataModel(session, channel)
     }
@@ -185,4 +187,13 @@ class AlertWork(context: Context, params: WorkerParameters) : CoroutineWorker(co
             return this.requestLastTime(channel, "$path/$folderName")
         return mTime
     }
+}
+
+class SftpUserInfo(private val password: String) : UserInfo {
+    override fun getPassword(): String = password
+    override fun getPassphrase(): String? = null
+    override fun promptPassphrase(message: String?): Boolean = true
+    override fun promptPassword(message: String?): Boolean = true
+    override fun promptYesNo(message: String?): Boolean = true
+    override fun showMessage(message: String?) = println(message)
 }
