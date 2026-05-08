@@ -1,3 +1,7 @@
+## 2.5.1 - 2026-05-08
+- Fix for muting in groups
+- Component update
+
 ## 2.5 - 2026-03-10
 
 Edge-to-Edge video

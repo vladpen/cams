@@ -1,0 +1,2 @@
+- Fix for muting in groups
+- Component update
