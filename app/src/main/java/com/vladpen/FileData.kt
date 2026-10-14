@@ -161,7 +161,7 @@ class FileData(private val sftpUrl: String?) {
 
             val jsch = JSch()
             session = jsch.getSession(sftpData.user, sftpData.host, sftpData.port)
-            session?.setPassword(password)
+            session?.setPassword(password.toByteArray())
             session?.setConfig("StrictHostKeyChecking", "no")
             session?.connect(3000)
 
