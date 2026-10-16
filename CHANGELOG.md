@@ -1,3 +1,7 @@
+## 2.5.2 - 2026-10-16
+- Android 17 support
+- Component update
+
 ## 2.5.1 - 2026-05-08
 - Fix for muting in groups
 - Component update
