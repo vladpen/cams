@@ -3,6 +3,7 @@ package com.vladpen.cams
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -107,6 +108,10 @@ class StreamsActivity : AppCompatActivity(), Layout {
         }
         gestureDetector = VideoGestureDetector(binding.rlStreamsBox)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        if (Build.VERSION.SDK_INT >= 37) // Android 17
+            this.requestPermissions(
+                arrayOf(android.Manifest.permission.ACCESS_LOCAL_NETWORK), 0)
 
         Alert.init(this, binding.toolbar.btnAlert)
     }
