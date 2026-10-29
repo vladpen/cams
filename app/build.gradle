@@ -9,15 +9,15 @@ android {
         applicationId = 'com.vladpen.cams'
         minSdk = 24
         targetSdk = 37
-        versionCode 1010135
-        versionName = '2.5.2'
+        versionCode 1010136
+        versionName = '2.5.3b'
         base.archivesName = 'cams'
         testInstrumentationRunner = 'androidx.test.runner.AndroidJUnitRunner'
     }
     buildTypes {
         release {
-            minifyEnabled false
-            shrinkResources false
+            minifyEnabled = false
+            shrinkResources = false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }

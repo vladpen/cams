@@ -1,0 +1,1 @@
+Add Android 17 ACCESS_LOCAL_NETWORK permission (beta version)

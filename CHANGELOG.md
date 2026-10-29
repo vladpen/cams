@@ -1,3 +1,6 @@
+## 2.5.3b - 2026-10-29
+Add Android 17 ACCESS_LOCAL_NETWORK permission (beta version)
+
 ## 2.5.2 - 2026-10-16
 - Android 17 support
 - Component update
