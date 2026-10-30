@@ -1,3 +1,6 @@
+## 2.5.3 - 2026-10-30
+Fix Android 17 'nearby devices' permission
+
 ## 2.5.3b - 2026-10-29
 Add Android 17 ACCESS_LOCAL_NETWORK permission (beta version)
 

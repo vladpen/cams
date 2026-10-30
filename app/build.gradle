@@ -9,8 +9,8 @@ android {
         applicationId = 'com.vladpen.cams'
         minSdk = 24
         targetSdk = 37
-        versionCode 1010136
-        versionName = '2.5.3b'
+        versionCode 1010137
+        versionName = '2.5.3'
         base.archivesName = 'cams'
         testInstrumentationRunner = 'androidx.test.runner.AndroidJUnitRunner'
     }
